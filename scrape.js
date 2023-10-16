@@ -15,13 +15,6 @@ const pool = new Client({
     port: 5432,
   });
   
-const csvWriter = createCsvWriter({
-    path: 'output.csv',
-    header: [
-        { id: 'url', title: 'URL' },
-        { id: 'price', title: 'Price' },
-    ],
-});
 
 let browser; 
 
@@ -229,6 +222,8 @@ async function main() {
 }
 createBrowser().then ( () => {
     main()
+}).finally (( )=> {
+    console.log('final')
 })
 
 
