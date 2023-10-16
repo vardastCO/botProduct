@@ -19,6 +19,9 @@ COPY . .
 
 RUN rm -rf node_modules
 RUN if [ -f package-lock.json ]; then rm package-lock.json; fi
+
+# Change the ownership of the working directory to the 'node' user
+RUN chown -R node:node /home/node/app
 RUN npm install
 
 # Expose port 3002 for your Node.js application (if needed)
