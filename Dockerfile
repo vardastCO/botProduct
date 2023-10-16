@@ -20,10 +20,8 @@ COPY . .
 RUN rm -rf node_modules
 RUN if [ -f package-lock.json ]; then rm package-lock.json; fi
 RUN npm install
-# Install Node.js dependencies
-RUN npm install
 
-# Expose port 3002 for your Node.js application
+# Expose port 3002 for your Node.js application (if needed)
 EXPOSE 3002
 
 # Start your Node.js application
