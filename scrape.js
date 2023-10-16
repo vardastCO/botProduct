@@ -125,15 +125,16 @@ async function main() {
                     const links = Array.from(document.querySelectorAll('a'));
                     return links.map((link) => link.getAttribute('href'));
                 });
-        
+                console.log('href start')
                 for (const href of hrefs) {
+                    console.log(href,'goooo')
                     try{
                         if (!href.startsWith('https://')) {
                             var outputUrl = initialPage + href;
                         } else {
                             var outputUrl = href;
                         }
-                        if (outputUrl.startsWith(startUrlPattern) ||outputUrl.startsWith(startUrlPattern2) ) {
+                        if (outputUrl.startsWith(startUrlPattern) || outputUrl.startsWith(startUrlPattern2) ) {
                             const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
                 
                             if (result.rows.length === 0) {
