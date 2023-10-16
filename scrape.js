@@ -97,13 +97,13 @@ async function main() {
                         if (elementHandle.length > 0) {
                           const imageElements = await Promise.all(elementHandle.map(handle => handle.asElement()));
                       
-                          async function downloadAndSaveImage(imageElement) {
+                          async function downloadAndSaveImage(imageElement,uuid1) {
                             const imageUrl = await imageElement.evaluate((img) => img.src);
                             const response = await fetch(imageUrl);
                       
                             if (response.ok) {
                               const buffer = await response.arrayBuffer();
-                              const localFilename = `./pic/image_${uuidv1()}.jpg`;
+                              const localFilename = `./pic/image_${uuid1}.jpg`;
                       
                               // Create the directory if it doesn't exist
                               const dirPath = path.dirname(localFilename);
@@ -117,7 +117,7 @@ async function main() {
                       
                           // Iterate through the image elements and download/save each one with a UUID-based filename
                           for (const imageElement of imageElements) {
-                            await downloadAndSaveImage(imageElement);
+                            await downloadAndSaveImage(imageElement,uuid1);
                           }
                         }
                       } catch (e) {
