@@ -77,17 +77,17 @@ async function main() {
                     const imageElements = await mainContainer.$$('img');
 
                     async function downloadAndSaveImage(imageElement) {
-                    const imageUrl = await imageElement.evaluate(img => img.src);
+
+                    const imageUrl = await imageElement.evaluate((img) => img.src);
                     const response = await fetch(imageUrl);
                     if (response.ok) {
-                        const blob = await response.blob();
+                        const buffer = await response.arrayBuffer(); // Get binary data
                         const localFilename = `./pic/image_${uuid1}.jpg`;
-
-                        const buffer = await blob.buffer();
-                        fs.writeFileSync(localFilename, buffer);
-
-                        // console.log(`Image saved as ${localFilename}`);
-                    }
+                    
+                        
+                        fs.writeFileSync(localFilename, Buffer.from(buffer));
+                    
+                      }
                     }
 
                     // Iterate through the image elements and download/save each one with a UUID-based filename
