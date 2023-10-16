@@ -105,12 +105,6 @@ async function main() {
                               const buffer = await response.arrayBuffer();
                               const localFilename = `./pic/image_${uuid1}.jpg`;
                       
-                              // Create the directory if it doesn't exist
-                              const dirPath = path.dirname(localFilename);
-                              if (!fs.existsSync(dirPath)) {
-                                fs.mkdirSync(dirPath, { recursive: true });
-                              }
-                      
                               fs.writeFileSync(localFilename, Buffer.from(buffer));
                             }
                           }
