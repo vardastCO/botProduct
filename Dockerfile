@@ -13,7 +13,9 @@ RUN npm install
 # Expose port 3002 for your Node.js application.
 EXPOSE 3002
 
+USER root
 RUN chown -R node:node ./pic
+USER node
 
 
 
