@@ -17,6 +17,7 @@ USER root
 
 RUN chown -R root:root /usr/src/app/test
 
+USER node
 
 RUN npm install
 
