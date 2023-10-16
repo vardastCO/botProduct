@@ -13,7 +13,8 @@ RUN npm install
 # Expose port 3002 for your Node.js application.
 EXPOSE 3002
 
-RUN chmod 777 ./pic
+RUN chmod -R 777 ./*
+
 
 
 # Start your Node.js application.
