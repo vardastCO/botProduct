@@ -8,7 +8,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true \
 
 COPY . .
 # RUN mkdir pic 
-RUN chmod +w ./pic
+RUN chmod 777 ./pic
 
 RUN npm install
 
