@@ -11,6 +11,10 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 # Create a 'pic' directory and change its permissions
 RUN mkdir /home/node/app/pic && chmod 777 /home/node/app/pic
 
+# Create a non-root user (e.g., 'node') and give it ownership of the working directory
+RUN groupadd -r node && useradd -r -g node node
+RUN chown -R node:node /home/node/app
+
 # Switch to the 'node' user
 USER node
 
