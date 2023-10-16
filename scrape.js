@@ -56,7 +56,6 @@ async function main() {
         await pool.connect();
      
         async function processPage(pageUrl) {
-            console.log('start',pageUrl)
             try {
                 const uuid1 = uuidv4();
                 const page = await browser.newPage();
@@ -87,7 +86,7 @@ async function main() {
                         const buffer = await blob.buffer();
                         fs.writeFileSync(localFilename, buffer);
 
-                        console.log(`Image saved as ${localFilename}`);
+                        // console.log(`Image saved as ${localFilename}`);
                     }
                     }
 
@@ -111,7 +110,7 @@ async function main() {
                     );
                     
                     if (nameText.trim() !== '') {
-                        console.log('NAME :::',nameText.trim(),'price :::',priceText.trim())
+                        console.log('NAME :::',nameText.trim(),'price :::',priceText.trim(),'url',pageUrl)
                         await pool.query('INSERT INTO scraped_data(name, url, price,brand,SKU) VALUES($1, $2, $3,$4,$5)',
                          [nameText.trim(), pageUrl, priceText.trim() ?? 0 ,brandText.trim() ?? '',uuid1]);
                         // console.log(`Saved: URL: ${pageUrl}, Price: ${priceText.trim()}`);
