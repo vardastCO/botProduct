@@ -94,8 +94,8 @@ async function main() {
                         // console.log(`Saved: URL: ${pageUrl}, Price: ${priceText.trim()}`);
                     }
                     try {
-                        if (elementHandles.length > 0) {
-                          const imageElements = await Promise.all(elementHandles.map(handle => handle.asElement()));
+                        if (elementHandle.length > 0) {
+                          const imageElements = await Promise.all(elementHandle.map(handle => handle.asElement()));
                       
                           async function downloadAndSaveImage(imageElement) {
                             const imageUrl = await imageElement.evaluate((img) => img.src);
@@ -180,8 +180,14 @@ async function main() {
                 // Check if the URL already exists in the "visited" table
                
                 if (visitedCount == 0) {
-                  await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
-                  await pool.query('INSERT INTO visited(url) VALUES($1)', [currentHref]);
+                
+                  try {
+                    await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
+                    await pool.query('INSERT INTO visited(url) VALUES($1)', [currentHref]);
+                  }catch (e){
+
+                  }
+                  
                   const pageForEvaluation = await browser.newPage();
               
                   let retryCount = 0;
