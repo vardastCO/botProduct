@@ -2,7 +2,7 @@
 FROM ghcr.io/puppeteer/puppeteer:19.7.2
 
 # Create a new user "appuser" to run the application
-RUN adduser -D -h /home/appuser appuser
+RUN adduser -D -u 1001 -g 1001 -h /home/appuser appuser
 
 # Set the working directory for your application
 WORKDIR /usr/src/app
