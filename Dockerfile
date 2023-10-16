@@ -12,7 +12,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 RUN mkdir /usr/src/app/pic && chmod 777 /usr/src/app/pic
 
 # Change the owner of the working directory to the 'node' user
-RUN chown -R node:node /home/node/app
+RUN chown -R node:node /usr/src/app
 
 # Switch to the 'node' user
 USER node
