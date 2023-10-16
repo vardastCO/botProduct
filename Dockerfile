@@ -20,8 +20,5 @@ COPY . .
 # Expose port 3002 for your Node.js application
 EXPOSE 3002
 
-# Make your script executable
-RUN chmod +x scrape.js
-
 # Change the CMD to run your desired Node.js script
-CMD ["./scrape.js"]
+CMD ["node","scrape.js"]
