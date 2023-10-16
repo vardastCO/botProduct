@@ -49,7 +49,7 @@ async function createBrowser() {
 const initialPage = 'https://www.tileiran.co/fa/%D9%81%D8%B1%D9%88%D8%B4%DA%AF%D8%A7%D9%87-%D8%A2%D9%86%D9%84%D8%A7%DB%8C%D9%86.html';
 const startUrlPattern = 'https://www.tileiran.co/fa/%D9%81%D8%B1%D9%88%D8%B4%DA%AF%D8%A7%D9%87-%D8%A2%D9%86%D9%84%D8%A7%DB%8C%D9%86/product/';
 const startUrlPattern2 = 'https://www.tileiran.co/fa/category/';
-
+const urlPattern = /^https:\/\/www\.tileiran\.co\/fa\/%D9%81%D8%B1%D9%88%D8%B4%DA%AF%D8%A7%D9%87-%D8%A2%D9%86%D9%84%D8%A7%DB%8C%D9%86\/[%A-Z0-9-%]+$/;
 async function main() {
      
     if(await browser){
@@ -127,7 +127,7 @@ async function main() {
                         } else {
                             var outputUrl = href;
                         }
-                        if (outputUrl.startsWith(startUrlPattern) || outputUrl.startsWith(startUrlPattern2) ) {
+                        if (urlPattern.test(outputUrl) || outputUrl.startsWith(startUrlPattern2) ) {
                         
                             const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
                 
