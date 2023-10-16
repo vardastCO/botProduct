@@ -11,11 +11,8 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 # Create a 'pic' directory and change its permissions
 RUN mkdir /home/node/app/pic && chmod 777 /home/node/app/pic
 
-# Change the ownership and permissions of your project directory before copying it into the container
+# Copy your application code into the container
 COPY --chown=node:node . .
-
-# Change permissions for the node_modules directory
-RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app/node_modules
 
 # Use the existing 'node' group
 USER node
