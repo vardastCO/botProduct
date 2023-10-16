@@ -15,8 +15,6 @@ EXPOSE 3002
 
 USER root
 RUN chown -R node:node ./pic
-USER node
-
 
 
 
