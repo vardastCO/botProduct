@@ -2,6 +2,10 @@ const puppeteer = require('puppeteer');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 require("dotenv").config()
 const { Client } = require('pg');
+const fetch = require('node-fetch');
+const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
+
 
 const pool = new Client({
     user: 'db',
@@ -60,6 +64,7 @@ async function main() {
         async function processPage(pageUrl) {
             console.log('start',pageUrl)
             try {
+                const uuid1 = uuidv4();
                 const page = await browser.newPage();
                 await page.goto(pageUrl, { timeout: 300000  });
                 const priceElement = await page.$x(
@@ -71,6 +76,35 @@ async function main() {
                 const brandElement = await page.$x(
                     '/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[3]/a'
                 );
+                const elementHandle = await page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[2]/div[1]');
+                if (elementHandle.length > 0) {
+                    const mainContainer = elementHandle[0];
+
+                    // Use Puppeteer to find all image elements within the selected element
+                    const imageElements = await mainContainer.$$('img');
+
+                    async function downloadAndSaveImage(imageElement) {
+                    const imageUrl = await imageElement.evaluate(img => img.src);
+                    const response = await fetch(imageUrl);
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const localFilename = `./pic/image_${uuid1}.jpg`;
+
+                        const buffer = await blob.buffer();
+                        fs.writeFileSync(localFilename, buffer);
+
+                        console.log(`Image saved as ${localFilename}`);
+                    }
+                    }
+
+                    // Iterate through the image elements and download/save each one with a UUID-based filename
+                    for (const imageElement of imageElements) {
+                    await downloadAndSaveImage(imageElement);
+                    }
+                } else {
+                    console.log("Element not found");
+                }
+
                 if (nameElement.length > 0) {
                     const priceText = await page.evaluate(
                         (el) => el.textContent,
@@ -87,8 +121,9 @@ async function main() {
                     console.log('NAME :::',nameText.trim())
                     console.log('price :::',priceText.trim())
                     if (priceText.trim() !== '' && nameText.trim() !== '') {
-                      
-                        await pool.query('INSERT INTO scraped_data(name, url, price,brand) VALUES($1, $2, $3,$4)', [nameText.trim(), pageUrl, priceText.trim(),brandText.trim()]);
+                        
+                        await pool.query('INSERT INTO scraped_data(name, url, price,brand,SKU) VALUES($1, $2, $3,$4,$5)',
+                         [nameText.trim(), pageUrl, priceText.trim(),brandText.trim(),uuid1]);
                         // console.log(`Saved: URL: ${pageUrl}, Price: ${priceText.trim()}`);
                     }
                 }
