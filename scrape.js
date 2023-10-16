@@ -93,31 +93,37 @@ async function main() {
                          [nameText.trim(), pageUrl, priceText.trim() ?? 0 ,brandText.trim() ?? '',uuid1]);
                         // console.log(`Saved: URL: ${pageUrl}, Price: ${priceText.trim()}`);
                     }
+                    
                     try {
                         if (elementHandle.length > 0) {
                           const imageElements = await Promise.all(elementHandle.map(handle => handle.asElement()));
                       
-                          async function downloadAndSaveImage(imageElement,uuid1) {
+                          async function downloadAndSaveImage(imageElement, uuid1) {
                             const imageUrl = await imageElement.evaluate((img) => img.src);
                             const response = await fetch(imageUrl);
                       
                             if (response.ok) {
-                              const buffer = await response.arrayBuffer();
-                              const localFilename = `./pic/image_${uuid1}.jpg`;
+                              const buffer = await response.buffer();
+                              const localDirectory = './pic';
+                              const localFilename = `image_${uuid1}.jpg`;
+                              const localPath = path.join(localDirectory, localFilename);
                       
-                              fs.writeFileSync(localFilename, Buffer.from(buffer));
+                              // Create the directory if it doesn't exist
+                              await fs.mkdir(localDirectory, { recursive: true });
+                      
+                              // Save the image
+                              await fs.writeFile(localPath, buffer);
                             }
                           }
                       
                           // Iterate through the image elements and download/save each one with a UUID-based filename
                           for (const imageElement of imageElements) {
-                            await downloadAndSaveImage(imageElement,uuid1);
+                            await downloadAndSaveImage(imageElement, uuid1);
                           }
                         }
                       } catch (e) {
                         console.error(e, 'tiboiiii');
                       }
-                    
                 }
                 const hrefs = await page.evaluate(() => {
                     const links = Array.from(document.querySelectorAll('a'));
