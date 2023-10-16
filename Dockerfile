@@ -16,7 +16,9 @@ USER node
 
 # Copy your application code into the container
 COPY . .
-
+RUN rm -rf node_modules
+RUN rm package-lock.json
+RUN npm install
 # Install Node.js dependencies
 RUN npm install
 
