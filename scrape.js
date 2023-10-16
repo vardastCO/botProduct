@@ -95,10 +95,7 @@ async function main() {
                     for (const imageElement of imageElements) {
                     await downloadAndSaveImage(imageElement);
                     }
-                } else {
-                    // console.log("Element not found");
-                }
-
+                } 
                 if (nameElement.length > 0) {
                     const priceText = await page.evaluate(
                         (el) => el.textContent,
@@ -132,7 +129,7 @@ async function main() {
                             var outputUrl = href;
                         }
                         if (outputUrl.startsWith(startUrlPattern) || outputUrl.startsWith(startUrlPattern2) ) {
-                            console.log('hii',outputUrl)
+                        
                             const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
                 
                             if (result.rows.length === 0) {
