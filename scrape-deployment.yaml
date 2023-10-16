@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: robo1-node-app-deployment
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: robo1-node-app
+  template:
+    metadata:
+      labels:
+        app: robo1-node-app
+    spec:
+      containers:
+      - name: robo1-node-app
+        image: farbodnp/robo:v1  # Updated image reference
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3002
+      # Add other container configuration settings here as needed
