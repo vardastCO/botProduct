@@ -94,37 +94,35 @@ async function main() {
                         // console.log(`Saved: URL: ${pageUrl}, Price: ${priceText.trim()}`);
                     }
                     try {
-                        if (elementHandle.length > 0) {
- 
-                            async function downloadAndSaveImage(imageElement) {
-        
+                        if (elementHandles.length > 0) {
+                          const imageElements = await Promise.all(elementHandles.map(handle => handle.asElement()));
+                      
+                          async function downloadAndSaveImage(imageElement) {
                             const imageUrl = await imageElement.evaluate((img) => img.src);
                             const response = await fetch(imageUrl);
+                      
                             if (response.ok) {
-                                const buffer = await response.arrayBuffer();
-                                const localFilename = `./pic/image_${uuid1}.jpg`;
-                            
-                                // Create the directory if it doesn't exist
-                                const dirPath = path.dirname(localFilename);
-                                if (!fs.existsSync(dirPath)) {
-                                  fs.mkdirSync(dirPath, { recursive: true });
-                                }
-                            
-                                fs.writeFileSync(localFilename, Buffer.from(buffer));
-                            
+                              const buffer = await response.arrayBuffer();
+                              const localFilename = `./pic/image_${uuidv1()}.jpg`;
+                      
+                              // Create the directory if it doesn't exist
+                              const dirPath = path.dirname(localFilename);
+                              if (!fs.existsSync(dirPath)) {
+                                fs.mkdirSync(dirPath, { recursive: true });
                               }
+                      
+                              fs.writeFileSync(localFilename, Buffer.from(buffer));
                             }
-                            
-        
-                            // Iterate through the image elements and download/save each one with a UUID-based filename
-                            for (const imageElement of imageElements) {
+                          }
+                      
+                          // Iterate through the image elements and download/save each one with a UUID-based filename
+                          for (const imageElement of imageElements) {
                             await downloadAndSaveImage(imageElement);
-                            }
-                        } 
-
-                    }catch(e){
-                        console.log(e,'tiboiiii')
-                    }
+                          }
+                        }
+                      } catch (e) {
+                        console.error(e, 'tiboiiii');
+                      }
                     
                 }
                 const hrefs = await page.evaluate(() => {
