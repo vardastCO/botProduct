@@ -107,14 +107,13 @@ async function main() {
                                 return;
                               }
                           
-                              async function downloadAndSaveImage(imageElement) {
+                              async function downloadAndSaveImage(imageElement,uuid1) {
                                 const imageUrl = await imageElement.evaluate((img) => img.src);
                                 const response = await fetch(imageUrl);
                           
                                 if (response.ok) {
                                   const buffer = await response.buffer();
                                   const localDirectory = './pic';
-                                  const uuid1 = uuidv4();
                                   const localFilename = `image_${uuid1}.jpg`;
                                   const localPath = path.join(localDirectory, localFilename);
                           
@@ -131,7 +130,7 @@ async function main() {
                           
                               // Iterate through the image elements and download/save each one with a UUID-based filename
                               for (const imageElement of elementHandle) {
-                                await downloadAndSaveImage(imageElement);
+                                await downloadAndSaveImage(imageElement, uuid1);
                               }
                             } catch (e) {
                               console.error('Error:', e);
@@ -140,7 +139,7 @@ async function main() {
                       
                           // Iterate through the image elements and download/save each one with a UUID-based filename
                           for (const imageElement of imageElements) {
-                            await downloadAndSaveImage(imageElement, uuid1);
+                            await downloadAndSaveImages(imageElement, uuid1);
                           }
                         }
                       } catch (e) {
