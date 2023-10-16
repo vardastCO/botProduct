@@ -3,7 +3,7 @@ const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 require("dotenv").config()
 const { Client } = require('pg');
 const fetch = require('node-fetch');
-const fs = require('fs');
+const fs = require('fs-extra'); 
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 
@@ -101,16 +101,16 @@ async function main() {
                           async function downloadAndSaveImage(imageElement, uuid1) {
                             const imageUrl = await imageElement.evaluate((img) => img.src);
                             const response = await fetch(imageUrl);
-                      
+                          
                             if (response.ok) {
                               const buffer = await response.buffer();
                               const localDirectory = './pic';
                               const localFilename = `image_${uuid1}.jpg`;
                               const localPath = path.join(localDirectory, localFilename);
-                      
+                          
                               // Create the directory if it doesn't exist
-                              await fs.mkdir(localDirectory, { recursive: true });
-                      
+                              await fs.ensureDir(localDirectory);
+                          
                               // Save the image
                               await fs.writeFile(localPath, buffer);
                             }
