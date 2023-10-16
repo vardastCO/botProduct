@@ -15,7 +15,6 @@
     "dotenv" : "*",
     "axios" : "*",
     "pg" : "*",
-    "uuid" : "*",
-    "fs-extra" : "*"
+    "uuid" : "*"
   }
 }
