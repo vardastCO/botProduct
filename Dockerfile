@@ -12,15 +12,11 @@ COPY . .
 
 USER root
 
-# Run the useradd command to add a new user.
-RUN useradd -m user
 
 # Switch back to the non-root user if necessary.
-USER user
 
-RUN chown -R user:user /usr/src/app/test
+RUN chown -R root:root /usr/src/app/test
 
-USER root
 
 RUN npm install
 
