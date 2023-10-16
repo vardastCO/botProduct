@@ -9,6 +9,7 @@ services:
       - "./data:/app/data"
     depends_on:
       - postgres
+    restart: always
     networks:
       - custom_network
   postgres:

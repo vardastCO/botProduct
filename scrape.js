@@ -125,9 +125,7 @@ async function main() {
                     const links = Array.from(document.querySelectorAll('a'));
                     return links.map((link) => link.getAttribute('href'));
                 });
-                console.log('href start')
                 for (const href of hrefs) {
-                    console.log(href,'goooo')
                     try{
                         if (!href.startsWith('https://')) {
                             var outputUrl = initialPage + href;
@@ -135,17 +133,18 @@ async function main() {
                             var outputUrl = href;
                         }
                         if (outputUrl.startsWith(startUrlPattern) || outputUrl.startsWith(startUrlPattern2) ) {
+                            console.log('hii',outputUrl)
                             const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
                 
                             if (result.rows.length === 0) {
-                                const linkElements = document.querySelectorAll(`a[href="${outputUrl}"]`);
+                                // const linkElements = document.querySelectorAll(`a[href="${outputUrl}"]`);
 
-                                linkElements.forEach((linkElement) => {
-                                    if (!linkElement.hasAttribute('href') && linkElement.hasAttribute('onclick')) {
-                                        // Simulate a click on elements without an href but with an onclick attribute
-                                        linkElement.click();
-                                    }
-                                });
+                                // linkElements.forEach((linkElement) => {
+                                //     if (!linkElement.hasAttribute('href') && linkElement.hasAttribute('onclick')) {
+                                //         // Simulate a click on elements without an href but with an onclick attribute
+                                //         linkElement.click();
+                                //     }
+                                // });
                                 // URL doesn't exist, so you can insert it
                                 await pool.query('INSERT INTO unvisited(url) VALUES($1)', [outputUrl]);
                             }
