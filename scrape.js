@@ -5,6 +5,7 @@ const { Client } = require('pg');
 const fetch = require('node-fetch');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
+const path = require('path');
 
 
 const pool = new Client({
@@ -81,14 +82,20 @@ async function main() {
                     const imageUrl = await imageElement.evaluate((img) => img.src);
                     const response = await fetch(imageUrl);
                     if (response.ok) {
-                        const buffer = await response.arrayBuffer(); // Get binary data
+                        const buffer = await response.arrayBuffer();
                         const localFilename = `./pic/image_${uuid1}.jpg`;
                     
-                        
+                        // Create the directory if it doesn't exist
+                        const dirPath = path.dirname(localFilename);
+                        if (!fs.existsSync(dirPath)) {
+                          fs.mkdirSync(dirPath, { recursive: true });
+                        }
+                    
                         fs.writeFileSync(localFilename, Buffer.from(buffer));
                     
                       }
                     }
+                    
 
                     // Iterate through the image elements and download/save each one with a UUID-based filename
                     for (const imageElement of imageElements) {
