@@ -71,38 +71,40 @@ async function main() {
                     '/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[3]/a'
                 );
                 const elementHandle = await page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[2]/div[1]');
-                if (elementHandle.length > 0) {
-                    const mainContainer = elementHandle[0];
-
-                    // Use Puppeteer to find all image elements within the selected element
-                    const imageElements = await mainContainer.$$('img');
-
-                    async function downloadAndSaveImage(imageElement) {
-
-                    const imageUrl = await imageElement.evaluate((img) => img.src);
-                    const response = await fetch(imageUrl);
-                    if (response.ok) {
-                        const buffer = await response.arrayBuffer();
-                        const localFilename = `./pic/image_${uuid1}.jpg`;
-                    
-                        // Create the directory if it doesn't exist
-                        const dirPath = path.dirname(localFilename);
-                        if (!fs.existsSync(dirPath)) {
-                          fs.mkdirSync(dirPath, { recursive: true });
-                        }
-                    
-                        fs.writeFileSync(localFilename, Buffer.from(buffer));
-                    
-                      }
-                    }
-                    
-
-                    // Iterate through the image elements and download/save each one with a UUID-based filename
-                    for (const imageElement of imageElements) {
-                    await downloadAndSaveImage(imageElement);
-                    }
-                } 
+               
                 if (nameElement.length > 0) {
+
+                    if (elementHandle.length > 0) {
+                        const mainContainer = elementHandle[0];
+    
+                        // Use Puppeteer to find all image elements within the selected element
+                        const imageElements = await mainContainer.$$('img');
+    
+                        async function downloadAndSaveImage(imageElement) {
+    
+                        const imageUrl = await imageElement.evaluate((img) => img.src);
+                        const response = await fetch(imageUrl);
+                        if (response.ok) {
+                            const buffer = await response.arrayBuffer();
+                            const localFilename = `./pic/image_${uuid1}.jpg`;
+                        
+                            // Create the directory if it doesn't exist
+                            const dirPath = path.dirname(localFilename);
+                            if (!fs.existsSync(dirPath)) {
+                              fs.mkdirSync(dirPath, { recursive: true });
+                            }
+                        
+                            fs.writeFileSync(localFilename, Buffer.from(buffer));
+                        
+                          }
+                        }
+                        
+    
+                        // Iterate through the image elements and download/save each one with a UUID-based filename
+                        for (const imageElement of imageElements) {
+                        await downloadAndSaveImage(imageElement);
+                        }
+                    } 
                     const priceText = await page.evaluate(
                         (el) => el.textContent,
                         priceElement[0]
@@ -156,7 +158,7 @@ async function main() {
                 }
                 await page.close();
             } catch (error) {
-                console.error('An error occurred while navigating to the page farbooood:', error);
+                // console.error('An error occurred while navigating to the page farbooood:', error);
             }      
         
         }
