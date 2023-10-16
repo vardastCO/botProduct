@@ -11,15 +11,9 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 # Create a 'pic' directory and change its permissions
 RUN mkdir pic && chmod 777 pic
 
-# Use an existing group (e.g., 'users') if available
-# Replace 'users' with the name of an existing group in the base image
-RUN useradd -g users user
-
-# Give the 'user' user permissions to the 'pic' directory
-RUN chown -R user:user /usr/src/app/pic
-
-# Switch to the 'user' user
-USER user
+# Use an existing user (e.g., 'node') if available
+# Replace 'node' with the name of an existing user in the base image
+USER node
 
 # Copy your application code into the container
 COPY . .
