@@ -224,7 +224,7 @@ async function main() {
                   // throw ('exist visited url farbod');
                 }
             } catch (error) {
-            console.error('An error occurred:', error);
+            // console.error('An error occurred:', error);
             }
         }
         
