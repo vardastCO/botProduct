@@ -70,8 +70,8 @@ async function main() {
                 const brandElement = await page.$x(
                     '/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[3]/a'
                 );
-                const elementHandle = await page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[2]/div[1]');
-               
+                const elementHandle = await page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[2]/div[1]/div[1]/div/div/div/a/img');
+            
                 if (nameElement.length > 0) {
 
                     const priceText = await page.evaluate(
@@ -95,11 +95,7 @@ async function main() {
                     }
                     try {
                         if (elementHandle.length > 0) {
-                            const mainContainer = elementHandle[0];
-        
-                            // Use Puppeteer to find all image elements within the selected element
-                            const imageElements = await mainContainer.$$('img');
-        
+ 
                             async function downloadAndSaveImage(imageElement) {
         
                             const imageUrl = await imageElement.evaluate((img) => img.src);
