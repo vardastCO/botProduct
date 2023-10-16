@@ -48,7 +48,7 @@ async function createBrowser() {
 
 const initialPage = 'https://www.tileiran.co/fa/%D9%81%D8%B1%D9%88%D8%B4%DA%AF%D8%A7%D9%87-%D8%A2%D9%86%D9%84%D8%A7%DB%8C%D9%86.html';
 const startUrlPattern = 'https://www.tileiran.co/fa/%D9%81%D8%B1%D9%88%D8%B4%DA%AF%D8%A7%D9%87-%D8%A2%D9%86%D9%84%D8%A7%DB%8C%D9%86/product/';
-const startUrlPattern2 = 'https://www.tileiran.co/fa/category/';
+const startUrlPattern2 = 'https://www.tileiran.co/fa/';
 const urlPattern = /^https:\/\/www\.tileiran\.co\/fa\/%D9%81%D8%B1%D9%88%D8%B4%DA%AF%D8%A7%D9%87-%D8%A2%D9%86%D9%84%D8%A7%DB%8C%D9%86\/[%A-Z0-9-%]+$/;
 async function main() {
      
@@ -127,7 +127,7 @@ async function main() {
                         } else {
                             var outputUrl = href;
                         }
-                        if (urlPattern.test(outputUrl) || outputUrl.startsWith(startUrlPattern2) ) {
+                        if ( outputUrl.startsWith(startUrlPattern2) ) {
                         
                             const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
                 
@@ -149,7 +149,7 @@ async function main() {
                 }
                 await page.close();
             } catch (error) {
-                // console.error('An error occurred while navigating to the page farbooood:', error);
+                console.error('An error occurred while navigating to the page farbooood:', error);
             }      
         
         }
@@ -209,7 +209,7 @@ async function main() {
                   // throw ('exist visited url farbod');
                 }
             } catch (error) {
-            // console.error('An error occurred:', error);
+            console.error('An error occurred:', error);
             }
         }
         
