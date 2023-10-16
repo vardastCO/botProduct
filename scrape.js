@@ -60,127 +60,114 @@ async function main() {
             try {
                 const uuid1 = uuidv4();
                 const page = await browser.newPage();
-                await page.goto(pageUrl, { timeout: 350000  });
-                const priceElement = await page.$x(
-                    '/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[4]/div[1]/span/span/span[1]'
-                );
-                const nameElement = await page.$x(
-                    '/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[1]/a'
-                );
-                const brandElement = await page.$x(
-                    '/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[3]/a'
-                );
-                const elementHandle = await page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[2]/div[1]/div[1]/div/div/div/a/img');
-            
+                await page.goto(pageUrl, { timeout: 350000 });
+              
+                const priceElement = await page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[4]/div[1]/span/span/span[1]');
+                const nameElement = await page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[1]/a');
+                const brandElement = await page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[3]/a');
+              
                 if (nameElement.length > 0) {
-
-                    const priceText = await page.evaluate(
-                        (el) => el.textContent,
-                        priceElement[0]
-                    );
-                    const nameText = await page.evaluate(
-                        (el) => el.textContent,
-                        nameElement[0]
-                    );
-                    const brandText = await page.evaluate(
-                        (el) => el.textContent,
-                        brandElement[0]
-                    );
-                    
-                    if (nameText.trim() !== '') {
-                        console.log('NAME :::',nameText.trim(),'price :::',priceText.trim(),'url',pageUrl)
-                        await pool.query('INSERT INTO scraped_data(name, url, price,brand,SKU) VALUES($1, $2, $3,$4,$5)',
-                         [nameText.trim(), pageUrl, priceText.trim() ?? 0 ,brandText.trim() ?? '',uuid1]);
-                        // console.log(`Saved: URL: ${pageUrl}, Price: ${priceText.trim()}`);
-                    }
-                    
-                    try {
-                        if (elementHandle.length > 0) {
-                          const imageElements = await Promise.all(elementHandle.map(handle => handle.asElement()));
-                      
-                          async function downloadAndSaveImages(page) {
-                            try {
-                              // Find and collect image elements on the page
-                              const elementHandle = await page.$$('img');
-                              if (elementHandle.length === 0) {
-                                console.log('No images found on the page.');
-                                return;
-                              }
-                          
-                              async function downloadAndSaveImage(imageElement,uuid1) {
-                                const imageUrl = await imageElement.evaluate((img) => img.src);
-                                const response = await fetch(imageUrl);
-                          
-                                if (response.ok) {
-                                  const buffer = await response.buffer();
-                                  const localDirectory = './pic';
-                                  const localFilename = `image_${uuid1}.jpg`;
-                                  const localPath = path.join(localDirectory, localFilename);
-                          
-                                  // Create the directory if it doesn't exist
-                                  await fs.ensureDir(localDirectory);
-                          
-                                  // Save the image
-                                  await fs.writeFile(localPath, buffer);
-                                  console.log(`Image saved: ${localPath}`);
-                                } else {
-                                  console.error(`Failed to download image: ${imageUrl}`);
-                                }
-                              }
-                          
-                              // Iterate through the image elements and download/save each one with a UUID-based filename
-                              for (const imageElement of elementHandle) {
-                                await downloadAndSaveImage(imageElement, uuid1);
-                              }
-                            } catch (e) {
-                              console.error('Error:', e);
-                            }
+                  const priceText = await page.evaluate((el) => el.textContent, priceElement[0]);
+                  const nameText = await page.evaluate((el) => el.textContent, nameElement[0]);
+                  const brandText = await page.evaluate((el) => el.textContent, brandElement[0]);
+              
+                  const imageElement = await page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[2]/div[1]/div[1]/div/div/div/a/img');
+              
+                  if (imageElement.length > 0) {
+                    const imageElements = await Promise.all(imageElement.map(handle => handle.asElement()));
+              
+                    // Add the following code inside this if block
+                    async function downloadAndSaveImages(page, uuid1) {
+                      try {
+                        // Find and collect image elements on the page
+                        const elementHandle = await page.$$('img');
+                        if (elementHandle.length === 0) {
+                          console.log('No images found on the page.');
+                          return;
+                        }
+              
+                        async function downloadAndSaveImage(imageElement, uuid1) {
+                          const imageUrl = await imageElement.evaluate((img) => img.src);
+                          const response = await fetch(imageUrl);
+              
+                          if (response.ok) {
+                            const buffer = await response.buffer();
+                            const localDirectory = './pic';
+                            const localFilename = `image_${uuid1}.jpg`;
+                            const localPath = path.join(localDirectory, localFilename);
+              
+                            // Create the directory if it doesn't exist
+                            await fs.ensureDir(localDirectory);
+              
+                            // Save the image
+                            await fs.writeFile(localPath, buffer);
+                            console.log(`Image saved: ${localPath}`);
+                          } else {
+                            console.error(`Failed to download image: ${imageUrl}`);
                           }
-                      
-                          // Iterate through the image elements and download/save each one with a UUID-based filename
-                          for (const imageElement of imageElements) {
-                            await downloadAndSaveImages(imageElement, uuid1);
-                          }
+                        }
+              
+                        // Iterate through the image elements and download/save each one with a UUID-based filename
+                        for (const imageElement of elementHandle) {
+                          await downloadAndSaveImage(imageElement, uuid1);
                         }
                       } catch (e) {
-                        console.error(e, 'tiboiiii');
+                        console.error('Error:', e);
                       }
+                    }
+              
+                    // Now, call the downloadAndSaveImages function for each image element
+                    for (const imageElement of imageElements) {
+                      await downloadAndSaveImages(page, uuid1);
+                    }
+                  } else {
+                    console.log('No imageElement found on the page.');
+                  }
+              
+                  if (nameText.trim() !== '') {
+                    console.log('NAME:', nameText.trim(), 'PRICE:', priceText.trim(), 'URL:', pageUrl);
+                    await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU) VALUES($1, $2, $3, $4, $5)',
+                      [nameText.trim(), pageUrl, priceText.trim() ?? 0, brandText.trim() ?? '', uuid1]);
+                    // console.log(`Saved: URL: ${pageUrl}, Price: ${priceText.trim()}`);
+                  }
                 }
+              
                 const hrefs = await page.evaluate(() => {
-                    const links = Array.from(document.querySelectorAll('a'));
-                    return links.map((link) => link.getAttribute('href'));
+                  const links = Array from(document.querySelectorAll('a'));
+                  return links.map((link) => link.getAttribute('href'));
                 });
                 for (const href of hrefs) {
-                    try{
-                        if (!href.startsWith('https://')) {
-                            var outputUrl = initialPage + href;
-                        } else {
-                            var outputUrl = href;
-                        }
-                        if ( outputUrl.startsWith(startUrlPattern2)) {
-                        
-                            const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
-                
-                            if (result.rows.length === 0) {
-                                // const linkElements = document.querySelectorAll(`a[href="${outputUrl}"]`);
-
-                                // linkElements.forEach((linkElement) => {
-                                //     if (!linkElement.hasAttribute('href') && linkElement.hasAttribute('onclick')) {
-                                //         // Simulate a click on elements without an href but with an onclick attribute
-                                //         linkElement.click();
-                                //     }
-                                // });
-                                // URL doesn't exist, so you can insert it
-                                await pool.query('INSERT INTO unvisited(url) VALUES($1)', [outputUrl]);
-                            }
-                        }
-                    } catch (error) {
+                  try {
+                    if (!href.startsWith('https://')) {
+                      var outputUrl = initialPage + href;
+                    } else {
+                      var outputUrl = href;
                     }
+                    if (outputUrl.startsWith(startUrlPattern2)) {
+              
+                      const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
+              
+                      if (result.rows.length === 0) {
+                        // const linkElements = document.querySelectorAll(`a[href="${outputUrl}"]`);
+              
+                        // linkElements.forEach((linkElement) => {
+                        //     if (!linkElement hasAttribute('href') && linkElement hasAttribute('onclick')) {
+                        //         // Simulate a click on elements without an href but with an onclick attribute
+                        //         linkElement.click();
+                        //     }
+                        // });
+                        // URL doesn't exist, so you can insert it
+                        await pool.query('INSERT INTO unvisited(url) VALUES($1)', [outputUrl]);
+                      }
+                    }
+                  } catch (error) {
+                  }
                 }
                 await page.close();
-            } catch (error) {
-                // console.error('An error occurred while navigating to the page farbooood:', error);
-            }      
+              } catch (error) {
+                // console.error('An error occurred while navigating to the page:', error);
+              }
+                 
         
         }
         while (true) {
