@@ -1,4 +1,9 @@
 FROM ghcr.io/puppeteer/puppeteer:19.7.2
+
+FROM node:18-alpine
+
+# Create a new user "appuser" to run the application
+RUN useradd -m appuser
 WORKDIR /usr/src/app
 
 # We don't need the standalone Chromium
@@ -7,24 +12,15 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true \
 
 
 
-COPY . .
-
-
-
-
-
 
 RUN npm install
 
+USER appuser
+
+COPY . .
+
 # Expose port 3002 for your Node.js application.
 EXPOSE 3002
-
-USER root
-
-
-# Switch back to the non-root user if necessary.
-
-RUN chown -R root:root /usr/src/app/test
 
 
 # Start your Node.js application.

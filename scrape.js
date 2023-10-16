@@ -3,7 +3,7 @@ const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 require("dotenv").config()
 const { Client } = require('pg');
 const fetch = require('node-fetch');
-const fs = require('fs-extra'); 
+const fs = require('fs'); 
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 
