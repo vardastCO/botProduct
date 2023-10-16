@@ -24,7 +24,6 @@ RUN npm install
 # Expose port 3002 for your Node.js application.
 EXPOSE 3002
 
-USER node
 
 # Start your Node.js application.
 CMD ["node", "scrape.js"]
