@@ -9,6 +9,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true \
 
 COPY . .
 
+RUN chown -R user:user /usr/src/app/test
 RUN chmod -R 777 /usr/src/app/test
 
 RUN npm install
