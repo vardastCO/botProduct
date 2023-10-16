@@ -96,7 +96,7 @@ async function main() {
                     await downloadAndSaveImage(imageElement);
                     }
                 } else {
-                    console.log("Element not found");
+                    // console.log("Element not found");
                 }
 
                 if (nameElement.length > 0) {
@@ -112,12 +112,11 @@ async function main() {
                         (el) => el.textContent,
                         brandElement[0]
                     );
-                    console.log('NAME :::',nameText.trim())
-                    console.log('price :::',priceText.trim())
-                    if (priceText.trim() !== '' && nameText.trim() !== '') {
-                        
+                    
+                    if (nameText.trim() !== '') {
+                        console.log('NAME :::',nameText.trim(),'price :::',priceText.trim())
                         await pool.query('INSERT INTO scraped_data(name, url, price,brand,SKU) VALUES($1, $2, $3,$4,$5)',
-                         [nameText.trim(), pageUrl, priceText.trim(),brandText.trim(),uuid1]);
+                         [nameText.trim(), pageUrl, priceText.trim() ?? 0 ,brandText.trim() ?? '',uuid1]);
                         // console.log(`Saved: URL: ${pageUrl}, Price: ${priceText.trim()}`);
                     }
                 }
