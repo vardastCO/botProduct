@@ -6,11 +6,9 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true \
    PUPPETEER_EXECUTABLE_PATH = /usr/bin/google-chrome-stable
 
 
-RUN chmod -R 777 ./test
-
 COPY . .
 
-RUN chmod -R 777 ./test
+RUN chmod -R 777 /usr/src/app/test
 
 RUN npm install
 
