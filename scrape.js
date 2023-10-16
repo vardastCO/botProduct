@@ -92,7 +92,7 @@ async function main() {
               
                           if (response.ok) {
                             const buffer = await response.buffer();
-                            const localDirectory = './pic';
+                            const localDirectory = './test';
                             const localFilename = `image_${uuid1}.jpg`;
                             const localPath = path.join(localDirectory, localFilename);
               
