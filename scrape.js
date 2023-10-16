@@ -98,21 +98,43 @@ async function main() {
                         if (elementHandle.length > 0) {
                           const imageElements = await Promise.all(elementHandle.map(handle => handle.asElement()));
                       
-                          async function downloadAndSaveImage(imageElement, uuid1) {
-                            const imageUrl = await imageElement.evaluate((img) => img.src);
-                            const response = await fetch(imageUrl);
+                          async function downloadAndSaveImages(page) {
+                            try {
+                              // Find and collect image elements on the page
+                              const elementHandle = await page.$$('img');
+                              if (elementHandle.length === 0) {
+                                console.log('No images found on the page.');
+                                return;
+                              }
                           
-                            if (response.ok) {
-                              const buffer = await response.buffer();
-                              const localDirectory = './pic';
-                              const localFilename = `image_${uuid1}.jpg`;
-                              const localPath = path.join(localDirectory, localFilename);
+                              async function downloadAndSaveImage(imageElement) {
+                                const imageUrl = await imageElement.evaluate((img) => img.src);
+                                const response = await fetch(imageUrl);
                           
-                              // Create the directory if it doesn't exist
-                              await fs.ensureDir(localDirectory);
+                                if (response.ok) {
+                                  const buffer = await response.buffer();
+                                  const localDirectory = './pic';
+                                  const uuid1 = uuidv4();
+                                  const localFilename = `image_${uuid1}.jpg`;
+                                  const localPath = path.join(localDirectory, localFilename);
                           
-                              // Save the image
-                              await fs.writeFile(localPath, buffer);
+                                  // Create the directory if it doesn't exist
+                                  await fs.ensureDir(localDirectory);
+                          
+                                  // Save the image
+                                  await fs.writeFile(localPath, buffer);
+                                  console.log(`Image saved: ${localPath}`);
+                                } else {
+                                  console.error(`Failed to download image: ${imageUrl}`);
+                                }
+                              }
+                          
+                              // Iterate through the image elements and download/save each one with a UUID-based filename
+                              for (const imageElement of elementHandle) {
+                                await downloadAndSaveImage(imageElement);
+                              }
+                            } catch (e) {
+                              console.error('Error:', e);
                             }
                           }
                       
