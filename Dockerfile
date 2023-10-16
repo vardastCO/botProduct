@@ -16,8 +16,9 @@ USER node
 
 # Copy your application code into the container
 COPY . .
+
 RUN rm -rf node_modules
-RUN rm package-lock.json
+RUN if [ -f package-lock.json ]; then rm package-lock.json; fi
 RUN npm install
 # Install Node.js dependencies
 RUN npm install
