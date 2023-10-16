@@ -58,97 +58,100 @@ async function main() {
         async function processPage(pageUrl) {
             console.log('start',pageUrl)
             try {
-                const uuid1 = uuidv4();
-                const page = await browser.newPage();
-                await page.goto(pageUrl, { timeout: 350000  });
-                const priceElement = await page.$x(
-                    '/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[4]/div[1]/span/span/span[1]'
-                );
-                const nameElement = await page.$x(
-                    '/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[1]/a'
-                );
-                const brandElement = await page.$x(
-                    '/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[3]/a'
-                );
-                const elementHandle = await page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[2]/div[1]');
-                if (elementHandle.length > 0) {
-                    const mainContainer = elementHandle[0];
-
-                    // Use Puppeteer to find all image elements within the selected element
-                    const imageElements = await mainContainer.$$('img');
-
-                    async function downloadAndSaveImage(imageElement) {
-                    const imageUrl = await imageElement.evaluate(img => img.src);
-                    const response = await fetch(imageUrl);
-                    if (response.ok) {
-                        const blob = await response.blob();
-                        const localFilename = `./pic/image_${uuid1}.jpg`;
-
-                        const buffer = await blob.buffer();
-                        fs.writeFileSync(localFilename, buffer);
-
-                        console.log(`Image saved as ${localFilename}`);
-                    }
-                    }
-
-                    // Iterate through the image elements and download/save each one with a UUID-based filename
-                    for (const imageElement of imageElements) {
-                    await downloadAndSaveImage(imageElement);
-                    }
-                } 
-                if (nameElement.length > 0) {
-                    const priceText = await page.evaluate(
-                        (el) => el.textContent,
-                        priceElement[0]
+                if (pageUrl.startsWith(startUrlPattern) ){
+                    const uuid1 = uuidv4();
+                    const page = await browser.newPage();
+                    await page.goto(pageUrl, { timeout: 350000  });
+                    const priceElement = await page.$x(
+                        '/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[4]/div[1]/span/span/span[1]'
                     );
-                    const nameText = await page.evaluate(
-                        (el) => el.textContent,
-                        nameElement[0]
+                    const nameElement = await page.$x(
+                        '/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[1]/a'
                     );
-                    const brandText = await page.evaluate(
-                        (el) => el.textContent,
-                        brandElement[0]
+                    const brandElement = await page.$x(
+                        '/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[3]/a'
                     );
-                    
-                    if (nameText.trim() !== '') {
-                        console.log('NAME :::',nameText.trim(),'price :::',priceText.trim())
-                        await pool.query('INSERT INTO scraped_data(name, url, price,brand,SKU) VALUES($1, $2, $3,$4,$5)',
-                         [nameText.trim(), pageUrl, priceText.trim() ?? 0 ,brandText.trim() ?? '',uuid1]);
-                        // console.log(`Saved: URL: ${pageUrl}, Price: ${priceText.trim()}`);
-                    }
-                }
-                const hrefs = await page.evaluate(() => {
-                    const links = Array.from(document.querySelectorAll('a'));
-                    return links.map((link) => link.getAttribute('href'));
-                });
-                for (const href of hrefs) {
-                    try{
-                        if (!href.startsWith('https://')) {
-                            var outputUrl = initialPage + href;
-                        } else {
-                            var outputUrl = href;
+                    const elementHandle = await page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[2]/div[1]');
+                    if (elementHandle.length > 0) {
+                        const mainContainer = elementHandle[0];
+    
+                        // Use Puppeteer to find all image elements within the selected element
+                        const imageElements = await mainContainer.$$('img');
+    
+                        async function downloadAndSaveImage(imageElement) {
+                        const imageUrl = await imageElement.evaluate(img => img.src);
+                        const response = await fetch(imageUrl);
+                        if (response.ok) {
+                            const blob = await response.blob();
+                            const localFilename = `./pic/image_${uuid1}.jpg`;
+    
+                            const buffer = await blob.buffer();
+                            fs.writeFileSync(localFilename, buffer);
+    
+                            console.log(`Image saved as ${localFilename}`);
                         }
-                        if (outputUrl.startsWith(startUrlPattern) || outputUrl.startsWith(startUrlPattern2) ) {
+                        }
+    
+                        // Iterate through the image elements and download/save each one with a UUID-based filename
+                        for (const imageElement of imageElements) {
+                        await downloadAndSaveImage(imageElement);
+                        }
+                    } 
+                    if (nameElement.length > 0) {
+                        const priceText = await page.evaluate(
+                            (el) => el.textContent,
+                            priceElement[0]
+                        );
+                        const nameText = await page.evaluate(
+                            (el) => el.textContent,
+                            nameElement[0]
+                        );
+                        const brandText = await page.evaluate(
+                            (el) => el.textContent,
+                            brandElement[0]
+                        );
                         
-                            const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
-                
-                            if (result.rows.length === 0) {
-                                // const linkElements = document.querySelectorAll(`a[href="${outputUrl}"]`);
-
-                                // linkElements.forEach((linkElement) => {
-                                //     if (!linkElement.hasAttribute('href') && linkElement.hasAttribute('onclick')) {
-                                //         // Simulate a click on elements without an href but with an onclick attribute
-                                //         linkElement.click();
-                                //     }
-                                // });
-                                // URL doesn't exist, so you can insert it
-                                await pool.query('INSERT INTO unvisited(url) VALUES($1)', [outputUrl]);
-                            }
+                        if (nameText.trim() !== '') {
+                            console.log('NAME :::',nameText.trim(),'price :::',priceText.trim())
+                            await pool.query('INSERT INTO scraped_data(name, url, price,brand,SKU) VALUES($1, $2, $3,$4,$5)',
+                             [nameText.trim(), pageUrl, priceText.trim() ?? 0 ,brandText.trim() ?? '',uuid1]);
+                            // console.log(`Saved: URL: ${pageUrl}, Price: ${priceText.trim()}`);
                         }
-                    } catch (error) {
                     }
+                    const hrefs = await page.evaluate(() => {
+                        const links = Array.from(document.querySelectorAll('a'));
+                        return links.map((link) => link.getAttribute('href'));
+                    });
+                    for (const href of hrefs) {
+                        try{
+                            if (!href.startsWith('https://')) {
+                                var outputUrl = initialPage + href;
+                            } else {
+                                var outputUrl = href;
+                            }
+                            if (outputUrl.startsWith(startUrlPattern) || outputUrl.startsWith(startUrlPattern2) ) {
+                            
+                                const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
+                    
+                                if (result.rows.length === 0) {
+                                    // const linkElements = document.querySelectorAll(`a[href="${outputUrl}"]`);
+    
+                                    // linkElements.forEach((linkElement) => {
+                                    //     if (!linkElement.hasAttribute('href') && linkElement.hasAttribute('onclick')) {
+                                    //         // Simulate a click on elements without an href but with an onclick attribute
+                                    //         linkElement.click();
+                                    //     }
+                                    // });
+                                    // URL doesn't exist, so you can insert it
+                                    await pool.query('INSERT INTO unvisited(url) VALUES($1)', [outputUrl]);
+                                }
+                            }
+                        } catch (error) {
+                        }
+                    }
+                    await page.close();
                 }
-                await page.close();
+               
             } catch (error) {
                 // console.error('An error occurred while navigating to the page farbooood:', error);
             }      
