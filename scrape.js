@@ -48,6 +48,7 @@ async function createBrowser() {
 
 const initialPage = 'https://www.tileiran.co/fa/%D9%81%D8%B1%D9%88%D8%B4%DA%AF%D8%A7%D9%87-%D8%A2%D9%86%D9%84%D8%A7%DB%8C%D9%86.html';
 const startUrlPattern = 'https://www.tileiran.co/fa/%D9%81%D8%B1%D9%88%D8%B4%DA%AF%D8%A7%D9%87-%D8%A2%D9%86%D9%84%D8%A7%DB%8C%D9%86/product/';
+const startUrlPattern2 = 'https://www.tileiran.co/fa/category/';
 
 async function main() {
      
@@ -59,7 +60,7 @@ async function main() {
             try {
                 const uuid1 = uuidv4();
                 const page = await browser.newPage();
-                await page.goto(pageUrl, { timeout: 300000  });
+                await page.goto(pageUrl, { timeout: 350000  });
                 const priceElement = await page.$x(
                     '/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[4]/div[1]/span/span/span[1]'
                 );
@@ -132,7 +133,7 @@ async function main() {
                         } else {
                             var outputUrl = href;
                         }
-                        if (outputUrl.startsWith(startUrlPattern)) {
+                        if (outputUrl.startsWith(startUrlPattern) ||outputUrl.startsWith(startUrlPattern2) ) {
                             const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
                 
                             if (result.rows.length === 0) {
