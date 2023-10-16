@@ -6,7 +6,7 @@ services:
     ports:
       - "3002-3022:3002" # Map container port 3002 to host port 3002 for the first replica
     volumes:
-      - "./pic:/app/pic"
+      - "./pic:/app/pic:rw"
     depends_on:
       - postgres
     restart: always
