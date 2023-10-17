@@ -14,7 +14,7 @@ services:
       - "3002-3021:3002"
     volumes:
       - "./test:/app/test"
-      - data-volume:/app:rw
+      - test-volume:/app/test
     depends_on:
       - postgres
     restart: always
@@ -38,8 +38,8 @@ services:
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 volumes:
-  data-volume:  
-  
+  test-volume:
+
 networks:
   custom_network:
     external: true
