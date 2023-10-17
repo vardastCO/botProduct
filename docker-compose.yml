@@ -5,7 +5,7 @@ services:
     build:
       context: .
     ports:
-      - "3002-3022:3002" # Map container port 3002 to host port 3002 for the first replica
+      - "3002-3012:3002" # Map container port 3002 to host port 3002 for the first replica
     volumes:
       - "./test:/app/test"
     depends_on:
