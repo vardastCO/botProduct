@@ -9,15 +9,13 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/google-chrome-stable
 
 # Copy package.json and package-lock.json to the container
-
+COPY package*.json ./
 
 # Install Node.js dependencies
+RUN npm install
+
+# Copy the rest of your application code
 COPY . .
-
-RUN mkdir ./node_modules && chmod -R 777 ./node_modules
-
-RUN npm install 
-
 
 # Expose port 3002 for your Node.js application
 EXPOSE 3002
