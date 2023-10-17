@@ -14,6 +14,8 @@ ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/google-chrome-stable
 # Install Node.js dependencies
 COPY . .
 
+RUN mkdir ./node_modules && chmod -R 777 ./node_modules
+
 RUN npm install 
 
 
