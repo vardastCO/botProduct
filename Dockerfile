@@ -12,10 +12,12 @@ ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/google-chrome-stable
 COPY package*.json ./
 
 # Install Node.js dependencies
-RUN npm install
+
 
 # Copy the rest of your application code
 COPY . .
+
+RUN npm install
 
 # Expose port 3002 for your Node.js application
 EXPOSE 3002
