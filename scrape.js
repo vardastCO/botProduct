@@ -91,17 +91,17 @@ async function processPage(pageUrl) {
 
     for (const href of hrefs) {
       try {
-        if (!href.startsWith('https://')) {
-          var outputUrl = initialPage + href;
-        } else {
-          var outputUrl = href;
-        }
-        if (outputUrl && outputUrl.startsWith(startUrlPattern2)) {
-
-          const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
-
-          if (result.rows.length === 0) {
-            await pool.query('INSERT INTO unvisited(url) VALUES($1)', [outputUrl]);
+        if (href) { // Check if href is not null
+          if (!href.startsWith('https://')) {
+            var outputUrl = initialPage + href;
+          } else {
+            var outputUrl = href;
+          }
+          if (outputUrl && outputUrl.startsWith(startUrlPattern2)) {
+            const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
+            if (result.rows.length === 0) {
+              await pool.query('INSERT INTO unvisited(url) VALUES($1)', [outputUrl]);
+            }
           }
         }
       } catch (error) {
