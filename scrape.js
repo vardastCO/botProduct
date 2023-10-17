@@ -95,9 +95,9 @@ async function main() {
                             const localDirectory = './test';
                             const localFilename = `image_${uuid1}.jpg`;
                             const localPath = path.join(localDirectory, localFilename);
-              
+                            console.log('hi')
                             // Create the directory if it doesn't exist
-                            await fs.ensureDir(localDirectory);
+                            // await fs.ensureDir(localDirectory);
               
                             // Save the image
                             await fs.writeFile(localPath, buffer);
