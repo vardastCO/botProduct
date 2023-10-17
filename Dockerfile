@@ -17,7 +17,7 @@ COPY package*.json ./
 # Copy the rest of your application code
 COPY . .
 
-RUN npm install
+RUN npm install --only=production
 
 # Expose port 3002 for your Node.js application
 EXPOSE 3002
