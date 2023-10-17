@@ -14,6 +14,7 @@ services:
       - "3002-3021:3002"
     volumes:
       - "./test:/app/test"
+       - "data-volume:/app/"
     depends_on:
       - postgres
     restart: always
