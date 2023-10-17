@@ -12,15 +12,10 @@ ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/google-chrome-stable
 COPY package*.json ./
 
 # Install Node.js dependencies
-
+COPY . .
 
 RUN npm install --only=production
 
-# Copy the rest of your application code
-COPY . .
-
-# Change the ownership to allow the non-root user to write to node_modules
-RUN chown -R 777 /usr/src/app/node_modules
 
 # Expose port 3002 for your Node.js application
 EXPOSE 3002
