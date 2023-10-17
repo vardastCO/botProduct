@@ -96,7 +96,7 @@ async function processPage(pageUrl) {
         } else {
           var outputUrl = href;
         }
-        if (outputUrl.startsWith(startUrlPattern2)) {
+        if (outputUrl && outputUrl.startsWith(startUrlPattern2)) {
 
           const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
 
