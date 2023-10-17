@@ -1,11 +1,17 @@
-version: '3'
+version: '3.7'
+
 services:
   node-app:
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'  # Set the CPU limit to 0.5 (half of a CPU core)
+          memory: '512M'  # Set the memory limit to 512 megabytes
     user: root
     build:
       context: .
     ports:
-      - "3002-3012:3002" # Map container port 3002 to host port 3002 for the first replica
+      - "3002-3007:3002"
     volumes:
       - "./test:/app/test"
     depends_on:
@@ -14,6 +20,11 @@ services:
     networks:
       - custom_network
   postgres:
+    deploy:
+      resources:
+        limits:
+          cpus: '1'  # Set the CPU limit to 1 (one CPU core)
+          memory: '1G'  # Set the memory limit to 1 gigabyte
     image: postgres
     environment:
       POSTGRES_USER: db
