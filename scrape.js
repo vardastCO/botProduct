@@ -33,7 +33,7 @@ async function createBrowser() {
     throw error;
   }
 }
-
+const startUrlPattern2 = 'https://www.tileiran.co/fa/';
 const initialPage = 'https://www.tileiran.co/fa/%D9%81%D8%B1%D9%88%D8%B4%DA%AF%D8%A7%D9%87-%D8%A2%D9%86%D9%84%D8%A7%DB%8C%D9%86.html';
 
 async function processPage(pageUrl) {
