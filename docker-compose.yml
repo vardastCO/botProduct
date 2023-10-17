@@ -13,7 +13,6 @@ services:
     ports:
       - "3002-3021:3002"
     volumes:
-      - "./test:/app/test"
       - test-volume:/app/test
     depends_on:
       - postgres

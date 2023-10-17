@@ -63,7 +63,7 @@ async function processPage(pageUrl) {
 
         if (response.ok) {
           const buffer = await response.buffer();
-          const localDirectory = './test';
+          const localDirectory = '/app/test'; 
           const localFilename = `image_${uuid1}.jpg`;
           const localPath = path.join(localDirectory, localFilename);
 
