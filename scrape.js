@@ -72,9 +72,11 @@ async function processPage(pageUrl) {
 
         if (response.ok && uuid1) {
           const buffer = await response.buffer();
+          const localFilename = `${uuid1}.jpg`;
+      
           // Upload the image to Minio
           const bucketName = 'vardast'; // Replace with your Minio bucket name
-          const objectName = `${uuid1}`;
+          const objectName = localFilename;
       
           try {
              await minioClient.putObject(bucketName, objectName, buffer, buffer.length);
