@@ -19,7 +19,6 @@ services:
     restart: always
     networks:
       - custom_network
-
   postgres:
     deploy:
       resources:
@@ -38,21 +37,6 @@ services:
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
-  minio:
-    image: minio/minio
-    ports:
-      - "9000:9000"
-    environment:
-      MINIO_ACCESS_KEY: your_access_key
-      MINIO_SECRET_KEY: your_secret_key
-    volumes:
-      - minio-data:/data
-    networks:
-      - custom_network
-
 networks:
   custom_network:
     external: true
-
-volumes:
-  minio-data:

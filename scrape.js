@@ -5,7 +5,7 @@ const fetch = require('node-fetch');
 const fs = require('fs-extra');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
-
+const Minio = require('minio');
 const minioClient = new Minio.Client({
   endPoint: 'minio', // Use the service name defined in your Docker Compose file
   port: 9000,
