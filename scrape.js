@@ -8,7 +8,7 @@ const path = require('path');
 const Minio = require('minio');
 const minioClient = new Minio.Client({
   endPoint: 'storage', // Use the service name defined in your Docker Compose file
-  port: 9090,
+  port: 9000,
   useSSL: false,
   accessKey: 'ndp', // Use the access key defined in your Docker Compose file
   secretKey: 'str0ngP@ss', // Use the secret key defined in your Docker Compose file
