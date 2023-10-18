@@ -45,11 +45,12 @@ const startUrlPattern2 = 'https://www.tileiran.co/fa/';
 const initialPage = 'https://www.tileiran.co/fa/%D9%81%D8%B1%D9%88%D8%B4%DA%AF%D8%A7%D9%87-%D8%A2%D9%86%D9%84%D8%A7%DB%8C%D9%86.html';
 
 async function processPage(pageUrl) {
-  const uuid1 = uuidv4();
+  
   const page = await browser.newPage();
   await page.goto(pageUrl, { timeout: 350000 });
 
   try {
+    const uuid1 = uuidv4();
     const [priceElement, nameElement, brandElement] = await Promise.all([
       page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[4]/div[1]/span/span/span[1]'),
       page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[1]/a'),
@@ -69,13 +70,11 @@ async function processPage(pageUrl) {
         const imageUrl = await imageElement.evaluate((img) => img.src);
         const response = await fetch(imageUrl);
 
-        if (response.ok) {
+        if (response.ok && uuid1) {
           const buffer = await response.buffer();
-          const localFilename = `image_${uuid1}.jpg`;
-      
           // Upload the image to Minio
           const bucketName = 'vardast'; // Replace with your Minio bucket name
-          const objectName = localFilename;
+          const objectName = `${uuid1}`;
       
           try {
              await minioClient.putObject(bucketName, objectName, buffer, buffer.length);
