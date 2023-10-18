@@ -6,6 +6,14 @@ const fs = require('fs-extra');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 
+const minioClient = new Minio.Client({
+  endPoint: 'minio', // Use the service name defined in your Docker Compose file
+  port: 9000,
+  useSSL: false,
+  accessKey: 'your_access_key', // Use the access key defined in your Docker Compose file
+  secretKey: 'your_secret_key', // Use the secret key defined in your Docker Compose file
+});
+
 const pool = new Client({
   user: 'db',
   host: 'postgres', // Use the service name defined in docker-compose.yml
@@ -63,13 +71,18 @@ async function processPage(pageUrl) {
 
         if (response.ok) {
           const buffer = await response.buffer();
-          const localDirectory = './test';
           const localFilename = `image_${uuid1}.jpg`;
-          const localPath = path.join(localDirectory, localFilename);
-
-          // await fs.ensureDir(localDirectory);
-          await fs.writeFile(localPath, buffer);
-          console.log(`Image saved: ${localPath}`);
+      
+          // Upload the image to Minio
+          const bucketName = 'vardast'; // Replace with your Minio bucket name
+          const objectName = localFilename;
+      
+          try {
+             await minioClient.putObject(bucketName, objectName, buffer, buffer.length);
+            console.log(`Image uploaded to Minio: ${objectName}`);
+          } catch (error) {
+            console.error(`Failed to upload image to Minio: ${error}`);
+          }
         } else {
           console.error(`Failed to download image: ${imageUrl}`);
         }
