@@ -39,8 +39,8 @@ services:
   minio:
     image: minio/minio
     environment:
-      - MINIO_ROOT_USER: root
-      - MINIO_ROOT_PASSWORD: root
+      - MINIO_ROOT_USER=root
+      - MINIO_ROOT_PASSWORD=root
     ports:
       - "9000:9000"
     volumes:
