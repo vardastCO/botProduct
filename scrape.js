@@ -64,6 +64,33 @@ async function processPage(pageUrl) {
         page.evaluate((el) => el.textContent, brandElement[0]),
       ]);
 
+      const tableXPath = '/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/div[3]/div/div[2]/div[2]/table';
+
+      const tableData = await page.evaluate((tableXPath) => {
+        const table = document.evaluate(tableXPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        const data = {};
+      
+        if (table) {
+          const rows = table.getElementsByTagName('tr');
+          for (const row of rows) {
+            const cells = row.getElementsByTagName('td');
+            if (cells.length === 2) {
+              const key = cells[0].textContent.trim();
+              const value = cells[1].textContent.trim();
+              data[key] = value;
+            }
+          }
+        }
+      
+        return data;
+      }, tableXPath);
+      
+      // Create a single string with the formatted data
+      const formattedTableData = Object.keys(tableData)
+        .map((key) => `${key}: ${tableData[key]}`)
+        .join('\n');
+      
+
       const [imageElement] = await page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[2]/div[1]/div[1]/div/div/div/a/img');
 
       if (imageElement) {
@@ -93,8 +120,9 @@ async function processPage(pageUrl) {
 
       if (nameText.trim() !== '') {
         console.log('NAME:', nameText.trim(), 'PRICE:', priceText.trim(), 'URL:', pageUrl);
-        await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU) VALUES($1, $2, $3, $4, $5)',
-          [nameText.trim(), pageUrl, priceText.trim() ?? 0, brandText.trim() ?? '', uuid1]);
+        await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU,description) VALUES($1, $2, $3, $4, $5,$6)',
+          [nameText.trim(), pageUrl, priceText.trim() ?? 0, brandText.trim() ?? '', uuid1,
+        formattedTableData]);
       }
     }
 
