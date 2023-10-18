@@ -7,8 +7,8 @@ const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const Minio = require('minio');
 const minioClient = new Minio.Client({
-  endPoint: 'minio', // Use the service name defined in your Docker Compose file
-  port: 9000,
+  endPoint: 'storage', // Use the service name defined in your Docker Compose file
+  port: 9090,
   useSSL: false,
   accessKey: 'root', // Use the access key defined in your Docker Compose file
   secretKey: 'root', // Use the secret key defined in your Docker Compose file
