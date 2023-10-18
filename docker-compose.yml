@@ -36,18 +36,19 @@ services:
       - custom_network
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-  minio:
+  storage:
     image: minio/minio
-    environment:
-      - MINIO_ROOT_USER=root
-      - MINIO_ROOT_PASSWORD=root
+    restart: always
     ports:
-      - "9000:9000"
+      - 80:9000
+      - 9090:9090
+    environment:
+      MINIO_ROOT_USER: ndp
+      MINIO_ROOT_PASSWORD: str0ngP@ss
     volumes:
       - minio-data:/data
-    restart: always
+    command: server /data --console-address ":9090"   
     networks:
-      - custom_network
 
 volumes:
   minio-data:
