@@ -10,8 +10,8 @@ const minioClient = new Minio.Client({
   endPoint: 'minio', // Use the service name defined in your Docker Compose file
   port: 9000,
   useSSL: false,
-  accessKey: 'your_access_key', // Use the access key defined in your Docker Compose file
-  secretKey: 'your_secret_key', // Use the secret key defined in your Docker Compose file
+  accessKey: 'root', // Use the access key defined in your Docker Compose file
+  secretKey: 'root', // Use the secret key defined in your Docker Compose file
 });
 
 const pool = new Client({
