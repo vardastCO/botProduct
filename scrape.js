@@ -167,7 +167,7 @@ async function main() {
     await createBrowser();
 
 
-    cron.schedule('*/3 * * * *', async () => {
+    cron.schedule('*/2 * * * *', async () => {
       try {
         const client = await pool.connect(); 
         let currentHref = await pool.query('SELECT url FROM unvisited LIMIT 1');
