@@ -40,10 +40,9 @@ async function createBrowser() {
   } catch (error) {
     throw error;
   }
-}
-const startUrlPattern2 = 'https://www.tileiran.co/fa/';
-const initialPage = 'https://www.tileiran.co/fa/%D9%81%D8%B1%D9%88%D8%B4%DA%AF%D8%A7%D9%87-%D8%A2%D9%86%D9%84%D8%A7%DB%8C%D9%86.html';
-
+}startUrlPattern2
+const initialPage = 'https://kashiland.com/store';
+const startUrlPattern2 = 'https://kashiland.com/store/product/'
 async function processPage(pageUrl) {
   
   const page = await browser.newPage();
@@ -52,9 +51,9 @@ async function processPage(pageUrl) {
   try {
     const uuid1 = uuidv4();
     const [priceElement, nameElement, brandElement] = await Promise.all([
-      page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[4]/div[1]/span/span/span[1]'),
-      page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[1]/a'),
-      page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[3]/a'),
+      page.$x('/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[2]/div[2]/div[2]/div[1]/div[3]/div/div[1]/div[1]/span[2]'),
+      page.$x('/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[1]/div/div/h1'),
+      page.$x('/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[2]/div[1]/div[1]/div[2]/ul/li[2]/a'),
     ]);
 
     if (nameElement.length > 0) {
@@ -64,32 +63,31 @@ async function processPage(pageUrl) {
         page.evaluate((el) => el.textContent, brandElement[0]),
       ]);
 
-      const tableXPath = '/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/div[3]/div/div[2]/div[2]/table';
+      const listXPath = '/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[2]/div[1]/div[1]/div[2]/div/ul';
 
-      const tableData = await page.evaluate((tableXPath) => {
-        const table = document.evaluate(tableXPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+      const listData = await page.evaluate((listXPath) => {
+        const list = document.evaluate(listXPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
         const data = {};
       
-        if (table) {
-          const rows = table.getElementsByTagName('tr');
-          for (const row of rows) {
-            const cells = row.getElementsByTagName('td');
-            if (cells.length === 2) {
-              const key = cells[0].textContent.trim();
-              const value = cells[1].textContent.trim();
+        if (list) {
+          const items = list.getElementsByTagName('li');
+          for (const item of items) {
+            const parts = item.textContent.split(':');
+            if (parts.length === 2) {
+              const key = parts[0].trim();
+              const value = parts[1].trim();
               data[key] = value;
             }
           }
         }
       
         return data;
-      }, tableXPath);
+      }, listXPath);
       
       // Create a single string with the formatted data
-      const formattedTableData = Object.keys(tableData)
-        .map((key) => `${key}: ${tableData[key]}`)
+      const formattedListData = Object.keys(listData)
+        .map((key) => `${key}: ${listData[key]}`)
         .join('\n');
-      
 
       const [imageElement] = await page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[2]/div[1]/div[1]/div/div/div/a/img');
 
@@ -122,7 +120,7 @@ async function processPage(pageUrl) {
         console.log('NAME:', nameText.trim(), 'PRICE:', priceText.trim(), 'URL:', pageUrl);
         await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU,description) VALUES($1, $2, $3, $4, $5,$6)',
           [nameText.trim(), pageUrl, priceText.trim() ?? 0, brandText.trim() ?? '', uuid1,
-        formattedTableData]);
+        formattedListData]);
       }
     }
 
