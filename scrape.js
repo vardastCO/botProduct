@@ -20,7 +20,7 @@ const pool = new Client({
   database: 'mydb', // This should match the POSTGRES_DB in docker-compose.yml
   password: 'root',
   port: 5432,
-  max: 20, // A
+  max: 25, // A
 });
 
 let browser;
@@ -165,11 +165,10 @@ async function processPage(pageUrl) {
 async function main() {
   try {
     await createBrowser();
-
+    await pool.connect(); 
 
     cron.schedule('*/2 * * * *', async () => {
       try {
-        const client = await pool.connect(); 
         let currentHref = await pool.query('SELECT url FROM unvisited LIMIT 1');
         let visitedCount = 0;
 
@@ -208,7 +207,6 @@ async function main() {
         } else {
           await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
         }
-        client.release()
       } catch (error) {
         console.error(error);
       } finally {
