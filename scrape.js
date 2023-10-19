@@ -40,7 +40,7 @@ async function createBrowser() {
   } catch (error) {
     throw error;
   }
-}startUrlPattern2
+}
 const initialPage = 'https://kashiland.com/store';
 const startUrlPattern2 = 'https://kashiland.com/store/product/'
 async function processPage(pageUrl) {
@@ -89,7 +89,7 @@ async function processPage(pageUrl) {
         .map((key) => `${key}: ${listData[key]}`)
         .join('\n');
 
-      const [imageElement] = await page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[2]/div[1]/div[1]/div/div/div/a/img');
+      const [imageElement] = await page.$x('/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[1]/div/div/div/div[1]/div[1]/div[1]/a/figure/img');
 
       if (imageElement) {
         const imageUrl = await imageElement.evaluate((img) => img.src);
