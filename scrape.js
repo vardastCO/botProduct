@@ -121,7 +121,7 @@ async function processPage(page) {
     }
 
     const hrefs = await page.evaluate(() => {
-      const links = Array from(document.querySelectorAll('a'));
+      const links = Array.from(document.querySelectorAll('a'));
       return links.map((link) => link.getAttribute('href'));
     });
 
