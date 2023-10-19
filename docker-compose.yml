@@ -9,7 +9,7 @@ services:
           cpus: '0.5'
           memory: 512M
     user: root
-    image: farbodnp/robo
+    image: farbodnp/robo:v1
     ports:
       - "3002-3021:3002"
     volumes:
