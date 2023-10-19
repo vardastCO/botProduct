@@ -1,8 +1,10 @@
-const puppeteer = require('puppeteer-core');
-const { Cluster } = require('puppeteer-cluster');
+const puppeteer = require('puppeteer');
 const { Client } = require('pg');
+const cron = require('node-cron');
 const fetch = require('node-fetch');
+const fs = require('fs-extra');
 const { v4: uuidv4 } = require('uuid');
+const path = require('path');
 const Minio = require('minio');
 const minioClient = new Minio.Client({
   endPoint: 'storage', // Use the service name defined in your Docker Compose file
@@ -27,7 +29,8 @@ async function createBrowser() {
   try {
     browser = await puppeteer.launch({
       headless: true,
-      executablePath: '/usr/bin/google-chrome-stable',
+      executablePath: process.env.NODE_ENV === "production" ?
+        process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
@@ -47,7 +50,6 @@ async function processPage(pageUrl) {
 
 
   try {
-    console.log('start',page,pageUrl)
     await page.goto(pageUrl, { timeout: 350000 });
     const uuid1 = uuidv4();
     const [priceElement, nameElement, brandElement,categoryElemt] = await Promise.all([
@@ -159,58 +161,61 @@ async function processPage(pageUrl) {
     }
   }
 }
+
 async function main() {
   try {
- 
-    const cluster = await Cluster.launch({
-      concurrency: Cluster.CONCURRENCY_CONTEXT,
-      maxConcurrency: 10,
-      puppeteerOptions: {
-        headless: true,
-        executablePath: '/usr/bin/google-chrome-stable',
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-      },
-    });
-  
-    await pool.connect();
-    await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
     await createBrowser();
-    cluster.queue(async ({data: currentHref }) => {
+    await pool.connect(); 
+
+    cron.schedule('*/5 * * * *', async () => {
       try {
-  
-        console.log('hi')
-        const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [currentHref]);
-        
-        const visitedCount = visitedCheckResult.rows[0].count;
-  
-        if (visitedCount === 0) {
+        let currentHref = await pool.query('SELECT url FROM unvisited LIMIT 1');
+        let visitedCount = 0;
+
+        if (currentHref.rows.length > 0) {
+          const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [currentHref.rows[0].url]);
+          visitedCount = visitedCheckResult.rows[0].count;
+          currentHref = currentHref.rows[0].url;
+        } else {
+          currentHref = initialPage;
+        }
+
+        if (visitedCount == 0) {
           await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
           await pool.query('INSERT INTO visited(url) VALUES($1)', [currentHref]);
-  
-          await processPage(currentHref);
+
+          const pageForEvaluation = await browser.newPage();
+          let retryCount = 0;
+          const maxRetries = 10000;
+
+          while (retryCount < maxRetries) {
+            try {
+              await processPage(currentHref);
+              break;
+            } catch (error) {
+              if (error.name === 'TimeoutError') {
+                retryCount++;
+              }
+            }
+          }
+
+          if (retryCount >= maxRetries) {
+            await pageForEvaluation.close();
+          }
+
+          await pageForEvaluation.close();
         } else {
-          console.log('sssssss')
           await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
         }
       } catch (error) {
-        logger.error(`Error processing page: ${error}`);
+        console.error(error);
+      } finally {
+      
       }
     });
-  
-    cluster.on('taskerror', (err, data) => {
-      logger.error(`Task error on URL ${data}: ${err.message}`);
-    });
-  
-    cluster.on('idle', async () => {
-      await cluster.idle();
-      await cluster.close();
-      logger.info('Puppeteer Cluster has completed all tasks.');
-      process.exit(0);
-    });
-  }catch (e){
-    console.log('eeeeeeeeeee',e)
-  }  
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 main();
-
