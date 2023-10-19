@@ -74,8 +74,6 @@ async function processPage(pageUrl) {
       const browser = await createBrowser();
       const page = await browser.newPage();
 
-
-
       try {
         await page.goto(pageUrl, { timeout: 120000 });
         const uuid1 = uuidv4();
@@ -197,46 +195,15 @@ async function main() {
 
     cron.schedule('*/5 * * * *', async () => {
       try {
-        let currentHref = await pool.query('SELECT url FROM unvisited LIMIT 1');
-        let visitedCount = 0;
-
-      
-        const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [currentHref.rows[0].url]);
-        visitedCount = visitedCheckResult.rows[0].count;
-        currentHref = currentHref.rows[0].url;
-        
-
-        if (visitedCount == 0) {
-          await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
-          await pool.query('INSERT INTO visited(url) VALUES($1)', [currentHref]);
-
-          const pageForEvaluation = await browser.newPage();
-          let retryCount = 0;
-          const maxRetries = 10000;
-
-          while (retryCount < maxRetries) {
-            try {
-              await processPage(currentHref);
-              break;
-            } catch (error) {
-              if (error.name === 'TimeoutError') {
-                retryCount++;
-              }
-            }
-          }
-
-          if (retryCount >= maxRetries) {
-            await pageForEvaluation.close();
-          }
-
-          await pageForEvaluation.close();
-        } else {
-          await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
+        // Get the next unvisited URL
+        const result = await pool.query('SELECT url FROM unvisited LIMIT 1');
+        if (result.rows.length > 0) {
+          const url = result.rows[0].url;
+          // Process the URL
+          await processPage(url);
         }
       } catch (error) {
         console.error(error);
-      } finally {
-      
       }
     });
   } catch (error) {
