@@ -200,13 +200,11 @@ async function main() {
         let currentHref = await pool.query('SELECT url FROM unvisited LIMIT 1');
         let visitedCount = 0;
 
-        if (currentHref.rows.length > 0) {
-          const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [currentHref.rows[0].url]);
-          visitedCount = visitedCheckResult.rows[0].count;
-          currentHref = currentHref.rows[0].url;
-        } else {
-          currentHref = initialPage;
-        }
+      
+        const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [currentHref.rows[0].url]);
+        visitedCount = visitedCheckResult.rows[0].count;
+        currentHref = currentHref.rows[0].url;
+        
 
         if (visitedCount == 0) {
           await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
