@@ -18,6 +18,7 @@
     "uuid" : "*",
     "node-cron" : "*",
     "minio" : "*",
+    "p-queue" : "*",
     "puppeteer-cluster" : "*"
   }
 }
