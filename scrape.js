@@ -4,6 +4,7 @@ const cron = require('node-cron');
 const fetch = require('node-fetch');
 const { v4: uuidv4 } = require('uuid');
 const Minio = require('minio');
+const genericPool = require('generic-pool');
 const minioClient = new Minio.Client({
   endPoint: 'storage', // Use the service name defined in your Docker Compose file
   port: 9000,
@@ -24,29 +25,55 @@ const pool = new Client({
 
 let browser;
 
-async function createBrowser() {
-  try {
-    browser = await puppeteer.launch({
+const browserFactory = {
+  create: async () => {
+    const browser = await puppeteer.launch({
       headless: true,
       executablePath: '/usr/bin/google-chrome-stable',
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
-        '--disable-extensions'
+        '--disable-extensions',
+        '--disable-gpu'
       ],
     });
+    return browser;
+  },
+  destroy: (browser) => {
+    browser.close();
+  }
+};
+
+const browserPool = genericPool.createPool(browserFactory, {
+  max: 10, // Maximum number of browsers in the pool
+  min: 2,  // Minimum number of browsers to keep in the pool
+});
+
+async function acquireBrowser() {
+  return browserPool.acquire();
+}
+
+async function releaseBrowser(browser) {
+  browserPool.release(browser);
+}
+
+async function createBrowser() {
+  try {
+    browser = await acquireBrowser();
     return browser;
   } catch (error) {
     throw error;
   }
 }
+
 const initialPage = 'https://kashiland.com/store';
 const startUrlPattern2 = 'https://kashiland.com/store/prod'
 async function processPage(pageUrl) {
 
-  
+      const browser = await createBrowser();
       const page = await browser.newPage();
+
 
 
       try {
@@ -158,6 +185,7 @@ async function processPage(pageUrl) {
         if (page) {
           await page.close();
         }
+        releaseBrowser(browser); 
       }
   
 }

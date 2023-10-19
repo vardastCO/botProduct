@@ -19,6 +19,7 @@
     "node-cron" : "*",
     "minio" : "*",
     "p-queue" : "*",
-    "puppeteer-cluster" : "*"
+    "puppeteer-cluster" : "*",
+    "generic-pool" : "*"
   }
 }
