@@ -46,9 +46,10 @@ const startUrlPattern2 = 'https://kashiland.com/store/prod'
 async function processPage(pageUrl) {
   
   const page = await browser.newPage();
-  await page.goto(pageUrl, { timeout: 350000 });
+
 
   try {
+    await page.goto(pageUrl, { timeout: 350000 });
     const uuid1 = uuidv4();
     const [priceElement, nameElement, brandElement,categoryElemt] = await Promise.all([
       page.$x('/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[2]/div[2]/div[2]/div[1]/div[3]/div/div[1]/div[1]/span[2]'),
@@ -130,6 +131,8 @@ async function processPage(pageUrl) {
       return links.map((link) => link.getAttribute('href'));
     });
 
+    await page.close();
+
     for (const href of hrefs) {
       try {
         if (href) { // Check if href is not null
@@ -152,7 +155,9 @@ async function processPage(pageUrl) {
   } catch (error) {
     console.error(error);
   } finally {
-    await page.close();
+    if (page) {
+      await page.close();
+    }
   }
 }
 
@@ -203,6 +208,10 @@ async function main() {
         }
       } catch (error) {
         console.error(error);
+      } finally {
+        if (pool) {
+          await pool.end();
+        }
       }
     });
   } catch (error) {
