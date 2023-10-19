@@ -198,6 +198,7 @@ async function main() {
         if (result.rows.length > 0) {
           const url = result.rows[0].url;
           // Process the URL
+          console.log('url',url)
           await processPage(url);
         }
       } catch (error) {
