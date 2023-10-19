@@ -28,7 +28,7 @@ async function createBrowser() {
   try {
     browser = await puppeteer.launch({
       headless: true,
-      path : '/usr/bin/google-chrome-stable',
+      executablePath : '/usr/bin/google-chrome-stable',
       // executablePath: process.env.NODE_ENV === "production" ?
       //   process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
       args: [
