@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
-const { Client } = require('pg');
+const puppeteer = require('puppeteer-core');
 const { Cluster } = require('puppeteer-cluster');
+const { Client } = require('pg');
 const cron = require('node-cron');
 const fetch = require('node-fetch');
 const { v4: uuidv4 } = require('uuid');
@@ -24,21 +24,11 @@ const pool = new Client({
 
 let browser;
 
-let cluster;
-
-async function createCluster() {
-  cluster = await Cluster.launch({
-    concurrency: Cluster.CONCURRENCY_CONTEXT,
-    maxConcurrency: 4,
-  });
-}
-
 async function createBrowser() {
   try {
     browser = await puppeteer.launch({
       headless: true,
-      executablePath: process.env.NODE_ENV === "production" ?
-        process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
+      executablePath: '/usr/bin/google-chrome-stable',
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
@@ -169,10 +159,20 @@ async function processPage(pageUrl) {
     }
   }
 }
-
 async function main() {
   try {
-    await createCluster();
+    await createBrowser();
+
+    const cluster = await Cluster.launch({
+      concurrency: Cluster.CONCURRENCY_CONTEXT, // Use browserContext per page for better isolation
+      maxConcurrency: 4, // Set your desired concurrency level
+      puppeteerOptions: {
+        headless: true,
+        executablePath: '/usr/bin/google-chrome-stable', // Set the path to your Chrome or Chromium executable
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+      },
+    });
+
     await pool.connect();
 
     cron.schedule('*/2 * * * *', async () => {
@@ -192,8 +192,30 @@ async function main() {
           await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
           await pool.query('INSERT INTO visited(url) VALUES($1)', [currentHref]);
 
-          cluster.queue({ pageUrl: currentHref });
+          cluster.queue(currentHref);
 
+          cluster.task(async ({ page, data: currentHref }) => {
+            const pageForEvaluation = await page.newPage();
+            let retryCount = 0;
+            const maxRetries = 10000;
+
+            while (retryCount < maxRetries) {
+              try {
+                await processPage(currentHref);
+                break;
+              } catch (error) {
+                if (error.name === 'TimeoutError') {
+                  retryCount++;
+                }
+              }
+            }
+
+            if (retryCount >= maxRetries) {
+              await pageForEvaluation.close();
+            }
+
+            await pageForEvaluation.close();
+          });
         } else {
           await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
         }
@@ -202,11 +224,14 @@ async function main() {
       }
     });
 
-    cluster.task(processPage);
-    cluster.idle().then(() => cluster.close());
+    // Handle errors and cleanup here
+
+    await cluster.idle();
+    await cluster.close();
   } catch (error) {
     console.error(error);
   }
 }
 
 main();
+
