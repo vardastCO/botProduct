@@ -2,9 +2,10 @@ const { Cluster } = require('puppeteer-cluster');
 const { Client } = require('pg');
 const cron = require('node-cron');
 const fetch = require('node-fetch');
-const fs = require('fs-extra');
 const { v4: uuidv4 } = require('uuid');
 const Minio = require('minio');
+const puppeteer = require('puppeteer-core');
+
 
 const minioClient = new Minio.Client({
   endPoint: 'storage', // Use the service name defined in your Docker Compose file
