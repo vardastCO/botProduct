@@ -47,6 +47,7 @@ async function processPage(pageUrl) {
 
 
   try {
+    console.log('start',page,pageUrl)
     await page.goto(pageUrl, { timeout: 200000 });
     const uuid1 = uuidv4();
     const [priceElement, nameElement, brandElement,categoryElemt] = await Promise.all([
@@ -172,12 +173,14 @@ async function main() {
     });
   
     await pool.connect();
+    await pool.query('INSERT INTO unvisited(url) VALUES($1)', initialPage]);
     await createBrowser();
-  
     cluster.queue(async ({data: currentHref }) => {
       try {
+  
         console.log('hi')
         const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [currentHref]);
+        
         const visitedCount = visitedCheckResult.rows[0].count;
   
         if (visitedCount === 0) {
