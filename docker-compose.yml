@@ -6,11 +6,10 @@ services:
       replicas: 20
       resources:
         limits:
-          cpus: '0.5'  # Set the CPU limit to 0.5 (half of a CPU core)
-          memory: '512M'  # Set the memory limit to 512 megabytes
+          cpus: '0.5'
+          memory: 512M
     user: root
-    build:
-      context: .
+    image: your_node_app_image:latest  # Specify the image you want to use
     ports:
       - "3002-3021:3002"
     volumes:
@@ -24,8 +23,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'  # Set the CPU limit to 1 (one CPU core)
-          memory: '1G'  # Set the memory limit to 1 gigabyte
+          cpus: '1'
+          memory: 1G
     image: postgres
     environment:
       POSTGRES_USER: db
@@ -50,7 +49,8 @@ services:
       - minio-data:/data
     command: server /data --console-address ":9090"
     networks:
-      - custom_network  
+      - custom_network
+
 volumes:
   minio-data:
 
