@@ -191,7 +191,7 @@ async function main() {
     await pool.connect(); 
     // await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
 
-    cron.schedule('*/5 * * * *', async () => {
+    cron.schedule('* * * * *', async () => {
       try {
         // Get the next unvisited URL
         const result = await pool.query('SELECT url FROM unvisited WHERE url NOT IN (SELECT url FROM visited) LIMIT 1');
@@ -201,6 +201,8 @@ async function main() {
           
           // Delete the URL from unvisited
           await pool.query('DELETE FROM unvisited WHERE url = $1', [url]);
+
+          console.log('url',url)
     
           // Process the URL if it's not in the "visited" table
           const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [url]);
@@ -209,6 +211,7 @@ async function main() {
           if (visitedCount === 0) {
             // Attempt to process the URL
             try {
+              console.log('url2222',url)
               await processPage(url);
     
               // Insert it into visited
