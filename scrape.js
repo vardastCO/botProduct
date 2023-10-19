@@ -57,11 +57,9 @@ async function processPage(pageUrl) {
     ]);
 
     if (nameElement.length > 0) {
-      const [priceText, nameText, brandText] = await Promise.all([
-        page.evaluate((el) => el.textContent, priceElement[0]),
-        page.evaluate((el) => el.textContent, nameElement[0]),
-        page.evaluate((el) => el.textContent, brandElement[0]),
-      ]);
+      const priceText = priceElement.length > 0 ? await page.evaluate((el) => el.textContent, priceElement[0]) : null;
+      const nameText = nameElement.length > 0 ? await page.evaluate((el) => el.textContent, nameElement[0]) : null;
+      const brandText = brandElement.length > 0 ? await page.evaluate((el) => el.textContent, brandElement[0]) : null;
 
       const listXPath = '/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[2]/div[1]/div[1]/div[2]/div/ul';
 
@@ -116,7 +114,7 @@ async function processPage(pageUrl) {
         console.log('No imageElement found on the page.');
       }
 
-      if (nameText.trim() !== '') {
+      if (nameText && nameText.trim() !== '') {
         console.log('NAME:', nameText.trim(), 'PRICE:', priceText.trim(), 'URL:', pageUrl);
         await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU,description) VALUES($1, $2, $3, $4, $5,$6)',
           [nameText.trim(), pageUrl, priceText.trim() ?? 0, brandText.trim() ?? '', uuid1,
