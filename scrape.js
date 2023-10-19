@@ -2,9 +2,7 @@ const puppeteer = require('puppeteer');
 const { Client } = require('pg');
 const cron = require('node-cron');
 const fetch = require('node-fetch');
-const fs = require('fs-extra');
 const { v4: uuidv4 } = require('uuid');
-const path = require('path');
 const Minio = require('minio');
 const minioClient = new Minio.Client({
   endPoint: 'storage', // Use the service name defined in your Docker Compose file
@@ -150,7 +148,7 @@ async function processPage(pageUrl) {
           }
         }
       } catch (error) {
-        // console.error(error);
+        console.error(error);
       }
     }
   } catch (error) {
