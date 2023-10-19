@@ -1,7 +1,6 @@
 const puppeteer = require('puppeteer-core');
 const { Cluster } = require('puppeteer-cluster');
 const { Client } = require('pg');
-const cron = require('node-cron');
 const fetch = require('node-fetch');
 const { v4: uuidv4 } = require('uuid');
 const Minio = require('minio');
@@ -48,7 +47,7 @@ async function processPage(pageUrl) {
 
 
   try {
-    await page.goto(pageUrl, { timeout: 350000 });
+    await page.goto(pageUrl, { timeout: 200000 });
     const uuid1 = uuidv4();
     const [priceElement, nameElement, brandElement,categoryElemt] = await Promise.all([
       page.$x('/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[2]/div[2]/div[2]/div[1]/div[3]/div/div[1]/div[1]/span[2]'),
@@ -173,10 +172,11 @@ async function main() {
     });
   
     await pool.connect();
-    await createBrowser()
+    await createBrowser();
   
-    cluster.queue(async ({ page, data: currentHref }) => {
+    cluster.queue(async ({data: currentHref }) => {
       try {
+        console.log('hi')
         const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [currentHref]);
         const visitedCount = visitedCheckResult.rows[0].count;
   
@@ -184,7 +184,7 @@ async function main() {
           await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
           await pool.query('INSERT INTO visited(url) VALUES($1)', [currentHref]);
   
-          await processPage(page, currentHref);
+          await processPage(currentHref);
         } else {
           await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
         }
