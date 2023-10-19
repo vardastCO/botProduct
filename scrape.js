@@ -161,76 +161,50 @@ async function processPage(pageUrl) {
 }
 async function main() {
   try {
-    await createBrowser();
-
+ 
     const cluster = await Cluster.launch({
-      concurrency: Cluster.CONCURRENCY_CONTEXT, // Use browserContext per page for better isolation
-      maxConcurrency: 4, // Set your desired concurrency level
+      concurrency: Cluster.CONCURRENCY_CONTEXT,
+      maxConcurrency: 10,
       puppeteerOptions: {
         headless: true,
-        executablePath: '/usr/bin/google-chrome-stable', // Set the path to your Chrome or Chromium executable
+        executablePath: '/usr/bin/google-chrome-stable',
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
       },
     });
-
+  
     await pool.connect();
-
-    cron.schedule('*/2 * * * *', async () => {
+  
+    cluster.queue(async ({ page, data: currentHref }) => {
       try {
-        let currentHref = await pool.query('SELECT url FROM unvisited LIMIT 1');
-        let visitedCount = 0;
-
-        if (currentHref.rows.length > 0) {
-          const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [currentHref.rows[0].url]);
-          visitedCount = visitedCheckResult.rows[0].count;
-          currentHref = currentHref.rows[0].url;
-        } else {
-          currentHref = initialPage;
-        }
-
-        if (visitedCount == 0) {
+        const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [currentHref]);
+        const visitedCount = visitedCheckResult.rows[0].count;
+  
+        if (visitedCount === 0) {
           await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
           await pool.query('INSERT INTO visited(url) VALUES($1)', [currentHref]);
-
-          cluster.queue(currentHref);
-
-          cluster.task(async ({ page, data: currentHref }) => {
-            const pageForEvaluation = await page.newPage();
-            let retryCount = 0;
-            const maxRetries = 10000;
-
-            while (retryCount < maxRetries) {
-              try {
-                await processPage(currentHref);
-                break;
-              } catch (error) {
-                if (error.name === 'TimeoutError') {
-                  retryCount++;
-                }
-              }
-            }
-
-            if (retryCount >= maxRetries) {
-              await pageForEvaluation.close();
-            }
-
-            await pageForEvaluation.close();
-          });
+  
+          await processPage(page, currentHref);
         } else {
           await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
         }
       } catch (error) {
-        console.error(error);
+        logger.error(`Error processing page: ${error}`);
       }
     });
-
-    // Handle errors and cleanup here
-
-    await cluster.idle();
-    await cluster.close();
-  } catch (error) {
-    console.error(error);
-  }
+  
+    cluster.on('taskerror', (err, data) => {
+      logger.error(`Task error on URL ${data}: ${err.message}`);
+    });
+  
+    cluster.on('idle', async () => {
+      await cluster.idle();
+      await cluster.close();
+      logger.info('Puppeteer Cluster has completed all tasks.');
+      process.exit(0);
+    });
+  }catch (e){
+    console.log('eeeeeeeeeee',e)
+  }  
 }
 
 main();
