@@ -173,7 +173,7 @@ async function main() {
     });
   
     await pool.connect();
-    await pool.query('INSERT INTO unvisited(url) VALUES($1)', initialPage]);
+    await pool.query('INSERT INTO unvisited(url) VALUES($1)', initialPage);
     await createBrowser();
     cluster.queue(async ({data: currentHref }) => {
       try {
