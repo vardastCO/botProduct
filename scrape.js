@@ -207,8 +207,10 @@ async function main() {
           // Process the URL if it's not in the "visited" table
           const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [url]);
           const visitedCount = visitedCheckResult.rows[0].count;
+
+          console.log('visitedCount',visitedCount)
     
-          if (visitedCount === 0) {
+          if (visitedCount == 0) {
             // Attempt to process the URL
             try {
               console.log('url2222',url)
