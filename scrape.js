@@ -173,6 +173,7 @@ async function main() {
     });
   
     await pool.connect();
+    await createBrowser()
   
     cluster.queue(async ({ page, data: currentHref }) => {
       try {
