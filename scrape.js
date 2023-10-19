@@ -195,6 +195,7 @@ async function main() {
       try {
         // Get the next unvisited URL
         const result = await pool.query('SELECT url FROM unvisited LIMIT 1');
+        console.log('url',result)
         if (result.rows.length > 0) {
           const url = result.rows[0].url;
           // Process the URL
