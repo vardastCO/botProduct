@@ -82,7 +82,7 @@ async function processPage(page) {
 async function main() {
   const cluster = await Cluster.launch({
     concurrency: Cluster.CONCURRENCY_BROWSER,
-    maxConcurrency: 2,
+    maxConcurrency: 20,
     puppeteerOptions: {
       headless: true,
       executablePath: '/usr/bin/google-chrome-stable',
