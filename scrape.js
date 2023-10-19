@@ -90,8 +90,9 @@ async function main() {
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
-      ],
-    });
+      ]
+    }})
+  ;
 
   cluster.queue(initialPage, (page) => processPage(page));
 
