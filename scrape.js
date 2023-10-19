@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
 const { Client } = require('pg');
 const cron = require('node-cron');
 const fetch = require('node-fetch');
@@ -27,8 +27,7 @@ async function createBrowser() {
   try {
     browser = await puppeteer.launch({
       headless: true,
-      executablePath: process.env.NODE_ENV === "production" ?
-        process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
+      executablePath: '/usr/bin/google-chrome-stable',
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
@@ -116,7 +115,6 @@ async function processPage(pageUrl) {
       } else {
         console.log('No imageElement found on the page.');
       }
-
       if (nameText.trim() !== '') {
         console.log('NAME:', nameText.trim(), 'PRICE:', priceText.trim(), 'URL:', pageUrl);
         await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU,description,category) VALUES($1, $2, $3, $4, $5,$6,$7)',
