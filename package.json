@@ -11,15 +11,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "csv-writer": "*",
     "puppeteer": "19.7.2",
     "puppeteer-core": "*",
     "dotenv" : "*",
-    "axios" : "*",
     "pg" : "*",
     "uuid" : "*",
-    "fs-extra" : "*",
     "node-cron" : "*",
-    "minio" : "*"
+    "minio" : "*",
+    "puppeteer-cluster" : "*"
   }
 }
