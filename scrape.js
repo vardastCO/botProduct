@@ -146,7 +146,7 @@ async function processPage(pageUrl) {
           }
         }
       } catch (error) {
-        console.error(error);
+        // console.error(error);
       }
     }
   } catch (error) {
