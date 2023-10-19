@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
 const { Client } = require('pg');
 const cron = require('node-cron');
 const fetch = require('node-fetch');
@@ -28,8 +28,9 @@ async function createBrowser() {
   try {
     browser = await puppeteer.launch({
       headless: true,
-      executablePath: process.env.NODE_ENV === "production" ?
-        process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
+      path : '/usr/bin/google-chrome-stable',
+      // executablePath: process.env.NODE_ENV === "production" ?
+      //   process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
