@@ -3,7 +3,7 @@ version: '3.7'
 services:
   node-app:
     deploy:
-     replicas: 20
+      replicas: 20
       resources:
         limits:
           cpus: '0.5'  # Set the CPU limit to 0.5 (half of a CPU core)
