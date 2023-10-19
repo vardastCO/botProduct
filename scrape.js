@@ -57,10 +57,10 @@ async function processPage(pageUrl) {
       page.$x('/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[2]/div[1]/div[1]/div[2]/ul/li[1]/a'),
     
     ]);
-    const priceText = priceElement.length > 0 ? await page.evaluate((el) => el.textContent, priceElement[0]) : null;
-    const nameText = nameElement.length > 0 ? await page.evaluate((el) => el.textContent, nameElement[0]) : null;
-    const brandText = brandElement.length > 0 ? await page.evaluate((el) => el.textContent, brandElement[0]) : null;
-    const categoryText = categoryElemt.length > 0 ? await page.evaluate((el) => el.textContent, categoryElemt[0]) : null;
+    const priceText = priceElement.length > 0 ? await page.evaluate((el) => el.textContent, priceElement[0]) : '';
+    const nameText = nameElement.length > 0 ? await page.evaluate((el) => el.textContent, nameElement[0]) : '';
+    const brandText = brandElement.length > 0 ? await page.evaluate((el) => el.textContent, brandElement[0]) : '';
+    const categoryText = categoryElemt.length > 0 ? await page.evaluate((el) => el.textContent, categoryElemt[0]) : '';
 
 
     if (nameElement.length > 0) {
@@ -121,7 +121,7 @@ async function processPage(pageUrl) {
         console.log('NAME:', nameText.trim(), 'PRICE:', priceText.trim(), 'URL:', pageUrl);
         await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU,description,category) VALUES($1, $2, $3, $4, $5,$6,$7,$8)',
           [nameText.trim(), pageUrl, priceText.trim() ?? 0, brandText.trim() ?? '', uuid1,
-        formattedListData,categoryText.trim()?? '']);
+        formattedListData,categoryText.trim() ?? '']);
       }
     }
 
