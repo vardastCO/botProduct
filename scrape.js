@@ -47,7 +47,7 @@ async function processPage(pageUrl) {
 
 
   try {
-    await page.goto(pageUrl, { timeout: 350000 });
+    await page.goto(pageUrl, { timeout: 120000 });
     const uuid1 = uuidv4();
     const [priceElement, nameElement, brandElement,categoryElemt] = await Promise.all([
       page.$x('/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[2]/div[2]/div[2]/div[1]/div[3]/div/div[1]/div[1]/span[2]'),
