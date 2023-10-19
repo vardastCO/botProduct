@@ -9,7 +9,7 @@ services:
           cpus: '0.5'
           memory: 512M
     user: root
-    image: your_node_app_image:latest  # Specify the image you want to use
+    image: farbodnp/robo
     ports:
       - "3002-3021:3002"
     volumes:
