@@ -155,9 +155,6 @@ async function processPage(pageUrl) {
           const links = Array.from(document.querySelectorAll('a'));
           return links.map((link) => link.getAttribute('href'));
         });
-
-        await page.close();
-
         for (const href of hrefs) {
           try {
             if (href) { // Check if href is not null
