@@ -50,14 +50,17 @@ async function processPage(pageUrl) {
 
   try {
     const uuid1 = uuidv4();
-    const [priceElement, nameElement, brandElement] = await Promise.all([
+    const [priceElement, nameElement, brandElement,categoryElemt] = await Promise.all([
       page.$x('/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[2]/div[2]/div[2]/div[1]/div[3]/div/div[1]/div[1]/span[2]'),
       page.$x('/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[1]/div/div/h1'),
       page.$x('/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[2]/div[1]/div[1]/div[2]/ul/li[2]/a'),
+      page.$x('/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[2]/div[1]/div[1]/div[2]/ul/li[1]/a'),
+    
     ]);
     const priceText = priceElement.length > 0 ? await page.evaluate((el) => el.textContent, priceElement[0]) : null;
     const nameText = nameElement.length > 0 ? await page.evaluate((el) => el.textContent, nameElement[0]) : null;
     const brandText = brandElement.length > 0 ? await page.evaluate((el) => el.textContent, brandElement[0]) : null;
+    const categoryText = categoryElemt.length > 0 ? await page.evaluate((el) => el.textContent, categoryElemt[0]) : null;
 
 
     if (nameElement.length > 0) {
@@ -116,9 +119,9 @@ async function processPage(pageUrl) {
 
       if (nameText.trim() !== '') {
         console.log('NAME:', nameText.trim(), 'PRICE:', priceText.trim(), 'URL:', pageUrl);
-        await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU,description) VALUES($1, $2, $3, $4, $5,$6)',
+        await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU,description,category) VALUES($1, $2, $3, $4, $5,$6,$7,$8)',
           [nameText.trim(), pageUrl, priceText.trim() ?? 0, brandText.trim() ?? '', uuid1,
-        formattedListData]);
+        formattedListData,categoryText.trim()?? '']);
       }
     }
 
