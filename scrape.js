@@ -42,7 +42,7 @@ async function createBrowser() {
   }
 }
 const initialPage = 'https://kashiland.com/store';
-const startUrlPattern2 = 'https://kashiland.com/store/product/'
+const startUrlPattern2 = 'https://kashiland.com/store/'
 async function processPage(pageUrl) {
   
   const page = await browser.newPage();
