@@ -189,7 +189,7 @@ async function main() {
   try {
     await createBrowser();
     await pool.connect(); 
-    // await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
+    await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
 
     cron.schedule('* * * * *', async () => {
       try {
