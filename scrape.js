@@ -164,11 +164,17 @@ async function processPage(pageUrl) {
                 var outputUrl = href;
               }
               if (outputUrl && outputUrl.startsWith(startUrlPattern2)) {
-                const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
-                if (result.rows.length === 0) {
-                  await pool.query('INSERT INTO unvisited(url) VALUES($1)', [outputUrl]);
+                const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [outputUrl]);
+                const visitedCount = visitedCheckResult.rows[0].count;
+                
+                if (visitedCount === 0) {
+                  const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
+                  if (result.rows.length === 0) {
+                    await pool.query('INSERT INTO unvisited(url) VALUES($1)', [outputUrl]);
+                  }
                 }
               }
+              
             }
           } catch (error) {
             console.error(error);
