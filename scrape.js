@@ -46,7 +46,7 @@ const browserFactory = {
 };
 
 const browserPool = genericPool.createPool(browserFactory, {
-  max: 10, // Maximum number of browsers in the pool
+  max: 20, // Maximum number of browsers in the pool
   min: 2,  // Minimum number of browsers to keep in the pool
 });
 
@@ -75,7 +75,7 @@ async function processPage(pageUrl) {
       const page = await browser.newPage();
 
       try {
-        await page.goto(pageUrl, { timeout: 120000 });
+        await page.goto(pageUrl, { timeout: 300000 });
         const uuid1 = uuidv4();
         const [priceElement, nameElement, brandElement,categoryElemt] = await Promise.all([
           page.$x('/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[2]/div[2]/div[2]/div[1]/div[3]/div/div[1]/div[1]/span[2]'),
@@ -222,6 +222,9 @@ async function main() {
               console.error(`Failed to process URL: ${url}`);
               console.error(error);
             }
+          } else {
+            // URL exists in "visited," so we can remove it from "unvisited."
+            await pool.query('DELETE FROM unvisited WHERE url = $1', [url]);
           }
         }
       } catch (error) {
