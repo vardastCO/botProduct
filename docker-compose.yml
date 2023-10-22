@@ -19,6 +19,13 @@ services:
     restart: always
     networks:
       - custom_network
+    # Add a healthcheck configuration to check the memory usage
+    healthcheck:
+      test: ["CMD", "/bin/sh", "-c", "./memory_check.sh"]
+      interval: 60s  # Check every 60 seconds
+      timeout: 10s   # Set a timeout for the check
+      retries: 3     # Number of retries before considering the service unhealthy
+
   postgres:
     deploy:
       resources:
@@ -36,6 +43,7 @@ services:
       - custom_network
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
   storage:
     image: minio/minio
     restart: always
@@ -49,7 +57,8 @@ services:
       - minio-data:/data
     command: server /data --console-address ":9090"
     networks:
-      - custom_network  
+      - custom_network
+
 volumes:
   minio-data:
 
