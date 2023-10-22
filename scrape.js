@@ -70,9 +70,9 @@ const releaseBrowser = async (instance) => {
 };
 
 
-async function processPage(pageUrl,browserInstance) {
+async function processPage(pageUrl) {
 
-  const page = await browserInstance.newPage();
+  const page = await browser.newPage();
   
   try {
     await page.goto(pageUrl, { timeout: 200000 });
@@ -205,9 +205,8 @@ async function main() {
           const url = result.rows[0].url;
           console.log('url',url)
 
-          // const browserInstance = await acquireBrowser();
-          console.log('llkshdfihgdf',browser) // Acquire a browser instance from the pool
-          await processPage(url, browser); // Call the processPage function with the acquired browser instance
+          // const browserInstance = await acquireBrowser();/ Acquire a browser instance from the pool
+          await processPage(url); // Call the processPage function with the acquired browser instance
    
        
         }
