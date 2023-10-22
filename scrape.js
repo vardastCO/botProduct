@@ -195,10 +195,11 @@ async function processPage(pageUrl) {
 
 async function main() {
   try {
+    console.log('HI')
     await createBrowser();
     await pool.connect(); 
-    await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
-
+    let db = await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
+    console.log(db,'ddbb')
     cron.schedule('* * * * *', async () => {
       try {
         // Get the next unvisited URL
