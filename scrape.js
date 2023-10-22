@@ -44,7 +44,7 @@ const initializeBrowser = async () => {
     };
 
     browser = await genericPool.createPool(browserFactory, {
-      max: 20,
+      max: 25,
     });
   }
 
@@ -74,7 +74,7 @@ const releaseBrowser = async (instance) => {
 
 
 
-async function processPage(pageUrl) {
+async function processPage(pageUrl,browser) {
 
   const page = await browser.newPage();
   
@@ -210,7 +210,7 @@ async function main() {
 
           // Update the URL status to visited
           await pool.query('UPDATE urls SET status = true WHERE url = $1', [url]);
-          await processPage(url); // Call the processPage function
+          await processPage(url,browser); // Call the processPage function
             
           
         }
