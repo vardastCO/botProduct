@@ -72,11 +72,12 @@ const releaseBrowser = async (instance) => {
 };
 
 
+acquireBrowser()
 
+async function processPage(pageUrl,br) {
 
-async function processPage(pageUrl,browbrowserInstanceser) {
-
-  const page = await browbrowserInstanceser.newPage(); //
+  console.log('brrrrr',br)
+  const page = await br.newPage(); //
   
 
   try {
