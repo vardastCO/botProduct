@@ -198,8 +198,8 @@ async function main() {
         //Get the next unvisited URL
         const result = await pool.query('SELECT url FROM urls WHERE status = false LIMIT 1');
         console.log('result',result)
-        const resultCount = result.rows[0].count;
-        if (resultCount ==  0) {
+        const resultCount = result.rows.count();
+        if (resultCount !=  0) {
           const url = result.rows[0].url;
 
           // Update the URL status to visited
