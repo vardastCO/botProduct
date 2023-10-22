@@ -72,7 +72,7 @@ const startUrlPattern2 = 'https://kashiland.com/store/prod';
 async function processPage(pageUrl) {
   const browser = await createBrowser();
   const page = await browser.newPage();
-
+  
   try {
     await page.goto(pageUrl, { timeout: 300000 });
     const uuid1 = uuidv4();
@@ -186,13 +186,13 @@ async function processPage(pageUrl) {
 
 async function main() {
   try {
-    console.log('HI', initialPage);
-    await createBrowser();
-    await pool.connect();
-    let db = await pool.query('INSERT INTO urls(url, status) VALUES($1, $2)', [initialPage, false]);
-    console.log(db, 'ddbb');
-    cron.schedule('* * * * *', async () => {
+    cron.schedule('*/5 * * * *', async () => {
       try {
+        console.log('HI', initialPage);
+        await createBrowser();
+        await pool.connect();
+        let db = await pool.query('INSERT INTO urls(url, status) VALUES($1, $2)', [initialPage, false]);
+        console.log('farboood')
         // Get the next unvisited URL
         const result = await pool.query('SELECT url FROM urls WHERE status = false LIMIT 1');
 
