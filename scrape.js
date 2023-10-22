@@ -199,7 +199,7 @@ async function main() {
     // Define initialPage with the URL you want to start with
     // Initialize your database connection (e.g., 'pool') here.
     // await pool.query('INSERT INTO urls(url, status) VALUES($1, $2)', [initialPage, false]);
-    cron.schedule('*/5 * * * *', async () => {
+    // cron.schedule('*/5 * * * *', async () => {
       try {
         console.log('hi bot');
 
@@ -226,7 +226,7 @@ async function main() {
         // Close browser and database pool connections as needed
         // For example: await browser.close(); and await pool.end();
       }
-    });
+    // });
   } catch (error) {
     console.error(error, 'rrrrrrrrrrr');
   }
