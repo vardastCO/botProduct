@@ -58,6 +58,11 @@ const initializeBrowser = async () => {
   }
 };
 
+const acquireBrowser = async () => {
+  await initializeBrowser();
+  return browser.acquire();
+};
+
 const releaseBrowser = async (instance) => {
   await browser.release(instance);
 };
