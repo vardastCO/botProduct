@@ -76,8 +76,8 @@ async function processPage(pageUrl,browserInstance) {
   const page = await browserInstance.newPage();
   
   try {
-    await page.goto(pageUrl, { timeout: 300000 });
-    console.log('hi fucking')
+    await page.goto(pageUrl, { timeout: 200000 });
+    console.log('hi',pageUrl)
     const uuid1 = uuidv4();
     const [priceElement, nameElement, brandElement, categoryElemt] = await Promise.all([
       page.$x('/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[2]/div[2]/div[2]/div[1]/div[3]/div/div[1]/div[1]/span[2]'),
@@ -192,19 +192,17 @@ async function main() {
     // Define initialPage with the URL you want to start with
     // Initialize your database connection (e.g., 'pool') here.
     await pool.query('INSERT INTO urls(url, status) VALUES($1, $2)', [initialPage, false]);
-    cron.schedule('* * * * *', async () => {
+    cron.schedule('*/5 * * * *', async () => {
       try {
         console.log('hi bot');
 
         // Get the next unvisited URL
         const result = await pool.query('SELECT url FROM urls WHERE status = false LIMIT 1');
-        console.log('result', result);
+
         const resultCount = result.rowCount;
-        console.log('count result',resultCount) // Use rowCount to get the number of rows
+  
         if (resultCount !== 0) {
           const url = result.rows[0].url;
-
-          console.log('start urls',url)
 
           // Update the URL status to visited
           await pool.query('UPDATE urls SET status = true WHERE url = $1', [url]);
