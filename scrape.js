@@ -195,8 +195,9 @@ async function main() {
         
         // Initialize the browser and pool (if not already defined)
         const browser = await createBrowser();
+        console.log('browser',browser)
         const pool = await pool.connect();
-
+        console.log('pool',pool)
         // Insert the initial URL into the database
         await pool.query('INSERT INTO urls(url, status) VALUES($1, $2)', [initialPage, false]);
 
@@ -234,6 +235,7 @@ async function main() {
       } catch (error) {
         console.error(error, 'eeeeeeeeeeeeee');
       } finally {
+        console.log('giii')
         // Close browser and database pool connections as needed
         // For example: await browser.close(); and await pool.end();
       }
