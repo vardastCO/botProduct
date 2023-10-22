@@ -81,8 +81,8 @@ async function processPage(pageUrl) {
   const page = await browserInstance.newPage();
   try {
     
-    
-    await page.goto(pageUrl, { timeout: 200000 });
+    console.log('page',page,pageUrl)
+    await page.goto(pageUrl, { timeout: 100000 });
     console.log('hi',pageUrl)
     const uuid1 = uuidv4();
     const [priceElement, nameElement, brandElement, categoryElemt] = await Promise.all([
