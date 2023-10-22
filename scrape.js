@@ -205,9 +205,9 @@ async function main() {
           const url = result.rows[0].url;
           console.log('url',url)
 
-          const browserInstance = await acquireBrowser();
-          console.log('llkshdfihgdf',browserInstance) // Acquire a browser instance from the pool
-          await processPage(url, browserInstance); // Call the processPage function with the acquired browser instance
+          // const browserInstance = await acquireBrowser();
+          console.log('llkshdfihgdf',browser) // Acquire a browser instance from the pool
+          await processPage(url, browser); // Call the processPage function with the acquired browser instance
    
        
         }
