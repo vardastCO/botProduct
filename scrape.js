@@ -200,7 +200,7 @@ async function main() {
     // Define initialPage with the URL you want to start with
   
 
-    cron.schedule('*/5 * * * *', async () => {
+    cron.schedule('* * * * *', async () => {
       try {
 
         //Get the next unvisited URL
