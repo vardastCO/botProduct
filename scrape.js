@@ -249,9 +249,8 @@ async function main() {
     console.error(error, 'rrrrrrrrrrr');
   }
 }
-initializeBrowser().then( ()=> {
-  main();
-
-})
+initialize().then(() => {
+  main()
+});
 
 
