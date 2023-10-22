@@ -183,6 +183,7 @@ async function processPage(pageUrl,browserInstance) {
     if (page) {
       await page.close();
     }
+    await pool.query('UPDATE urls SET status = true WHERE url = $1', [pageUrl]);
     releaseBrowser(browser);
   }
 }
@@ -204,9 +205,6 @@ async function main() {
   
         if (resultCount != 0) {
           const url = result.rows[0].url;
-
-          // Update the URL status to visited
-          await pool.query('UPDATE urls SET status = true WHERE url = $1', [url]);
 
           const browserInstance = await acquireBrowser(); // Acquire a browser instance from the pool
           await processPage(url, browserInstance); // Call the processPage function with the acquired browser instance
