@@ -234,11 +234,11 @@ async function main() {
           }
         }
       } catch (error) {
-        console.error(error);
+        console.error(error,'eeeeeeeeeeeeee');
       }
     });
   } catch (error) {
-    console.error(error);
+    console.error(error,'rrrrrrrrrrr');
   }
 }
 
