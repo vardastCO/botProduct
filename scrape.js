@@ -224,7 +224,7 @@ async function main() {
       }
     });
   } catch (error) {
-    // console.error(error, 'rrrrrrrrrrr');
+    console.error(error, 'rrrrrrrrrrr');
   }
 }
 
