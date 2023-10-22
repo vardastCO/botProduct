@@ -55,7 +55,7 @@ async function acquireBrowser() {
 async function releaseBrowser(browser) {
   browserPool.release(browser);
 }
-
+const browser 
 async function createBrowser() {
   try {
     browser = await acquireBrowser();
@@ -64,21 +64,30 @@ async function createBrowser() {
     throw error;
   }
 }
-let browser 
+
 async function someFunction() {
+ // Declare the browser variable here to avoid any scoping issues.
   try {
-    browser = await createBrowser();eateBrowser();
+    browser = await createBrowser(); // Corrected the typo
     let kk = await pool.connect();
-    console.log('kkk',kk)
-    let ll = await pool.query('INSERT INTO urls(url, status) VALUES($1, $2)', [initialPage, false]);
-    console.log('ll',ll)
+    console.log('kkk', kk);
+
+    // Replace `initialPage` with the actual URL you want to insert into the database.
+  // / Change this URL to your desired one.
+
+    // Replace `url` and `status` with the actual column names in your database table.
+    const insertQuery = 'INSERT INTO urls(url, status) VALUES($1, $2)';
+
+    const ll = await pool.query(insertQuery, [initialPage, false]);
+    console.log('ll', ll);
   } catch (e) {
     console.error('Error:', e);
-  }
+  } 
 }
-
+someFunction()
 // Call your async function.
-someFunction();
+
+
 
 const initialPage = 'https://kashiland.com/store';
 const startUrlPattern2 = 'https://kashiland.com/store/prod';
@@ -210,7 +219,8 @@ async function main() {
         //Get the next unvisited URL
         const result = await pool.query('SELECT url FROM urls WHERE status = false LIMIT 1');
         console.log('result',result)
-        if (result.rows.length > 0) {
+        const resultCount = result.rows[0].count;
+        if (resultCount ==  0) {
           const url = result.rows[0].url;
 
           // Update the URL status to visited
@@ -222,7 +232,7 @@ async function main() {
           const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM scraped_data WHERE url = $1', [url]);
           const visitedCount = visitedCheckResult.rows[0].count;
 
-          if (visitedCount === 0) {
+          if (visitedCount == 0) {
             // Attempt to process the URL
             try {
               await processPage(url);
