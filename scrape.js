@@ -217,6 +217,7 @@ async function main() {
    
        
         }
+        console.log('end ptettrtrtert')
       } catch (error) {
         console.error(error, 'error bot');
       } finally {
