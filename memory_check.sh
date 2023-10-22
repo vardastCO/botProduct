@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set the memory threshold to 300 megabytes in bytes
-MEMORY_THRESHOLD=314572800  # 300 megabytes
+MEMORY_THRESHOLD=524288000 
 
 # Get the memory usage of the container
 MEMORY_USAGE=$(cat /sys/fs/cgroup/memory/memory.usage_in_bytes)
