@@ -74,12 +74,10 @@ const releaseBrowser = async (instance) => {
 
 acquireBrowser()
 
-async function processPage(pageUrl,br) {
+async function processPage(pageUrl,browserInstance) {
 
-  console.log('brrrrr',br)
-  const page = await br.newPage(); //
+  const page = await browserInstance.newPage();
   
-
   try {
     await page.goto(pageUrl, { timeout: 300000 });
     const uuid1 = uuidv4();
@@ -212,6 +210,10 @@ async function main() {
 
           // Update the URL status to visited
           await pool.query('UPDATE urls SET status = true WHERE url = $1', [url]);
+
+          const browserInstance = await acquireBrowser(); // Acquire a browser instance from the pool
+          await processPage(url, browserInstance); // Call the processPage function with the acquired browser instance
+          await releaseBrowser(browserInstance);
           await processPage(url,browser); // Call the processPage function
             
           
