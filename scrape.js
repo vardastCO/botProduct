@@ -46,8 +46,7 @@ const browserFactory = {
 };
 
 const browserPool = genericPool.createPool(browserFactory, {
-  max: 20, // Maximum number of browsers in the pool
-  min: 2,  // Minimum number of browsers to keep in the pool
+  max: 20
 });
 
 async function acquireBrowser() {
