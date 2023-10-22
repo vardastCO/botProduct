@@ -209,6 +209,7 @@ async function main() {
         const resultCount = result.rowCount;
         console.log(resultCount,'count')
         if (resultCount != 0) {
+          console.log('hi in if')
           const url = result.rows[0].url;
           console.log('url',url)
 
