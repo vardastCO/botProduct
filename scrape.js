@@ -62,7 +62,6 @@ const initializeBrowser = async () => {
  
 };
 const acquireBrowser = async () => {
-  await initializeBrowser();
   return browser.acquire();
 };
 
