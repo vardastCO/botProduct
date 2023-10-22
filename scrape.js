@@ -68,6 +68,7 @@ async function someFunction() {
   try {
     await createBrowser();
     await pool.connect();
+    await pool.query('INSERT INTO urls(url, status) VALUES($1, $2)', [initialPage, false]);
   } catch (e) {
     console.error('Error:', e);
   }
@@ -201,17 +202,8 @@ async function main() {
 
     cron.schedule('*/5 * * * *', async () => {
       try {
-        console.log('HI', initialPage);
-        
-        // Initialize the browser and pool (if not already defined)
-     
-        console.log('pool',pool)
-        // Insert the initial URL into the database
-        await pool.query('INSERT INTO urls(url, status) VALUES($1, $2)', [initialPage, false]);
 
-        console.log('farboood');
-
-        // Get the next unvisited URL
+        //Get the next unvisited URL
         const result = await pool.query('SELECT url FROM urls WHERE status = false LIMIT 1');
 
         if (result.rows.length > 0) {
