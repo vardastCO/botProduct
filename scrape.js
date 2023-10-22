@@ -212,16 +212,12 @@ async function main() {
 
           // Process the URL if it's not in the "visited" table
           const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM scraped_data WHERE url = $1', [url]);
-          const visitedCount = visitedCheckResult.rows[0].count; // Access count value
+          const visitedCount = visitedCheckResult.rowCount; // Access count value
 
-          if (visitedCount === 0) {
+          if (visitedCount == 0) {
             // Attempt to process the URL
             try {
               await processPage(url); // Call the processPage function
-
-              // Insert it into the "scraped_data" table
-              await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU, description, category) VALUES($1, $2, $3, $4, $5, $6, $7)',
-                ['', url, 0, '', '', '', '']);
             } catch (error) {
               console.error(`Failed to process URL: ${url}`);
               console.error(error);
