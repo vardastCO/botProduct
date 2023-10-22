@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# Set your memory threshold in bytes (e.g., 512MB)
-MEMORY_THRESHOLD=536870912  # 512MB
+# Set your memory threshold to 10 gigabytes in bytes
+MEMORY_THRESHOLD=$((10 * 1024 * 1024 * 1024))
 
 # Get the memory usage of the container
 MEMORY_USAGE=$(cat /sys/fs/cgroup/memory/memory.usage_in_bytes)
