@@ -201,28 +201,18 @@ async function main() {
         // Get the next unvisited URL
         const result = await pool.query('SELECT url FROM urls WHERE status = false LIMIT 1');
         console.log('result', result);
-        const resultCount = result.rowCount; // Use rowCount to get the number of rows
+        const resultCount = result.rowCount;
+        console.log('count result',resultCount) // Use rowCount to get the number of rows
         if (resultCount !== 0) {
           const url = result.rows[0].url;
 
+          console.log('start urls',url)
+
           // Update the URL status to visited
           await pool.query('UPDATE urls SET status = true WHERE url = $1', [url]);
-
-          console.log('url', url);
-
-          // Process the URL if it's not in the "visited" table
-          const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM scraped_data WHERE url = $1', [url]);
-          const visitedCount = visitedCheckResult.rowCount; // Access count value
-
-          if (visitedCount == 0) {
-            // Attempt to process the URL
-            try {
-              await processPage(url); // Call the processPage function
-            } catch (error) {
-              console.error(`Failed to process URL: ${url}`);
-              console.error(error);
-            }
-          }
+          await processPage(url); // Call the processPage function
+            
+          
         }
       } catch (error) {
         console.error(error, 'error bot');
@@ -233,7 +223,7 @@ async function main() {
       }
     });
   } catch (error) {
-    console.error(error, 'rrrrrrrrrrr');
+    // console.error(error, 'rrrrrrrrrrr');
   }
 }
 
