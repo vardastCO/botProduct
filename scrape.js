@@ -1,9 +1,10 @@
-const puppeteer = require('puppeteer-core');
-const { Cluster } = require('puppeteer-cluster');
+const puppeteer = require('puppeteer');
 const { Client } = require('pg');
 const cron = require('node-cron');
 const fetch = require('node-fetch');
+const fs = require('fs-extra');
 const { v4: uuidv4 } = require('uuid');
+const path = require('path');
 const Minio = require('minio');
 const minioClient = new Minio.Client({
   endPoint: 'storage', // Use the service name defined in your Docker Compose file
@@ -27,7 +28,8 @@ async function createBrowser() {
   try {
     browser = await puppeteer.launch({
       headless: true,
-      executablePath: '/usr/bin/google-chrome-stable',
+      executablePath: process.env.NODE_ENV === "production" ?
+        process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
@@ -39,65 +41,37 @@ async function createBrowser() {
     throw error;
   }
 }
-const initialPage = 'https://kashiland.com/store';
-const startUrlPattern2 = 'https://kashiland.com/store/prod'
-async function processPage(pageUrl) {
-  
-  const page = await browser.newPage();
+const startUrlPattern2 = 'https://www.tileiran.co/fa/';
+const initialPage = 'https://www.tileiran.co/fa/%D9%81%D8%B1%D9%88%D8%B4%DA%AF%D8%A7%D9%87-%D8%A2%D9%86%D9%84%D8%A7%DB%8C%D9%86.html';
 
+async function processPage(pageUrl) {
+  const uuid1 = uuidv4();
+  const page = await browser.newPage();
+  await page.goto(pageUrl, { timeout: 350000 });
 
   try {
-    await page.goto(pageUrl, { timeout: 350000 });
-    const uuid1 = uuidv4();
-    const [priceElement, nameElement, brandElement,categoryElemt] = await Promise.all([
-      page.$x('/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[2]/div[2]/div[2]/div[1]/div[3]/div/div[1]/div[1]/span[2]'),
-      page.$x('/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[1]/div/div/h1'),
-      page.$x('/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[2]/div[1]/div[1]/div[2]/ul/li[2]/a'),
-      page.$x('/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[2]/div[1]/div[1]/div[2]/ul/li[1]/a'),
-    
+    const [priceElement, nameElement, brandElement] = await Promise.all([
+      page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[4]/div[1]/span/span/span[1]'),
+      page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[1]/a'),
+      page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[3]/a'),
     ]);
-    const priceText = priceElement.length > 0 ? await page.evaluate((el) => el.textContent, priceElement[0]) : '';
-    const nameText = nameElement.length > 0 ? await page.evaluate((el) => el.textContent, nameElement[0]) : '';
-    const brandText = brandElement.length > 0 ? await page.evaluate((el) => el.textContent, brandElement[0]) : '';
-    const categoryText = categoryElemt.length > 0 ? await page.evaluate((el) => el.textContent, categoryElemt[0]) : '';
-
 
     if (nameElement.length > 0) {
-      const listXPath = '/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[2]/div[1]/div[1]/div[2]/div/ul';
+      const [priceText, nameText, brandText] = await Promise.all([
+        page.evaluate((el) => el.textContent, priceElement[0]),
+        page.evaluate((el) => el.textContent, nameElement[0]),
+        page.evaluate((el) => el.textContent, brandElement[0]),
+      ]);
 
-      const listData = await page.evaluate((listXPath) => {
-        const list = document.evaluate(listXPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-        const data = {};
-      
-        if (list) {
-          const items = list.getElementsByTagName('li');
-          for (const item of items) {
-            const parts = item.textContent.split(':');
-            if (parts.length === 2) {
-              const key = parts[0].trim();
-              const value = parts[1].trim();
-              data[key] = value;
-            }
-          }
-        }
-      
-        return data;
-      }, listXPath);
-      
-      // Create a single string with the formatted data
-      const formattedListData = Object.keys(listData)
-        .map((key) => `${key}: ${listData[key]}`)
-        .join('\n');
-
-      const [imageElement] = await page.$x('/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[1]/div/div/div/div[1]/div[1]/div[1]/a/figure/img');
+      const [imageElement] = await page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[2]/div[1]/div[1]/div/div/div/a/img');
 
       if (imageElement) {
         const imageUrl = await imageElement.evaluate((img) => img.src);
         const response = await fetch(imageUrl);
 
-        if (response.ok && uuid1) {
+        if (response.ok) {
           const buffer = await response.buffer();
-          const localFilename = `${uuid1}.jpg`;
+          const localFilename = `image_${uuid1}.jpg`;
       
           // Upload the image to Minio
           const bucketName = 'vardast'; // Replace with your Minio bucket name
@@ -118,9 +92,8 @@ async function processPage(pageUrl) {
 
       if (nameText.trim() !== '') {
         console.log('NAME:', nameText.trim(), 'PRICE:', priceText.trim(), 'URL:', pageUrl);
-        await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU,description,category) VALUES($1, $2, $3, $4, $5,$6,$7)',
-          [nameText.trim(), pageUrl, priceText.trim() ?? 0, brandText.trim() ?? '', uuid1,
-        formattedListData,categoryText.trim() ?? '']);
+        await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU) VALUES($1, $2, $3, $4, $5)',
+          [nameText.trim(), pageUrl, priceText.trim() ?? 0, brandText.trim() ?? '', uuid1]);
       }
     }
 
@@ -128,8 +101,6 @@ async function processPage(pageUrl) {
       const links = Array.from(document.querySelectorAll('a'));
       return links.map((link) => link.getAttribute('href'));
     });
-
-    await page.close();
 
     for (const href of hrefs) {
       try {
@@ -147,64 +118,52 @@ async function processPage(pageUrl) {
           }
         }
       } catch (error) {
-        // console.error(error);
+        console.error(error);
       }
     }
   } catch (error) {
     console.error(error);
   } finally {
-    if (page) {
-      await page.close();
-    }
+    await page.close();
   }
 }
+
 async function main() {
   try {
- 
-    const cluster = await Cluster.launch({
-      concurrency: Cluster.CONCURRENCY_CONTEXT,
-      maxConcurrency: 20,
-      puppeteerOptions: {
-        headless: true,
-        executablePath: '/usr/bin/google-chrome-stable',
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-      },
-    });
-  
+    await createBrowser();
     await pool.connect();
-    await createBrowser()
-  
-    cluster.queue(async ({ page, data: currentHref }) => {
+
+    cron.schedule('* * * * *', async () => {
       try {
-        const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [currentHref]);
-        const visitedCount = visitedCheckResult.rows[0].count;
-  
-        if (visitedCount === 0) {
+        let currentHref = await pool.query('SELECT url FROM unvisited LIMIT 1');
+        let visitedCount = 0;
+
+        if (currentHref.rows.length > 0) {
+          const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [currentHref.rows[0].url]);
+          visitedCount = visitedCheckResult.rows[0].count;
+          currentHref = currentHref.rows[0].url;
+        } else {
+          currentHref = initialPage;
+        }
+
+        if (visitedCount == 0) {
           await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
           await pool.query('INSERT INTO visited(url) VALUES($1)', [currentHref]);
-  
-          await processPage(page, currentHref);
+
+          const pageForEvaluation = await browser.newPage();
+          await processPage(currentHref);
+
+          await pageForEvaluation.close();
         } else {
           await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
         }
       } catch (error) {
-        logger.error(`Error processing page: ${error}`);
+        console.error(error);
       }
     });
-  
-    cluster.on('taskerror', (err, data) => {
-      logger.error(`Task error on URL ${data}: ${err.message}`);
-    });
-  
-    cluster.on('idle', async () => {
-      await cluster.idle();
-      await cluster.close();
-      logger.info('Puppeteer Cluster has completed all tasks.');
-      process.exit(0);
-    });
-  }catch (e){
-    console.log('eeeeeeeeeee',e)
-  }  
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 main();
