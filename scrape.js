@@ -79,6 +79,8 @@ function createMinioClient() {
 
 // Acquire a browser instance from the pool
 async function acquireBrowser() {
+  console.log('Acquiring a browser instance...');
+  console.log('Acquiring a browser instance...',browserPool);
   return browserPool.acquire();
 }
 
@@ -87,20 +89,25 @@ async function releaseBrowser(instance) {
   await browserPool.release(instance);
 }
 async function processPage(pageUrl) {
- console.log('pppppppppppppppppppppp')
-  const browserInstance = await acquireBrowser();
-  console.log('lllllllllll',browserInstance)
-  if (!browserInstance) {
-    console.error('Failed to acquire a browser instance.');
-    return;
-  }
-  
-  const page = await browserInstance.newPage();
-  console.log('oooooooooooooo',page)
+  console.log('Starting page processing for:', pageUrl);
+
   try {
-    
-    console.log('page',page,pageUrl)
+    // Acquire a browser instance
+    const browserInstance = await acquireBrowser();
+    console.log('Acquired browser instance:', browserInstance);
+
+    if (!browserInstance) {
+      console.error('Failed to acquire a browser instance.');
+      return;
+    }
+
+    // Create a new page for web scraping
+    const page = await browserInstance.newPage();
+
+    // Navigate to the specified URL
+    console.log('Navigating to:', pageUrl);
     await page.goto(pageUrl, { timeout: 100000 });
+
     console.log('hi',pageUrl)
     const uuid1 = uuidv4();
     const [priceElement, nameElement, brandElement, categoryElemt] = await Promise.all([
