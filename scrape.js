@@ -1,86 +1,102 @@
 const puppeteer = require('puppeteer-core');
 const { Client } = require('pg');
-const cron = require('node-cron');
-const fetch = require('node-fetch');
-const { v4: uuidv4 } = require('uuid');
 const Minio = require('minio');
 const genericPool = require('generic-pool');
+const { v4: uuidv4 } = require('uuid');
+const fetch = require('node-fetch');
+const cron = require('node-cron');
 
-const minioClient = new Minio.Client({
-  endPoint: 'storage', // Use the service name defined in your Docker Compose file
-  port: 9000,
-  useSSL: false,
-  accessKey: 'ndp', // Use the access key defined in your Docker Compose file
-  secretKey: 'str0ngP@ss', // Use the secret key defined in your Docker Compose file
-});
-
-let browser = null;
-let pool = null;
+// Define your environment variables or configuration here
+const config = {
+  puppeteer: {
+    executablePath: '/usr/bin/google-chrome-stable',
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-extensions',
+      '--disable-gpu',
+    ],
+  },
+  database: {
+    user: 'db',
+    host: 'postgres',
+    database: 'mydb',
+    password: 'root',
+    port: 5432,
+  },
+  minio: {
+    endPoint: 'storage',
+    port: 9000,
+    useSSL: false,
+    accessKey: 'ndp',
+    secretKey: 'str0ngP@ss',
+  },
+};
 
 const initialPage = 'https://kashiland.com/store';
 const startUrlPattern2 = 'https://kashiland.com/store/prod';
 
-const initializeBrowser = async () => {
-  // Initialize the browser and pool only once
-  if (!browser) {
-    const browserFactory = {
-      create: async () => {
-        const instance = await puppeteer.launch({
-          headless: true,
-          executablePath: '/usr/bin/google-chrome-stable',
-          args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-extensions',
-            '--disable-gpu',
-          ],
-        });
-        return instance;
-      },
-      destroy: (instance) => {
-        instance.close();
-      },
-    };
+let browserPool = null;
+let dbClient = null;
+let minioClient = null;
 
-    browser = await genericPool.createPool(browserFactory, {
-      max: 25,
-    });
+// Initialize browser, database, and Minio connections
+async function initialize() {
+  try {
+    browserPool = await createBrowserPool();
+    dbClient = await createDatabaseClient();
+    minioClient = createMinioClient();
+  } catch (error) {
+    console.error('Initialization error:', error);
   }
+}
 
-  if (!pool) {
-    pool = new Client({
-      user: 'db',
-      host: 'postgres', // Use the service name defined in docker-compose.yml
-      database: 'mydb', // This should match the POSTGRES_DB in docker-compose.yml
-      password: 'root',
-      port: 5432,
-      max: 25, // Maximum number of connections in the pool
-    });
-    await pool.connect();
-  }
- 
-};
-const acquireBrowser = async () => {
-  return browser.acquire();
-};
+// Create a browser pool
+async function createBrowserPool() {
+  const factory = {
+    create: async () => {
+      const instance = await puppeteer.launch(config.puppeteer);
+      return instance;
+    },
+    destroy: (instance) => instance.close(),
+  };
 
-const releaseBrowser = async (instance) => {
-  await pool.release(instance);
-};
+  return genericPool.createPool(factory, { max: 25 });
+}
 
+// Create a PostgreSQL client
+async function createDatabaseClient() {
+  const client = new Client(config.database);
+  await client.connect();
+  return client;
+}
 
+// Create a Minio client
+function createMinioClient() {
+  return new Minio.Client(config.minio);
+}
+
+// Acquire a browser instance from the pool
+async function acquireBrowser() {
+  return browserPool.acquire();
+}
+
+// Release a browser instance back to the pool
+async function releaseBrowser(instance) {
+  await browserPool.release(instance);
+}
 async function processPage(pageUrl) {
  console.log('pppppppppppppppppppppp')
   const browserInstance = await acquireBrowser();
-  console.log('pppppppppppppppppppppp',browserInstance)
+  console.log('lllllllllll',browserInstance)
   if (!browserInstance) {
     console.error('Failed to acquire a browser instance.');
     return;
   }
   
   const page = await browserInstance.newPage();
-  console.log('pppppppppppppppppppppp',page)
+  console.log('oooooooooooooo',page)
   try {
     
     console.log('page',page,pageUrl)
