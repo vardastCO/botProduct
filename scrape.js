@@ -64,11 +64,14 @@ async function createBrowser() {
     throw error;
   }
 }
+let browser 
 async function someFunction() {
   try {
-    await createBrowser();
-    await pool.connect();
-    await pool.query('INSERT INTO urls(url, status) VALUES($1, $2)', [initialPage, false]);
+    browser = await createBrowser();eateBrowser();
+    let kk = await pool.connect();
+    console.log('kkk',kk)
+    let ll = await pool.query('INSERT INTO urls(url, status) VALUES($1, $2)', [initialPage, false]);
+    console.log('ll',ll)
   } catch (e) {
     console.error('Error:', e);
   }
@@ -81,7 +84,7 @@ const initialPage = 'https://kashiland.com/store';
 const startUrlPattern2 = 'https://kashiland.com/store/prod';
 
 async function processPage(pageUrl) {
-  const browser = await createBrowser();
+
   const page = await browser.newPage();
   
   try {
