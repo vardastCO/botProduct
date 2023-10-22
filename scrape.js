@@ -57,9 +57,13 @@ async function createBrowserPool() {
   const factory = {
     create: async () => {
       const instance = await puppeteer.launch(config.puppeteer);
+      console.log('Created a new browser instance:', instance);
       return instance;
     },
-    destroy: (instance) => instance.close(),
+    destroy: (instance) => {
+      console.log('Destroying browser instance:', instance);
+      instance.close();
+    },
   };
 
   return genericPool.createPool(factory, { max: 25 });
@@ -103,6 +107,8 @@ async function processPage(pageUrl) {
 
     // Create a new page for web scraping
     const page = await browserInstance.newPage();
+
+    cpnsole.log(page,'::::::::page:::::::::')
 
     // Navigate to the specified URL
     console.log('Navigating to:', pageUrl);
