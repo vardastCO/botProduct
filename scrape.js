@@ -61,18 +61,15 @@ const initializeBrowser = async () => {
   }
  
 };
-
 const acquireBrowser = async () => {
-  await initializeBrowser();
-  return browser.acquire();
+  await initializeBrowserPool();
+  return browserPool.acquire();
 };
 
 const releaseBrowser = async (instance) => {
   await pool.release(instance);
 };
 
-
-acquireBrowser()
 
 async function processPage(pageUrl,browserInstance) {
 
