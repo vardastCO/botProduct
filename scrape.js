@@ -189,18 +189,40 @@ async function main() {
   try {
     await createBrowser();
     await pool.connect(); 
-    // await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
+    await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
 
-    cron.schedule('*/5 * * * *', async () => {
+    cron.schedule('* * * * *', async () => {
       try {
         // Get the next unvisited URL
-        const result = await pool.query('SELECT url FROM unvisited LIMIT 1');
-        console.log('url',result)
+        const result = await pool.query('SELECT url FROM unvisited WHERE url NOT IN (SELECT url FROM visited) LIMIT 1');
+    
         if (result.rows.length > 0) {
           const url = result.rows[0].url;
-          // Process the URL
+          
+          // Delete the URL from unvisited
+          await pool.query('DELETE FROM unvisited WHERE url = $1', [url]);
+
           console.log('url',url)
-          await processPage(url);
+    
+          // Process the URL if it's not in the "visited" table
+          const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [url]);
+          const visitedCount = visitedCheckResult.rows[0].count;
+
+          console.log('visitedCount',visitedCount)
+    
+          if (visitedCount == 0) {
+            // Attempt to process the URL
+            try {
+              console.log('url2222',url)
+              await processPage(url);
+    
+              // Insert it into visited
+              await pool.query('INSERT INTO visited(url) VALUES($1)', [url]);
+            } catch (error) {
+              console.error(`Failed to process URL: ${url}`);
+              console.error(error);
+            }
+          }
         }
       } catch (error) {
         console.error(error);
