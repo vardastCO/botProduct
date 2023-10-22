@@ -186,13 +186,22 @@ async function processPage(pageUrl) {
 
 async function main() {
   try {
+    // Define initialPage with the URL you want to start with
+  
+
     cron.schedule('*/5 * * * *', async () => {
       try {
         console.log('HI', initialPage);
-        await createBrowser();
-        await pool.connect();
-        let db = await pool.query('INSERT INTO urls(url, status) VALUES($1, $2)', [initialPage, false]);
-        console.log('farboood')
+        
+        // Initialize the browser and pool (if not already defined)
+        const browser = await createBrowser();
+        const pool = await pool.connect();
+
+        // Insert the initial URL into the database
+        await pool.query('INSERT INTO urls(url, status) VALUES($1, $2)', [initialPage, false]);
+
+        console.log('farboood');
+
         // Get the next unvisited URL
         const result = await pool.query('SELECT url FROM urls WHERE status = false LIMIT 1');
 
@@ -224,6 +233,9 @@ async function main() {
         }
       } catch (error) {
         console.error(error, 'eeeeeeeeeeeeee');
+      } finally {
+        // Close browser and database pool connections as needed
+        // For example: await browser.close(); and await pool.end();
       }
     });
   } catch (error) {
