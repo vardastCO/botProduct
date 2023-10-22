@@ -14,79 +14,58 @@ const minioClient = new Minio.Client({
   secretKey: 'str0ngP@ss', // Use the secret key defined in your Docker Compose file
 });
 
-const pool = new Client({
-  user: 'db',
-  host: 'postgres', // Use the service name defined in docker-compose.yml
-  database: 'mydb', // This should match the POSTGRES_DB in docker-compose.yml
-  password: 'root',
-  port: 5432,
-  max: 25, // Maximum number of connections in the pool
-});
+let browser = null;
+let pool = null;
 
+const initializeBrowser = async () => {
+  // Initialize the browser and pool only once
+  if (!browser) {
+    const browserFactory = {
+      create: async () => {
+        const instance = await puppeteer.launch({
+          headless: true,
+          executablePath: '/usr/bin/google-chrome-stable',
+          args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-extensions',
+            '--disable-gpu',
+          ],
+        });
+        return instance;
+      },
+      destroy: (instance) => {
+        instance.close();
+      },
+    };
 
-const browserFactory = {
-  create: async () => {
-    const browser = await puppeteer.launch({
-      headless: true,
-      executablePath: '/usr/bin/google-chrome-stable',
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-extensions',
-        '--disable-gpu'
-      ],
+    browser = await genericPool.createPool(browserFactory, {
+      max: 20,
     });
-    return browser;
-  },
-  destroy: (browser) => {
-    browser.close();
+  }
+
+  if (!pool) {
+    pool = new Client({
+      user: 'db',
+      host: 'postgres', // Use the service name defined in docker-compose.yml
+      database: 'mydb', // This should match the POSTGRES_DB in docker-compose.yml
+      password: 'root',
+      port: 5432,
+      max: 25, // Maximum number of connections in the pool
+    });
+    await pool.connect();
   }
 };
 
-const browserPool = genericPool.createPool(browserFactory, {
-  max: 20
-});
+const acquireBrowser = async () => {
+  await initializeBrowser();
+  return browser.acquire();
+};
 
-async function acquireBrowser() {
-  return browserPool.acquire();
-}
-
-async function releaseBrowser(browser) {
-  browserPool.release(browser);
-}
-const browser 
-async function createBrowser() {
-  try {
-    browser = await acquireBrowser();
-    return browser;
-  } catch (error) {
-    throw error;
-  }
-}
-
-async function someFunction() {
- // Declare the browser variable here to avoid any scoping issues.
-  try {
-    browser = await createBrowser(); // Corrected the typo
-    let kk = await pool.connect();
-    console.log('kkk', kk);
-
-    // Replace `initialPage` with the actual URL you want to insert into the database.
-  // / Change this URL to your desired one.
-
-    // Replace `url` and `status` with the actual column names in your database table.
-    const insertQuery = 'INSERT INTO urls(url, status) VALUES($1, $2)';
-
-    const ll = await pool.query(insertQuery, [initialPage, false]);
-    console.log('ll', ll);
-  } catch (e) {
-    console.error('Error:', e);
-  } 
-}
-someFunction()
-// Call your async function.
-
+const releaseBrowser = async (instance) => {
+  await browser.release(instance);
+};
 
 
 const initialPage = 'https://kashiland.com/store';
