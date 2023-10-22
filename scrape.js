@@ -189,55 +189,66 @@ async function processPage(pageUrl) {
 async function main() {
   try {
     // Define initialPage with the URL you want to start with
-  
+    // Initialize your database connection (e.g., 'pool') here.
 
     cron.schedule('* * * * *', async () => {
       try {
         console.log('hi bot');
-    
+
         // Get the next unvisited URL
         const result = await pool.query('SELECT url FROM urls WHERE status = false LIMIT 1');
         console.log('result', result);
         const resultCount = result.rowCount; // Use rowCount to get the number of rows
         if (resultCount !== 0) {
-            const url = result.rows[0].url;
-    
-            // Update the URL status to visited
-            await pool.query('UPDATE urls SET status = true WHERE url = $1', [url]);
-    
-            console.log('url', url);
-    
-            // Process the URL if it's not in the "visited" table
-            const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM scraped_data WHERE url = $1', [url]);
-            const visitedCount = visitedCheckResult.rows[0].count; // Access count value
-    
-            if (visitedCount === 0) {
-                // Attempt to process the URL
-                try {
-                    await processPage(url);
-    
-                    // Insert it into the "scraped_data" table
-                    await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU, description, category) VALUES($1, $2, $3, $4, $5, $6, $7)',
-                        ['', url, 0, '', '', '', '']);
-                } catch (error) {
-                    console.error(`Failed to process URL: ${url}`);
-                    console.error(error);
-                }
+          const url = result.rows[0].url;
+
+          // Update the URL status to visited
+          await pool.query('UPDATE urls SET status = true WHERE url = $1', [url]);
+
+          console.log('url', url);
+
+          // Process the URL if it's not in the "visited" table
+          const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM scraped_data WHERE url = $1', [url]);
+          const visitedCount = visitedCheckResult.rows[0].count; // Access count value
+
+          if (visitedCount === 0) {
+            // Attempt to process the URL
+            try {
+              await processPage(url); // Call the processPage function
+
+              // Insert it into the "scraped_data" table
+              await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU, description, category) VALUES($1, $2, $3, $4, $5, $6, $7)',
+                ['', url, 0, '', '', '', '']);
+            } catch (error) {
+              console.error(`Failed to process URL: ${url}`);
+              console.error(error);
             }
+          }
         }
-    } catch (error) {
+      } catch (error) {
         console.error(error, 'error bot');
-    } finally {
+      } finally {
         console.log('end');
         // Close browser and database pool connections as needed
-        // For example: await browser.close(); and await pool.end
-    
+        // For example: await browser.close(); and await pool.end();
+      }
     });
   } catch (error) {
     console.error(error, 'rrrrrrrrrrr');
   }
 }
-initializeBrowser().then (()=> {
-  main();
-})
 
+// Initialize your browser and other resources here.
+async function initializeBrowser() {
+  // Initialize your browser and other resources.
+  // For example: await browser.launch();
+}
+
+// Define your URL processing function here.
+async function processPage(url) {
+  // Implement your URL processing logic here.
+}
+
+initializeBrowser().then(() => {
+  main();
+});
