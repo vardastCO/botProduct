@@ -19,7 +19,6 @@ const pool = new Client({
   database: 'mydb', // This should match the POSTGRES_DB in docker-compose.yml
   password: 'root',
   port: 5432,
-  max: 25, // A
 });
 
 let browser;
