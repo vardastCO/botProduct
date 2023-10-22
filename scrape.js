@@ -200,8 +200,9 @@ async function main() {
         const result = await pool.query('SELECT url FROM urls WHERE status = false LIMIT 1');
 
         const resultCount = result.rowCount;
+        console.log(result,resultCount,'rty')
   
-        if (resultCount !== 0) {
+        if (resultCount != 0) {
           const url = result.rows[0].url;
 
           // Update the URL status to visited
