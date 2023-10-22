@@ -238,17 +238,6 @@ async function main() {
   }
 }
 
-// Initialize your browser and other resources here.
-async function initializeBrowser() {
-  // Initialize your browser and other resources.
-  // For example: await browser.launch();
-}
-
-// Define your URL processing function here.
-async function processPage(url) {
-  // Implement your URL processing logic here.
-}
-
 initializeBrowser().then(() => {
   main();
 });
