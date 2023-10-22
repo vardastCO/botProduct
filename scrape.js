@@ -170,7 +170,7 @@ async function processPage(pageUrl) {
 
       if (nameText.trim() !== '') {
         console.log('NAME:', nameText.trim(), 'PRICE:', priceText.trim(), 'URL:', pageUrl);
-        await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU, description, category) VALUES($1, $2, $3, $4, $5, $6, $7)',
+        await dbClient.query('INSERT INTO scraped_data(name, url, price, brand, SKU, description, category) VALUES($1, $2, $3, $4, $5, $6, $7)',
           [nameText.trim(), pageUrl, priceText.trim() ?? 0, brandText.trim() ?? '', uuid1, formattedListData, categoryText.trim() ?? '']);
       }
     }
@@ -189,11 +189,11 @@ async function processPage(pageUrl) {
           }
           if (outputUrl && outputUrl.startsWith(startUrlPattern2)) {
             console.log(outputUrl, 'out');
-            const urlCount = await pool.query('SELECT COUNT(*) FROM urls WHERE url = $1', [outputUrl]);
+            const urlCount = await dbClient.query('SELECT COUNT(*) FROM urls WHERE url = $1', [outputUrl]);
             const count = urlCount.rows[0].count;
             console.log(count, 'visitout');
             if (count === 0) {
-              await pool.query('INSERT INTO urls(url, status) VALUES($1, $2)', [outputUrl, false]);
+              await dbClient.query('INSERT INTO urls(url, status) VALUES($1, $2)', [outputUrl, false]);
             }
           }
         }
@@ -207,7 +207,7 @@ async function processPage(pageUrl) {
     if (page) {
       await page.close();
     }
-    await pool.query('UPDATE urls SET status = true WHERE url = $1', [pageUrl]);
+    await dbClient.query('UPDATE urls SET status = true WHERE url = $1', [pageUrl]);
     releaseBrowser(browser);
   }
 }
@@ -222,7 +222,7 @@ async function main() {
         console.log('hi bot');
 
         // Get the next unvisited URL
-        const result = await pool.query('SELECT url FROM urls WHERE status = false LIMIT 1');
+        const result = await dbClient.query('SELECT url FROM urls WHERE status = false LIMIT 1');
         console.log(result)
         const resultCount = result.rowCount;
         console.log(resultCount,'count')
