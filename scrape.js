@@ -202,10 +202,11 @@ async function main() {
 
     cron.schedule('* * * * *', async () => {
       try {
+        console.log('hi bot')
 
         //Get the next unvisited URL
         const result = await pool.query('SELECT url FROM urls WHERE status = false LIMIT 1');
-
+        console.log('result',result)
         if (result.rows.length > 0) {
           const url = result.rows[0].url;
 
