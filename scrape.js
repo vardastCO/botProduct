@@ -78,6 +78,7 @@ async function processPage(pageUrl,browser) {
 
   const page = await browser.newPage();
   
+  
   try {
     await page.goto(pageUrl, { timeout: 300000 });
     const uuid1 = uuidv4();
