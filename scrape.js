@@ -71,14 +71,16 @@ const releaseBrowser = async (instance) => {
 
 
 async function processPage(pageUrl) {
-
+ console.log('pppppppppppppppppppppp')
   const browserInstance = await acquireBrowser();
-
+  console.log('pppppppppppppppppppppp',browserInstance)
   if (!browserInstance) {
     console.error('Failed to acquire a browser instance.');
     return;
   }
+  
   const page = await browserInstance.newPage();
+  console.log('pppppppppppppppppppppp',page)
   try {
     
     console.log('page',page,pageUrl)
