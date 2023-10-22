@@ -17,6 +17,9 @@ const minioClient = new Minio.Client({
 let browser = null;
 let pool = null;
 
+const initialPage = 'https://kashiland.com/store';
+const startUrlPattern2 = 'https://kashiland.com/store/prod';
+
 const initializeBrowser = async () => {
   // Initialize the browser and pool only once
   if (!browser) {
@@ -56,6 +59,7 @@ const initializeBrowser = async () => {
     });
     await pool.connect();
   }
+  await pool.query('INSERT INTO urls(url, status) VALUES($1, $2)', [initialPage, false]);
 };
 
 const acquireBrowser = async () => {
@@ -68,8 +72,7 @@ const releaseBrowser = async (instance) => {
 };
 
 
-const initialPage = 'https://kashiland.com/store';
-const startUrlPattern2 = 'https://kashiland.com/store/prod';
+
 
 async function processPage(pageUrl) {
 
