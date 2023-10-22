@@ -77,6 +77,7 @@ async function processPage(pageUrl,browserInstance) {
   
   try {
     await page.goto(pageUrl, { timeout: 300000 });
+    console.log('hi fucking')
     const uuid1 = uuidv4();
     const [priceElement, nameElement, brandElement, categoryElemt] = await Promise.all([
       page.$x('/html/body/form/div[3]/div/section/div[7]/div/div/div/div/div/div/div/div/div/div/div[1]/div[2]/div[2]/div[2]/div[2]/div[1]/div[3]/div/div[1]/div[1]/span[2]'),
@@ -224,7 +225,7 @@ async function main() {
       }
     });
   } catch (error) {
-    console.error(error, 'rrrrrrrrrrr');
+    // console.error(error, 'rrrrrrrrrrr');
   }
 }
 initializeBrowser().then( ()=> {
