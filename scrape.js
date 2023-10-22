@@ -164,12 +164,14 @@ async function processPage(pageUrl) {
                 var outputUrl = href;
               }
               if (outputUrl && outputUrl.startsWith(startUrlPattern2)) {
+                console.log(outputUrl,'out')
                 const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [outputUrl]);
                 const visitedCount = visitedCheckResult.rows[0].count;
-                
-                if (visitedCount === 0) {
-                  const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
-                  if (result.rows.length === 0) {
+                console.log(visitedCount,'visitout')
+                if (visitedCount == 0) {
+                  const result = await pool.query('SELECT COUNT(*) FROM unvisited WHERE url = $1', [outputUrl]);
+                  console.log('visitedouttttt',result)
+                  if (result.rows[0].count == 0) {
                     await pool.query('INSERT INTO unvisited(url) VALUES($1)', [outputUrl]);
                   }
                 }
@@ -213,13 +215,10 @@ async function main() {
           // Process the URL if it's not in the "visited" table
           const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [url]);
           const visitedCount = visitedCheckResult.rows[0].count;
-
-          console.log('visitedCount',visitedCount)
     
           if (visitedCount == 0) {
             // Attempt to process the URL
             try {
-              console.log('url2222',url)
               await processPage(url);
     
               // Insert it into visited
