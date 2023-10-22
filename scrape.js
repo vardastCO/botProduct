@@ -228,6 +228,5 @@ async function main() {
   }
 }
 
-initializeBrowser().then(() => {
-  main();
-});
+main();
+
