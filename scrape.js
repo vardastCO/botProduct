@@ -68,17 +68,17 @@ const acquireBrowser = async () => {
 };
 
 const releaseBrowser = async (instance) => {
-  await browser.release(instance);
+  await pool.release(instance);
 };
 
 
 
 
-async function processPage(pageUrl,browser) {
+async function processPage(pageUrl,browbrowserInstanceser) {
 
-  const page = await browser.newPage();
+  const page = await browbrowserInstanceser.newPage(); //
   
-  
+
   try {
     await page.goto(pageUrl, { timeout: 300000 });
     const uuid1 = uuidv4();
