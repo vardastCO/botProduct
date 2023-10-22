@@ -72,9 +72,16 @@ const releaseBrowser = async (instance) => {
 
 async function processPage(pageUrl) {
 
-  const page = await browser.newPage();
-  
+  const browserInstance = await acquireBrowser();
+
+  if (!browserInstance) {
+    console.error('Failed to acquire a browser instance.');
+    return;
+  }
+  const page = await browserInstance.newPage();
   try {
+    
+    
     await page.goto(pageUrl, { timeout: 200000 });
     console.log('hi',pageUrl)
     const uuid1 = uuidv4();
