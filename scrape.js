@@ -62,7 +62,7 @@ const initializeBrowser = async () => {
  
 };
 const acquireBrowser = async () => {
-  await initializeBrowserPool();
+  await initializeBrowser();
   return browserPool.acquire();
 };
 
