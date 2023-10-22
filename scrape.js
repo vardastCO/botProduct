@@ -205,12 +205,11 @@ async function main() {
           const url = result.rows[0].url;
           console.log('url',url)
 
-          const browserInstance = await acquireBrowser(); // Acquire a browser instance from the pool
+          const browserInstance = await acquireBrowser();
+          console.log('llkshdfihgdf',browserInstance) // Acquire a browser instance from the pool
           await processPage(url, browserInstance); // Call the processPage function with the acquired browser instance
-          await releaseBrowser(browserInstance);
-          await processPage(url,browser); // Call the processPage function
-            
-          
+   
+       
         }
       } catch (error) {
         console.error(error, 'error bot');
