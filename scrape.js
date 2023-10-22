@@ -199,11 +199,12 @@ async function main() {
 
         // Get the next unvisited URL
         const result = await pool.query('SELECT url FROM urls WHERE status = false LIMIT 1');
-
+        console.log(result)
         const resultCount = result.rowCount;
-
+        console.log(resultCount,'count')
         if (resultCount != 0) {
           const url = result.rows[0].url;
+          console.log('url',url)
 
           const browserInstance = await acquireBrowser(); // Acquire a browser instance from the pool
           await processPage(url, browserInstance); // Call the processPage function with the acquired browser instance
