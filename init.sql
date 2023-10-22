@@ -1,11 +1,7 @@
-CREATE TABLE visited (
+CREATE TABLE urls (
     id SERIAL PRIMARY KEY,
-    url TEXT UNIQUE
-);
-
-CREATE TABLE unvisited (
-    id SERIAL PRIMARY KEY,
-    url TEXT UNIQUE
+    url TEXT UNIQUE,
+    status BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE scraped_data (
