@@ -23,7 +23,6 @@ const pool = new Client({
   max: 25, // Maximum number of connections in the pool
 });
 
-let browser;
 
 const browserFactory = {
   create: async () => {
@@ -65,6 +64,12 @@ async function createBrowser() {
     throw error;
   }
 }
+try{
+  await createBrowser();
+  await pool.connect();
+}catch(e){
+  console.log('kill',e)
+} 
 
 const initialPage = 'https://kashiland.com/store';
 const startUrlPattern2 = 'https://kashiland.com/store/prod';
@@ -194,9 +199,7 @@ async function main() {
         console.log('HI', initialPage);
         
         // Initialize the browser and pool (if not already defined)
-        const browser = await createBrowser();
-        console.log('browser',browser)
-        const pool = await pool.connect();
+     
         console.log('pool',pool)
         // Insert the initial URL into the database
         await pool.query('INSERT INTO urls(url, status) VALUES($1, $2)', [initialPage, false]);
