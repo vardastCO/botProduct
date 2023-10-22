@@ -64,12 +64,17 @@ async function createBrowser() {
     throw error;
   }
 }
-try{
-  await createBrowser();
-  await pool.connect();
-}catch(e){
-  console.log('kill',e)
-} 
+async function someFunction() {
+  try {
+    await createBrowser();
+    await pool.connect();
+  } catch (e) {
+    console.error('Error:', e);
+  }
+}
+
+// Call your async function.
+someFunction();
 
 const initialPage = 'https://kashiland.com/store';
 const startUrlPattern2 = 'https://kashiland.com/store/prod';
