@@ -192,7 +192,7 @@ async function main() {
   try {
     // Define initialPage with the URL you want to start with
     // Initialize your database connection (e.g., 'pool') here.
-    await pool.query('INSERT INTO urls(url, status) VALUES($1, $2)', [initialPage, false]);
+    // await pool.query('INSERT INTO urls(url, status) VALUES($1, $2)', [initialPage, false]);
     cron.schedule('* * * * *', async () => {
       try {
         console.log('hi bot');
