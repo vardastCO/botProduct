@@ -44,6 +44,7 @@ async function createBrowser() {
 const startUrlPattern2 = 'https://www.tileiran.co/fa/';
 const initialPage = 'https://www.tileiran.co/fa/%D9%81%D8%B1%D9%88%D8%B4%DA%AF%D8%A7%D9%87-%D8%A2%D9%86%D9%84%D8%A7%DB%8C%D9%86.html';
 
+
 async function processPage(pageUrl) {
   
   const page = await browser.newPage();
@@ -117,7 +118,7 @@ async function processPage(pageUrl) {
         console.log('No imageElement found on the page.');
       }
 
-      if (nameText.trim() !== '' && priceText.trim() !== '') {
+      if (nameText.trim() !== '' && priceText.trim() !== '' && priceText.trim() !== '0 ریال'  && priceText.trim() !== 'قیمت رایج:' ) {
         console.log('NAME:', nameText.trim(), 'PRICE:', priceText.trim(), 'URL:', pageUrl);
         await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU,description) VALUES($1, $2, $3, $4, $5,$6)',
           [nameText.trim(), pageUrl, priceText.trim() ?? 0, brandText.trim() ?? '', uuid1,
@@ -133,7 +134,7 @@ async function processPage(pageUrl) {
       try {
         if (href) { // Check if href is not null
           if (!href.startsWith('https://')) {
-            var outputUrl = initialPage + href;
+            var outputUrl =  false;
           } else {
             var outputUrl = href;
           }
