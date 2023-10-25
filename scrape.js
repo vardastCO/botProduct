@@ -161,6 +161,8 @@ async function main() {
     await createBrowser();
     await pool.connect();
 
+    await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
+
     cron.schedule('*/5 * * * *', async () => {
       try {
         let currentHref = await pool.query('SELECT url FROM unvisited LIMIT 1');
