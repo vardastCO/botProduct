@@ -47,7 +47,7 @@ const initialPage = 'https://www.tileiran.co/fa/%D9%81%D8%B1%D9%88%D8%B4%DA%AF%D
 async function processPage(pageUrl) {
   
   const page = await browser.newPage();
-  await page.goto(pageUrl, { timeout: 350000 });
+  await page.goto(pageUrl+ '?filter_نمایش_کالاهای_موجود_54=in_stock', { timeout: 350000 });
 
   try {
     const uuid1 = uuidv4();
@@ -117,7 +117,7 @@ async function processPage(pageUrl) {
         console.log('No imageElement found on the page.');
       }
 
-      if (nameText.trim() !== '') {
+      if (nameText.trim() !== '' && priceText.trim() !== '') {
         console.log('NAME:', nameText.trim(), 'PRICE:', priceText.trim(), 'URL:', pageUrl);
         await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU,description) VALUES($1, $2, $3, $4, $5,$6)',
           [nameText.trim(), pageUrl, priceText.trim() ?? 0, brandText.trim() ?? '', uuid1,
@@ -178,24 +178,9 @@ async function main() {
           await pool.query('INSERT INTO visited(url) VALUES($1)', [currentHref]);
 
           const pageForEvaluation = await browser.newPage();
-          let retryCount = 0;
-          const maxRetries = 10000;
-
-          while (retryCount < maxRetries) {
-            try {
-              await processPage(currentHref);
-              break;
-            } catch (error) {
-              if (error.name === 'TimeoutError') {
-                retryCount++;
-              }
-            }
-          }
-
-          if (retryCount >= maxRetries) {
-            await pageForEvaluation.close();
-          }
-
+        
+          await processPage(currentHref);
+         
           await pageForEvaluation.close();
         } else {
           await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
