@@ -7,7 +7,7 @@ services:
     build:
       context: .
     ports:
-      - "3002-3051:3002"
+      - "3002-3061:3002"
     volumes:
       - "./test:/app/test"
     depends_on:
