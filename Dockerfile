@@ -21,7 +21,6 @@ RUN chmod +x pak.sh
 # Copy the rest of your application code
 COPY . .
 
-RUN chmod +x pak.sh
 
 # Expose port 3002 for your Node.js application
 EXPOSE 3002
