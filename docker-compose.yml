@@ -32,7 +32,15 @@ services:
       - custom_network
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-
+  python-script:
+    image: python:3
+    command: ["python", "/app/container_memory_monitor.py"]
+    volumes:
+      - ./container_memory_monitor.py:/app/container_memory_monitor.py
+    depends_on:
+      - node-app
+    networks:
+      - custom_network
   storage:
     image: minio/minio
     restart: always
