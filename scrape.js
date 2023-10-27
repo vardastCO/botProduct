@@ -126,6 +126,9 @@ async function processPage(pageUrl) {
       }
     }
 
+  } catch (error) {
+    console.error(error);
+  } finally {
     const hrefs = await page.evaluate(() => {
       const links = Array.from(document.querySelectorAll('a'));
       return links.map((link) => link.getAttribute('href'));
@@ -149,9 +152,6 @@ async function processPage(pageUrl) {
         console.error(error);
       }
     }
-  } catch (error) {
-    console.error(error);
-  } finally {
     await page.close();
   }
 }
