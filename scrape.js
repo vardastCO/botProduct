@@ -165,7 +165,24 @@ async function main() {
 
     cron.schedule('*/2 * * * *', async () => {
       try {
-        let currentHref = await pool.query('SELECT url FROM unvisited LIMIT 1');
+        const currentHref = await pool.tx(async (t) => {
+          const result = await t.oneOrNone(`
+            SELECT u.url
+            FROM unvisited u
+            WHERE u.url NOT IN (
+              SELECT url FROM visited
+            )
+            LIMIT 1 FOR UPDATE
+          `);
+        
+          if (result) {
+            // Mark the selected URL as locked in the lock_status table
+            await t.none('INSERT INTO lock_status (url, is_locked) VALUES ($1, true)', [result.url]);
+          }
+        
+          return result;
+        });
+        
         let visitedCount = 0;
 
         if (currentHref.rows.length > 0) {
