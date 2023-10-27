@@ -1,5 +1,4 @@
 import docker
-import psutil
 
 # Initialize Docker client
 client = docker.from_env()
