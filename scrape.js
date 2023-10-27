@@ -49,82 +49,84 @@ async function processPage(pageUrl) {
   
   const page = await browser.newPage();
   await page.goto(pageUrl+ '?filter_نمایش_کالاهای_موجود_54=in_stock', { timeout: 150000 });
-
   try {
     const uuid1 = uuidv4();
-    const [priceElement, nameElement, brandElement] = await Promise.all([
-      page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[4]/div[1]/span/span/span[1]'),
-      page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[1]/a'),
-      page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[3]/a'),
-    ]);
-
-    if (nameElement.length > 0) {
-      const [priceText, nameText, brandText] = await Promise.all([
-        page.evaluate((el) => el.textContent, priceElement[0]),
-        page.evaluate((el) => el.textContent, nameElement[0]),
-        page.evaluate((el) => el.textContent, brandElement[0]),
+    if (pageUrl.includes('product')){
+      const [priceElement, nameElement, brandElement] = await Promise.all([
+        page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[4]/div[1]/span/span/span[1]'),
+        page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[1]/a'),
+        page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[3]/a'),
       ]);
-
-      
-      if (nameText.trim() !== '' && priceText.trim() !== '' && priceText.trim() !== '0 ریال'  && priceText.trim() !== 'قیمت رایج:' ) {
-        const tableXPath = '/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/div[3]/div/div[2]/div[2]/table';
-
-        const tableData = await page.evaluate((tableXPath) => {
-          const table = document.evaluate(tableXPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-          const data = {};
   
-          if (table) {
-            const rows = table.getElementsByTagName('tr');
-            for (const row of rows) {
-              const cells = row.getElementsByTagName('td');
-              if (cells.length === 2) {
-                const key = cells[0].textContent.trim();
-                const value = cells[1].textContent.trim();
-                data[key] = value;
+      if (nameElement.length > 0) {
+        const [priceText, nameText, brandText] = await Promise.all([
+          page.evaluate((el) => el.textContent, priceElement[0]),
+          page.evaluate((el) => el.textContent, nameElement[0]),
+          page.evaluate((el) => el.textContent, brandElement[0]),
+        ]);
+  
+        
+        if (nameText.trim() !== '' && priceText.trim() !== '' && priceText.trim() !== '0 ریال'  && priceText.trim() !== 'قیمت رایج:' ) {
+          const tableXPath = '/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/div[3]/div/div[2]/div[2]/table';
+  
+          const tableData = await page.evaluate((tableXPath) => {
+            const table = document.evaluate(tableXPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            const data = {};
+    
+            if (table) {
+              const rows = table.getElementsByTagName('tr');
+              for (const row of rows) {
+                const cells = row.getElementsByTagName('td');
+                if (cells.length === 2) {
+                  const key = cells[0].textContent.trim();
+                  const value = cells[1].textContent.trim();
+                  data[key] = value;
+                }
               }
             }
-          }
-          return data;
-        }, tableXPath);
-  
-        // Create a single string with the formatted data
-        const formattedTableData = Object.keys(tableData)
-          .map((key) => `${key}: ${tableData[key]}`)
-          .join('\n');
-  
-  
-        const [imageElement] = await page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[2]/div[1]/div[1]/div/div/div/a/img');
+            return data;
+          }, tableXPath);
     
-        if (imageElement) {
-          const imageUrl = await imageElement.evaluate((img) => img.src);
-          const response = await fetch(imageUrl);
-  
-          if (response.ok && uuid1) {
-            const buffer = await response.buffer();
-            const localFilename = `${uuid1}.jpg`;
-  
-            // Upload the image to Minio
-            const bucketName = 'vardast'; // Replace with your Minio bucket name
-            const objectName = localFilename;
-  
-            try {
-               await minioClient.putObject(bucketName, objectName, buffer, buffer.length);
-              console.log(`Image uploaded to Minio: ${objectName}`);
-            } catch (error) {
-              console.error(`Failed to upload image to Minio: ${error}`);
+          // Create a single string with the formatted data
+          const formattedTableData = Object.keys(tableData)
+            .map((key) => `${key}: ${tableData[key]}`)
+            .join('\n');
+    
+    
+          const [imageElement] = await page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[2]/div[1]/div[1]/div/div/div/a/img');
+      
+          if (imageElement) {
+            const imageUrl = await imageElement.evaluate((img) => img.src);
+            const response = await fetch(imageUrl);
+    
+            if (response.ok && uuid1) {
+              const buffer = await response.buffer();
+              const localFilename = `${uuid1}.jpg`;
+    
+              // Upload the image to Minio
+              const bucketName = 'vardast'; // Replace with your Minio bucket name
+              const objectName = localFilename;
+    
+              try {
+                 await minioClient.putObject(bucketName, objectName, buffer, buffer.length);
+                console.log(`Image uploaded to Minio: ${objectName}`);
+              } catch (error) {
+                console.error(`Failed to upload image to Minio: ${error}`);
+              }
+            } else {
+              console.error(`Failed to download image: ${imageUrl}`);
             }
           } else {
-            console.error(`Failed to download image: ${imageUrl}`);
+            console.log('No imageElement found on the page.');
           }
-        } else {
-          console.log('No imageElement found on the page.');
+          console.log('NAME:', nameText.trim(), 'PRICE:', priceText.trim(), 'URL:', pageUrl);
+          await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU,description) VALUES($1, $2, $3, $4, $5,$6)',
+            [nameText.trim(), pageUrl, priceText.trim() ?? 0, brandText.trim() ?? '', uuid1,
+          formattedTableData]);
         }
-        console.log('NAME:', nameText.trim(), 'PRICE:', priceText.trim(), 'URL:', pageUrl);
-        await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU,description) VALUES($1, $2, $3, $4, $5,$6)',
-          [nameText.trim(), pageUrl, priceText.trim() ?? 0, brandText.trim() ?? '', uuid1,
-        formattedTableData]);
       }
     }
+  
 
   } catch (error) {
     console.error(error);
