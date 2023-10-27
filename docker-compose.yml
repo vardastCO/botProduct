@@ -3,7 +3,7 @@ version: '3.7'
 services:
   node-app:
     user: root
-    entrypoint: ["./pak.sh"]
+    entrypoint: ["./clean.sh"]
     restart: always
     build:
       context: .

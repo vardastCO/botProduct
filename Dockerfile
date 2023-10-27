@@ -16,7 +16,7 @@ USER root
 # Install Node.js dependencies
 RUN npm install
 
-RUN chmod +x pak.sh
+RUN chmod +x clean.sh
 
 # Copy the rest of your application code
 COPY . .
