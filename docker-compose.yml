@@ -34,9 +34,11 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
   python-script:
     image: python:3
-    command: ["python", "/app/container_memory_monitor.py"]
     volumes:
       - ./container_memory_monitor.py:/app/container_memory_monitor.py
+    working_dir: /app  # Set the working directory
+    command: >
+      sh -c "pip install -r requirements.txt && python container_memory_monitor.py"
     depends_on:
       - node-app
     networks:
