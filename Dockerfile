@@ -16,11 +16,11 @@ USER root
 # Install Node.js dependencies
 RUN npm install
 
-RUN chmod +x clean.sh
+
 
 # Copy the rest of your application code
 COPY . .
-
+RUN chmod +x clean.sh
 
 # Expose port 3002 for your Node.js application
 EXPOSE 3002
