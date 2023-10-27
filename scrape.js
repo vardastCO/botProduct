@@ -183,7 +183,7 @@ async function main() {
           await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
           await pool.query('INSERT INTO visited(url) VALUES($1)', [currentHref]);
 
-          const randomDelay = Math.floor(Math.random() * 50000); // 0 to 50 seconds
+          const randomDelay = Math.floor(Math.random() * 90000); // 0 to 50 seconds
           await new Promise((resolve) => setTimeout(resolve, randomDelay));
 
           const pageForEvaluation = await browser.newPage();
