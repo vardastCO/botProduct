@@ -11,6 +11,8 @@ ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/google-chrome-stable
 # Copy package.json and package-lock.json to the container
 COPY package*.json ./
 
+
+
 USER root
 
 # Install Node.js dependencies
