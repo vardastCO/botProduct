@@ -2,11 +2,6 @@ version: '3.7'
 
 services:
   node-app:
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'  # Set the CPU limit to 0.5 (half of a CPU core)
-          memory: '500M'  # Set the memory limit to 512 megabytes
     user: root
     build:
       context: .
@@ -20,12 +15,6 @@ services:
     networks:
       - custom_network
     # Add a healthcheck configuration to check the memory usage
-    healthcheck:
-      test: ["CMD", "/bin/sh", "-c", "./memory_check.sh"]
-      interval: 60s  # Check every 60 seconds
-      timeout: 10s   # Set a timeout for the check
-      retries: 3     # Number of retries before considering the service unhealthy
-
   postgres:
     deploy:
       resources:
