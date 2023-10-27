@@ -165,7 +165,7 @@ async function main() {
 
     // await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
 
-    cron.schedule('*/3 * * * *', async () => {
+    cron.schedule('*/5 * * * *', async () => {
       try {
         let currentHref = await pool.query('SELECT url FROM unvisited ORDER BY RANDOM() LIMIT 1');
 
