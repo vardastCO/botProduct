@@ -3,6 +3,8 @@ version: '3.7'
 services:
   node-app:
     user: root
+    entrypoint: ["./custom_entrypoint.sh"]
+    restart: always
     build:
       context: .
     ports:
@@ -11,7 +13,6 @@ services:
       - "./test:/app/test"
     depends_on:
       - postgres
-    restart: always
     networks:
       - custom_network
     # Add a healthcheck configuration to check the memory usage
