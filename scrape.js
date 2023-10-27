@@ -163,7 +163,7 @@ async function main() {
 
     // await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
 
-    cron.schedule('*/2 * * * *', async () => {
+    cron.schedule('*/3 * * * *', async () => {
       try {
         const currentHref = await pool.tx(async (t) => {
           const result = await t.oneOrNone(`
