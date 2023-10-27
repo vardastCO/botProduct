@@ -33,7 +33,7 @@ services:
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
   python-script:
-    image: python:3
+    image: python:2  # Change the base image to Python 2
     volumes:
       - ./container_memory_monitor.py:/app/container_memory_monitor.py
       - ./requirements.txt:/app/requirements.txt  
@@ -43,7 +43,7 @@ services:
     depends_on:
       - node-app
     networks:
-      - custom_network
+      - custom_network  # Change the network to 'custom_network'
   storage:
     image: minio/minio
     restart: always
