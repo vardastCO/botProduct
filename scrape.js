@@ -48,7 +48,7 @@ const initialPage = 'https://www.tileiran.co/fa/%D9%81%D8%B1%D9%88%D8%B4%DA%AF%D
 async function processPage(pageUrl) {
   
   const page = await browser.newPage();
-  await page.goto(pageUrl+ '?filter_نمایش_کالاهای_موجود_54=in_stock', { timeout: 180000 });
+  await page.goto(pageUrl+ '?filter_نمایش_کالاهای_موجود_54=in_stock', { timeout: 150000 });
 
   try {
     const uuid1 = uuidv4();
@@ -163,7 +163,7 @@ async function main() {
 
     // await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
 
-    cron.schedule('*/4 * * * *', async () => {
+    cron.schedule('*/3 * * * *', async () => {
       try {
         let currentHref = await pool.query('SELECT url FROM unvisited LIMIT 1');
         let visitedCount = 0;
