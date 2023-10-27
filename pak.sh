@@ -1,18 +1,31 @@
 #!/bin/bash
 
-# Packs puppeteer using npm and moves the archive file to docker/puppeteer-latest.tgz.
-# Expected cwd: project root directory.
+# Set the memory limit threshold in bytes (9 GB in bytes)
+MEMORY_LIMIT=9663676416
 
-set -e
+# Function to check and restart containers if memory threshold is exceeded
+check_and_restart_containers() {
+  TOTAL_MEMORY_USAGE=0
+  CONTAINER_IDS=$(docker ps --filter "name=node-app" -q)
 
-cd docker
+  for CONTAINER_ID in $CONTAINER_IDS; do
+    MEMORY_USAGE=$(docker stats --no-stream --format "{{.MemUsage}}" "$CONTAINER_ID" | sed 's/MiB//')
+    MEMORY_USAGE_BYTES=$(echo "$MEMORY_USAGE * 1024 * 1024" | bc)
+    TOTAL_MEMORY_USAGE=$((TOTAL_MEMORY_USAGE + MEMORY_USAGE_BYTES))
+  done
 
-npm pack --workspace puppeteer --workspace puppeteer-core --workspace @puppeteer/browsers --pack-destination .
+  if [ "$TOTAL_MEMORY_USAGE" -gt "$MEMORY_LIMIT" ]; then
+    echo "Total memory usage of all node-app containers exceeds the limit. Restarting containers."
 
-rm -f puppeteer-core-latest.tgz
-rm -f puppeteer-latest.tgz
-rm -f puppeteer-browsers-latest.tgz
+    # Restart all node-app containers
+    for CONTAINER_ID in $CONTAINER_IDS; do
+      docker restart "$CONTAINER_ID"
+    done
+  fi
+}
 
-mv puppeteer-core-*.tgz puppeteer-core-latest.tgz
-mv puppeteer-browsers-*.tgz puppeteer-browsers-latest.tgz
-mv puppeteer-[0-9]*.tgz puppeteer-latest.tgz
+# Main entry point of the script
+check_and_restart_containers
+
+# Start your application, you can replace the following with your application's entry command
+exec "$@"
