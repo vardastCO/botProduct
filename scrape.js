@@ -52,10 +52,9 @@ const initialPage = 'https://www.tileiran.co/fa/%D9%81%D8%B1%D9%88%D8%B4%DA%AF%D
 
 async function processPage(pageUrl) {
   
-  
+  const page = await browser.newPage();
+  await page.goto(pageUrl+ '?filter_نمایش_کالاهای_موجود_54=in_stock', { timeout: 90000 });
   try {
-    const page = await browser.newPage();
-    await page.goto(pageUrl+ '?filter_نمایش_کالاهای_موجود_54=in_stock', { timeout: 120000 });
     const uuid1 = uuidv4();
     if (pageUrl.includes('product')){
       const [priceElement, nameElement, brandElement] = await Promise.all([
@@ -167,11 +166,11 @@ async function processPage(pageUrl) {
 async function main() {
   try {
     // await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
+    await createBrowser();
     await pool.connect();
     cron.schedule('*/5 * * * *', async () => {
       try {
-        await createBrowser();
-        
+    
         const freeMemoryGB = os.freemem() / (1024 * 1024 * 1024);
    
         // let cpuUsage = osUtils.cpuUsage(function (cpuUsage) {
@@ -198,9 +197,9 @@ async function main() {
             const randomDelay = Math.floor(Math.random() * 90000); // 0 to 50 seconds
             await new Promise((resolve) => setTimeout(resolve, randomDelay));
   
-            const pageForEvaluation = await browser.newPage();
+            // const pageForEvaluation = await browser.newPage();
             await processPage(currentHref);
-            await pageForEvaluation.close();
+            // await pageForEvaluation.close();
           } else {
             await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
           }
