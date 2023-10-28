@@ -25,15 +25,15 @@ def get_ram_usage():
     mem = psutil.virtual_memory()
     return mem.percent
 
-def restart_docker_containers():
-    try:
-        client = docker.from_env()
-        containers = client.containers.list()
-        for container in containers:
-            container.restart()
-        print("All Docker containers have been restarted.")
-    except Exception as e:
-        print(f"Failed to restart Docker containers: {e}")
+# def restart_docker_containers():
+#     try:
+#         client = docker.from_env()
+#         containers = client.containers.list()
+#         for container in containers:
+#             container.restart()
+#         print("All Docker containers have been restarted.")
+#     except Exception as e:
+#         print(f"Failed to restart Docker containers: {e}")
 
 async def send_memory_usage():
     ram_usage = get_ram_usage()
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     retry_count = 0
 
     while retry_count < max_retries:
-        ram_threshold = 40  # Adjust the threshold as needed
+        ram_threshold = 70  # Adjust the threshold as needed
         ram_usage = get_ram_usage()
 
         try:
@@ -56,7 +56,7 @@ if __name__ == "__main__":
             if ram_usage >= ram_threshold:
                 message = f"High RAM usage alert! RAM usage is {ram_usage}%."
                 asyncio.run(send_message(message))
-                restart_docker_containers()
+                # restart_docker_containers()
                 break  # Alert sent successfully, exit the loop
 
         except Exception as e:
