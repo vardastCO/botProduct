@@ -1,1 +1,1 @@
-python-telegram-bot==XX.XX.X
+python-telegram-bot==20.5
