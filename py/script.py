@@ -47,7 +47,7 @@ if __name__ == "__main__":
     retry_count = 0
 
     while retry_count < max_retries:
-        ram_threshold = 50  # Adjust the threshold as needed
+        ram_threshold = 60  # Adjust the threshold as needed
         ram_usage = get_ram_usage()
 
         try:
