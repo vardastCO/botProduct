@@ -6,6 +6,11 @@ const fs = require('fs-extra');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const Minio = require('minio');
+
+const os = require('os');
+const osUtils = require('os-utils');
+
+
 const minioClient = new Minio.Client({
   endPoint: 'storage', // Use the service name defined in your Docker Compose file
   port: 9000,
@@ -167,6 +172,18 @@ async function main() {
 
     cron.schedule('*/5 * * * *', async () => {
       try {
+        const totalMemoryGB = os.totalmem() / (1024 * 1024 * 1024);
+        const freeMemoryGB = os.freemem() / (1024 * 1024 * 1024);
+
+        osUtils.cpuUsage(function (cpuUsage) {
+          console.log(`Total Memory: ${totalMemoryGB.toFixed(2)} GB`);
+          console.log(`Free Memory: ${freeMemoryGB.toFixed(2)} GB`);
+          console.log(`CPU Usage: ${(cpuUsage * 100).toFixed(2)}%`);
+
+          if (freeMemoryGB > 6 / 16 && cpuUsage >= 0.99) {
+            console.log('HIGHhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
+          }
+        });
         let currentHref = await pool.query('SELECT url FROM unvisited ORDER BY RANDOM() LIMIT 1');
 
         let visitedCount = 0;
