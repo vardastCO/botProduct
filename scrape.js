@@ -167,23 +167,11 @@ async function processPage(pageUrl,browser) {
 }
 
 async function main() {
-  try {
-
-    docker.listContainers((err, containers) => {
-      if (err) {
-        console.error('Error listing containers:', err);
-        return;
-      }
-    
-      console.log('Containers:');
-      containers.forEach((containerInfo) => {
-        console.log(containerInfo.Id, containerInfo.Names);
-      });
-    });
+  try {;
     // await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
     await createBrowser();
     await pool.connect();
-    cron.schedule('*/10 * * * *', async () => {
+    cron.schedule('*/5 * * * *', async () => {
       try {
     
         const freeMemoryGB = os.freemem() / (1024 * 1024 * 1024);
@@ -209,7 +197,7 @@ async function main() {
             await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
             await pool.query('INSERT INTO visited(url) VALUES($1)', [currentHref]);
   
-            const randomDelay = Math.floor(Math.random() * 240000); // 0 to 50 seconds
+            const randomDelay = Math.floor(Math.random() * 50000); // 0 to 50 seconds
             await new Promise((resolve) => setTimeout(resolve, randomDelay));
   
         
@@ -219,6 +207,24 @@ async function main() {
           }
         } else{
           console.log('high pressure on server')
+          docker.listContainers((err, containers) => {
+            if (err) {
+              console.error('Error listing containers:', err);
+              return;
+            }
+        
+            containers.forEach((containerInfo) => {
+              const container = docker.getContainer(containerInfo.Id);
+        
+              container.restart((err) => {
+                if (err) {
+                  console.error(`Error restarting container ${containerInfo.Names[0]}:`, err);
+                } else {
+                  console.log(`Restarted container ${containerInfo.Names[0]}`);
+                }
+              });
+            });
+          });
         }
        
       } catch (error) {
