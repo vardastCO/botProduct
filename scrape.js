@@ -178,7 +178,7 @@ async function main() {
         // let cpuUsage = osUtils.cpuUsage(function (cpuUsage) {
         //   return cpuUsage ;
         // });
-
+        console.log('free',freeMemoryGB)
         if (freeMemoryGB > 3) {
           let currentHref = await pool.query('SELECT url FROM unvisited ORDER BY RANDOM() LIMIT 1');
 
