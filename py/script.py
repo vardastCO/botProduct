@@ -9,19 +9,7 @@ print(os.environ['PATH'])
 
 # Telegram Bot Token
 bot_token = '6918624503:AAFSU4bwTBmAa2w2T7ElJ9fY4XlUA6MaQ4Q'
-docker_command = "docker ps"
 
-try:
-    # Run the Docker command and capture the output
-    result = subprocess.run(docker_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
-
-    # Access the output
-    output = result.stdout
-    print("Docker containers:")
-    print(output)
-except subprocess.CalledProcessError as e:
-    # Handle any errors that occur
-    print(f"Error running Docker command: {e}")
 # Chat ID (can be a group or your user ID)
 chat_id = '1839030'  # Replace with your actual chat ID
 
@@ -48,7 +36,7 @@ if __name__ == "__main__":
     retry_count = 0
 
     while retry_count < max_retries:
-        ram_threshold = 40  # Adjust the threshold as needed
+        ram_threshold = 70  # Adjust the threshold as needed
         ram_usage = get_ram_usage()
 
         try:
@@ -58,12 +46,6 @@ if __name__ == "__main__":
             if ram_usage >= ram_threshold:
                 message = f"High RAM usage alert! RAM usage is {ram_usage}%."
                 asyncio.run(send_message(message))
-                docker_ps_command = "docker ps -q"
-                container_ids = subprocess.check_output(docker_ps_command, shell=True, text=True)
-                if container_ids:
-                    docker_restart_command = f"docker restart {container_ids}"
-                    os.system(docker_restart_command)
-                print("Containers restarted successfully.")
                 break  # Alert sent successfully, exit the loop
 
         except Exception as e:
