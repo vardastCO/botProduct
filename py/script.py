@@ -7,9 +7,7 @@ import time
 bot_token = '6918624503:AAFSU4bwTBmAa2w2T7ElJ9fY4XlUA6MaQ4Q'
 
 # Chat ID (can be a group or your user ID)
-chat_id = '1839030'
-
-
+chat_id = '1839030' # Replace with your actual chat ID
 
 def get_ram_usage():
     mem = psutil.virtual_memory()
@@ -21,7 +19,11 @@ def send_message(message):
         bot.send_message(chat_id=chat_id, text=message)
     except TelegramError as e:
         # Handle the Telegram error, or you can log it
-        print(f"Failed to send message: {e}")
+        print(f"Failed to send message: {e)
+
+def send_test_message():
+    test_message = "This is a test message."
+    send_message(test_message)
 
 if __name__ == "__main__":
     max_retries = 3  # Adjust the maximum number of retry attempts
@@ -42,3 +44,5 @@ if __name__ == "__main__":
             # Wait for the specified delay before retrying
             time.sleep(retry_delay)
 
+    # After the memory check loop, you can call the test message function
+    send_test_message()
