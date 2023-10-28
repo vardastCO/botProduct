@@ -50,7 +50,7 @@ const startUrlPattern2 = 'https://www.tileiran.co/fa/';
 const initialPage = 'https://www.tileiran.co/fa/%D9%81%D8%B1%D9%88%D8%B4%DA%AF%D8%A7%D9%87-%D8%A2%D9%86%D9%84%D8%A7%DB%8C%D9%86.html';
 
 
-async function processPage(pageUrl) {
+async function processPage(pageUrl,browser) {
   
   const page = await browser.newPage();
   await page.goto(pageUrl+ '?filter_نمایش_کالاهای_موجود_54=in_stock', { timeout: 250000 });
@@ -198,7 +198,7 @@ async function main() {
             await new Promise((resolve) => setTimeout(resolve, randomDelay));
   
         
-            await processPage(currentHref);
+            await processPage(currentHref,browser);
           } else {
             await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
           }
