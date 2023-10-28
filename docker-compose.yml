@@ -33,6 +33,17 @@ services:
       - custom_network
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  memory-monitor:
+    build:
+      context: ./py
+      dockerfile: Dockerfile
+    environment:
+      - BOT_TOKEN=6918624503:AAFSU4bwTBmAa2w2T7ElJ9fY4XlUA6MaQ4Q
+      - CHAT_ID=1839030
+    restart: always 
+    volumes:
+      - ./py/requirements.txt:/app/requirements.txt
+   
   storage:
     image: minio/minio
     restart: always
