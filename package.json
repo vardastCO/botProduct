@@ -21,6 +21,7 @@
     "p-queue" : "*",
     "puppeteer-cluster" : "*",
     "generic-pool" : "*",
-    "os-utils" : "*"
+    "os-utils" : "*",
+    "dockerode" : "*"
   }
 }

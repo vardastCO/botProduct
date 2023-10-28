@@ -7,6 +7,9 @@ const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const Minio = require('minio');
 
+const Docker = require('dockerode');
+const docker = new Docker();
+
 const os = require('os');
 const osUtils = require('os-utils');
 
@@ -165,6 +168,18 @@ async function processPage(pageUrl,browser) {
 
 async function main() {
   try {
+
+    docker.listContainers((err, containers) => {
+      if (err) {
+        console.error('Error listing containers:', err);
+        return;
+      }
+    
+      console.log('Containers:');
+      containers.forEach((containerInfo) => {
+        console.log(containerInfo.Id, containerInfo.Names);
+      });
+    });
     // await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
     await createBrowser();
     await pool.connect();
