@@ -5,6 +5,7 @@ import time
 import psutil
 import os  # Import the os module
 import subprocess
+import docker 
 
 # Telegram Bot Token
 bot_token = '6918624503:AAFSU4bwTBmAa2w2T7ElJ9fY4XlUA6MaQ4Q'
@@ -26,8 +27,11 @@ def get_ram_usage():
 
 def restart_docker_containers():
     try:
-        # Use the full path to the Docker executable and docker-compose to restart containers
-        subprocess.run(["/usr/bin/docker-compose", "-f", "../docker-compose.yml", "restart"])
+        client = docker.from_env()
+        containers = client.containers.list()
+        for container in containers:
+            container.restart()
+        print("All Docker containers have been restarted.")
     except Exception as e:
         print(f"Failed to restart Docker containers: {e}")
 
