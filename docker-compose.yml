@@ -42,7 +42,9 @@ services:
     restart: always 
     volumes:
       - ./py/requirements.txt:/app/requirements.txt
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - bridge  
   storage:
     image: minio/minio
     restart: always
