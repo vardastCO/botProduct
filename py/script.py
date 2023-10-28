@@ -25,9 +25,14 @@ def get_ram_usage():
 
 def restart_docker_containers():
     try:
-        # Run the "docker restart" command for all running containers
-        os.system('docker ps -q | xargs -I % docker restart %')
-        print("All Docker containers have been restarted.")
+        # Run the "docker ps" command to get IDs of running containers
+        running_containers = os.popen('docker ps -q').read()
+        if running_containers:
+            # Restart running containers
+            os.system(f'docker restart {running_containers}')
+            print("Running Docker containers have been restarted.")
+        else:
+            print("No running Docker containers to restart.")
     except Exception as e:
         print(f"Failed to restart Docker containers: {e}")
 
