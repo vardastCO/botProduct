@@ -8,7 +8,19 @@ import subprocess
 
 # Telegram Bot Token
 bot_token = '6918624503:AAFSU4bwTBmAa2w2T7ElJ9fY4XlUA6MaQ4Q'
-print(os.environ['PATH'])
+docker_command = "docker ps"
+
+try:
+    # Run the Docker command and capture the output
+    result = subprocess.run(docker_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
+
+    # Access the output
+    output = result.stdout
+    print("Docker containers:")
+    print(output)
+except subprocess.CalledProcessError as e:
+    # Handle any errors that occur
+    print(f"Error running Docker command: {e}")
 # Chat ID (can be a group or your user ID)
 chat_id = '1839030'  # Replace with your actual chat ID
 
