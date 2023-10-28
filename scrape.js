@@ -172,43 +172,43 @@ async function main() {
 
     cron.schedule('*/5 * * * *', async () => {
       try {
-        const totalMemoryGB = os.totalmem() / (1024 * 1024 * 1024);
+
         const freeMemoryGB = os.freemem() / (1024 * 1024 * 1024);
-
-        osUtils.cpuUsage(function (cpuUsage) {
-          console.log(`Total Memory: ${totalMemoryGB.toFixed(2)} GB`);
-          console.log(`Free Memory: ${freeMemoryGB.toFixed(2)} GB`);
-          console.log(`CPU Usage: ${(cpuUsage * 100).toFixed(2)}%`);
-
-          if (freeMemoryGB > 6 / 16 && cpuUsage >= 0.99) {
-            console.log('HIGHhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
-          }
+   
+        let cpuUsage = osUtils.cpuUsage(function (cpuUsage) {
+          return cpuUsage ;
         });
-        let currentHref = await pool.query('SELECT url FROM unvisited ORDER BY RANDOM() LIMIT 1');
 
-        let visitedCount = 0;
+        if (freeMemoryGB > 3 && cpuUsage <= 0.99) {
+          let currentHref = await pool.query('SELECT url FROM unvisited ORDER BY RANDOM() LIMIT 1');
 
-        if (currentHref.rows.length > 0) {
-          const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [currentHref.rows[0].url]);
-          visitedCount = visitedCheckResult.rows[0].count;
-          currentHref = currentHref.rows[0].url;
-        } else {
-          currentHref = initialPage;
+          let visitedCount = 0;
+  
+          if (currentHref.rows.length > 0) {
+            const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [currentHref.rows[0].url]);
+            visitedCount = visitedCheckResult.rows[0].count;
+            currentHref = currentHref.rows[0].url;
+          } else {
+            currentHref = initialPage;
+          }
+  
+          if (visitedCount == 0) {
+            await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
+            await pool.query('INSERT INTO visited(url) VALUES($1)', [currentHref]);
+  
+            const randomDelay = Math.floor(Math.random() * 90000); // 0 to 50 seconds
+            await new Promise((resolve) => setTimeout(resolve, randomDelay));
+  
+            const pageForEvaluation = await browser.newPage();
+            await processPage(currentHref);
+            await pageForEvaluation.close();
+          } else {
+            await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
+          }
+        } else{
+          console.log('high pressure on server')
         }
-
-        if (visitedCount == 0) {
-          await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
-          await pool.query('INSERT INTO visited(url) VALUES($1)', [currentHref]);
-
-          const randomDelay = Math.floor(Math.random() * 90000); // 0 to 50 seconds
-          await new Promise((resolve) => setTimeout(resolve, randomDelay));
-
-          const pageForEvaluation = await browser.newPage();
-          await processPage(currentHref);
-          await pageForEvaluation.close();
-        } else {
-          await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
-        }
+       
       } catch (error) {
         console.error(error);
       }
