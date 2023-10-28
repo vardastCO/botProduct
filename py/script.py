@@ -1,4 +1,3 @@
-import psutil  # For memory monitoring
 from telegram import Bot
 from telegram.error import TelegramError
 import asyncio
@@ -8,7 +7,7 @@ import time
 bot_token = '6918624503:AAFSU4bwTBmAa2w2T7ElJ9fY4XlUA6MaQ4Q'
 
 # Chat ID (can be a group or your user ID)
-chat_id = '1839030'   # Replace with your actual chat ID
+chat_id = '1839030'  # Replace with your actual chat ID
 
 async def send_message(message):
     bot = Bot(token=bot_token)
@@ -22,9 +21,10 @@ def get_ram_usage():
     mem = psutil.virtual_memory()
     return mem.percent
 
-async def send_test_message():
-    test_message = "This is a test message."
-    await send_message(test_message)
+async def send_memory_usage():
+    ram_usage = get_ram_usage()
+    message = f"Memory Usage is {ram_usage}%."
+    await send_message(message)
 
 if __name__ == "__main__":
     max_retries = 3  # Adjust the maximum number of retry attempts
@@ -45,5 +45,5 @@ if __name__ == "__main__":
             # Wait for the specified delay before retrying
             time.sleep(retry_delay)
 
-    # After the memory check loop, you can call the test message function
-    asyncio.run(send_test_message())
+    # After the memory check loop, you can call the memory usage function
+    asyncio.run(send_memory_usage())
