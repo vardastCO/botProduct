@@ -166,11 +166,11 @@ async function processPage(pageUrl) {
 async function main() {
   try {
     // await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
-
+    await pool.connect();
     cron.schedule('*/5 * * * *', async () => {
       try {
         await createBrowser();
-        await pool.connect();
+        
         const freeMemoryGB = os.freemem() / (1024 * 1024 * 1024);
    
         // let cpuUsage = osUtils.cpuUsage(function (cpuUsage) {
