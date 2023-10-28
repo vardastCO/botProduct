@@ -57,7 +57,7 @@ if __name__ == "__main__":
             if ram_usage >= ram_threshold:
                 message = f"High RAM usage alert! RAM usage is {ram_usage}%."
                 asyncio.run(send_message(message))
-                # restart_docker_containers()
+                restart_docker_containers()
                 break  # Alert sent successfully, exit the loop
 
         except Exception as e:
