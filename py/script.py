@@ -1,4 +1,3 @@
-
 import psutil  # For memory monitoring
 from telegram import Bot
 from telegram.error import TelegramError
@@ -44,7 +43,6 @@ if __name__ == "__main":
             # Restart all Docker containers
             try:
                 subprocess.run(["docker", "restart", "$(docker ps -q)"])
-                print(f"Docker Restart Output")
             except subprocess.CalledProcessError as e:
                 print(f"Failed to restart Docker containers: {e}")
             
