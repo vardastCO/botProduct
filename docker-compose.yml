@@ -65,4 +65,6 @@ volumes:
 
 networks:
   custom_network:
-    external: true
+    external:
+      name: bridge
+    driver: bridge
