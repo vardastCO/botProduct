@@ -64,16 +64,3 @@ if __name__ == "__main__":
 
     # After the memory check loop, you can call the memory usage function
     asyncio.run(send_memory_usage())
-import os
-
-def list_running_containers():
-    try:
-        # Run the "docker ps" command as a shell command
-        result = os.popen('docker ps').read()
-        print("Running Containers:")
-        print(result)
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
-
-if __name__ == "__main__":
-    list_running_containers()
