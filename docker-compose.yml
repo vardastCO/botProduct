@@ -10,7 +10,6 @@ services:
       - "3002-3071:3002"
     volumes:
       - "./test:/app/test"
-      - "/var/run/docker.sock:/var/run/docker.sock"
     depends_on:
       - postgres
     networks:
@@ -43,7 +42,7 @@ services:
     restart: always 
     volumes:
       - ./py/requirements.txt:/app/requirements.txt
-      - ./var/run/docker.sock:/var/run/docker.sock 
+      - "/var/run/docker.sock:/var/run/docker.sock"
   storage:
     image: minio/minio
     restart: always

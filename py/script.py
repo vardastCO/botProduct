@@ -5,7 +5,6 @@ import time
 import psutil
 import os  # Import the os module
 import subprocess
-print(os.environ['PATH'])
 
 # Telegram Bot Token
 bot_token = '6918624503:AAFSU4bwTBmAa2w2T7ElJ9fY4XlUA6MaQ4Q'
@@ -25,6 +24,13 @@ def get_ram_usage():
     mem = psutil.virtual_memory()
     return mem.percent
 
+def restart_docker_containers():
+    try:
+        # Restart all Docker containers using the "docker restart" command
+        subprocess.run(["docker", "restart", "$(docker ps -q)"])
+    except Exception as e:
+        print(f"Failed to restart Docker containers: {e}")
+
 async def send_memory_usage():
     ram_usage = get_ram_usage()
     message = f"Memory Usage is {ram_usage}%."
@@ -36,7 +42,7 @@ if __name__ == "__main__":
     retry_count = 0
 
     while retry_count < max_retries:
-        ram_threshold = 70  # Adjust the threshold as needed
+        ram_threshold = 40  # Adjust the threshold as needed
         ram_usage = get_ram_usage()
 
         try:
@@ -46,6 +52,7 @@ if __name__ == "__main__":
             if ram_usage >= ram_threshold:
                 message = f"High RAM usage alert! RAM usage is {ram_usage}%."
                 asyncio.run(send_message(message))
+                restart_docker_containers()
                 break  # Alert sent successfully, exit the loop
 
         except Exception as e:

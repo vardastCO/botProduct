@@ -7,9 +7,6 @@ const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const Minio = require('minio');
 
-const Docker = require('dockerode');
-const docker = new Docker();
-
 const os = require('os');
 const osUtils = require('os-utils');
 
@@ -207,24 +204,6 @@ async function main() {
           }
         } else{
           console.log('high pressure on server')
-          docker.listContainers((err, containers) => {
-            if (err) {
-              console.error('Error listing containers:', err);
-              return;
-            }
-        
-            containers.forEach((containerInfo) => {
-              const container = docker.getContainer(containerInfo.Id);
-        
-              container.restart((err) => {
-                if (err) {
-                  console.error(`Error restarting container ${containerInfo.Names[0]}:`, err);
-                } else {
-                  console.log(`Restarted container ${containerInfo.Names[0]}`);
-                }
-              });
-            });
-          });
         }
        
       } catch (error) {
