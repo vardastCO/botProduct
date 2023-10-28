@@ -8,7 +8,7 @@ import subprocess
 
 # Telegram Bot Token
 bot_token = '6918624503:AAFSU4bwTBmAa2w2T7ElJ9fY4XlUA6MaQ4Q'
-
+print(os.environ['PATH'])
 # Chat ID (can be a group or your user ID)
 chat_id = '1839030'  # Replace with your actual chat ID
 
