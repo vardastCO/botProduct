@@ -44,7 +44,13 @@ services:
     volumes:
       - ./py/requirements.txt:/app/requirements.txt
       - /var/run/docker.sock:/var/run/docker.sock 
-   
+    depends_on:
+      - dind  # Depends on the DinD service
+  dind:
+    image: docker:20
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock 
   storage:
     image: minio/minio
     restart: always
