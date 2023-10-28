@@ -5,6 +5,7 @@ import time
 import psutil
 import os  # Import the os module
 import subprocess
+print(os.environ['PATH'])
 
 # Telegram Bot Token
 bot_token = '6918624503:AAFSU4bwTBmAa2w2T7ElJ9fY4XlUA6MaQ4Q'
