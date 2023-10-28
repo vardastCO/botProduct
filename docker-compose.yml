@@ -44,7 +44,7 @@ services:
       - ./py/requirements.txt:/app/requirements.txt
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - bridge  
+      - custom_network
   storage:
     image: minio/minio
     restart: always
