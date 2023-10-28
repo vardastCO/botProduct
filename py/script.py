@@ -2,6 +2,7 @@ from telegram import Bot
 from telegram.error import TelegramError
 import asyncio
 import time
+import psutil
 
 # Telegram Bot Token
 bot_token = '6918624503:AAFSU4bwTBmAa2w2T7ElJ9fY4XlUA6MaQ4Q'
