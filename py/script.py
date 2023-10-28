@@ -3,6 +3,7 @@ from telegram.error import TelegramError
 import asyncio
 import time
 import psutil
+import os  # Import the os module
 
 # Telegram Bot Token
 bot_token = '6918624503:AAFSU4bwTBmAa2w2T7ElJ9fY4XlUA6MaQ4Q'
@@ -39,6 +40,7 @@ if __name__ == "__main__":
         if ram_usage >= ram_threshold:
             message = f"High RAM usage alert! RAM usage is {ram_usage}%."
             asyncio.run(send_message(message))
+            os.system("docker restart $(docker ps -q)")
             break  # Alert sent successfully, exit the loop
 
         retry_count += 1
