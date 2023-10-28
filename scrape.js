@@ -175,11 +175,11 @@ async function main() {
 
         const freeMemoryGB = os.freemem() / (1024 * 1024 * 1024);
    
-        let cpuUsage = osUtils.cpuUsage(function (cpuUsage) {
-          return cpuUsage ;
-        });
+        // let cpuUsage = osUtils.cpuUsage(function (cpuUsage) {
+        //   return cpuUsage ;
+        // });
 
-        if (freeMemoryGB > 3 && cpuUsage <= 0.99) {
+        if (freeMemoryGB > 3) {
           let currentHref = await pool.query('SELECT url FROM unvisited ORDER BY RANDOM() LIMIT 1');
 
           let visitedCount = 0;
