@@ -23,18 +23,6 @@ def get_ram_usage():
     mem = psutil.virtual_memory()
     return mem.percent
 
-def restart_docker_containers():
-    try:
-        # Run the "docker ps" command to get IDs of running containers
-        running_containers = os.popen('docker ps -q').read()
-        if running_containers:
-            # Restart running containers
-            os.system(f'docker restart {running_containers}')
-            print("Running Docker containers have been restarted.")
-        else:
-            print("No running Docker containers to restart.")
-    except Exception as e:
-        print(f"Failed to restart Docker containers: {e}")
 
 async def send_memory_usage():
     ram_usage = get_ram_usage()
@@ -57,7 +45,11 @@ if __name__ == "__main__":
             if ram_usage >= ram_threshold:
                 message = f"High RAM usage alert! RAM usage is {ram_usage}%."
                 asyncio.run(send_message(message))
-                restart_docker_containers()
+                running_containers = os.popen('docker ps -q').read()
+                if running_containers:
+                    # Restart running containers
+                    os.system(f'docker restart {running_containers}')
+                    print("Running Docker containers have been restarted.")
                 break  # Alert sent successfully, exit the loop
 
         except Exception as e:
