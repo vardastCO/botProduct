@@ -4,6 +4,7 @@ import asyncio
 import time
 import psutil
 import os  # Import the os module
+import subprocess
 
 # Telegram Bot Token
 bot_token = '6918624503:AAFSU4bwTBmAa2w2T7ElJ9fY4XlUA6MaQ4Q'
@@ -34,14 +35,28 @@ if __name__ == "__main__":
     retry_count = 0
 
     while retry_count < max_retries:
-        ram_threshold = 60  # Adjust the threshold as needed
+        ram_threshold = 40  # Adjust the threshold as needed
         ram_usage = get_ram_usage()
 
-        if ram_usage >= ram_threshold:
-            message = f"High RAM usage alert! RAM usage is {ram_usage}%."
-            asyncio.run(send_message(message))
-            os.system("docker restart $(docker ps -q)")
-            break  # Alert sent successfully, exit the loop
+        try:
+            # Your code to monitor RAM usage goes here
+            # Check if ram_usage >= ram_threshold
+
+            if ram_usage >= ram_threshold:
+                message = f"High RAM usage alert! RAM usage is {ram_usage}%."
+                asyncio.run(send_message(message))
+                docker_ps_command = "docker ps -q"
+                container_ids = subprocess.check_output(docker_ps_command, shell=True, text=True)
+                if container_ids:
+                    docker_restart_command = f"docker restart {container_ids}"
+                    os.system(docker_restart_command)
+                print("Containers restarted successfully.")
+                break  # Alert sent successfully, exit the loop
+
+        except Exception as e:
+            # Handle exceptions and log the error
+            print(f"An error occurred: {str(e)}")
+            # You can also log the error to a file if needed
 
         retry_count += 1
         if retry_count < max_retries:
