@@ -20,6 +20,7 @@
     "minio" : "*",
     "p-queue" : "*",
     "puppeteer-cluster" : "*",
-    "generic-pool" : "*"
+    "generic-pool" : "*",
+    "os-utils" : "*"
   }
 }
