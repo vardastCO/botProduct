@@ -26,8 +26,8 @@ def get_ram_usage():
 
 def restart_docker_containers():
     try:
-        # Restart all Docker containers using the "docker restart" command
-        subprocess.run(["docker", "restart", "$(docker ps -q)"])
+        # Use the full path to the Docker executable and docker-compose to restart containers
+        subprocess.run(["/usr/bin/docker-compose", "-f", "../docker-compose.yml", "restart"])
     except Exception as e:
         print(f"Failed to restart Docker containers: {e}")
 
