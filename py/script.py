@@ -45,11 +45,14 @@ if __name__ == "__main__":
             if ram_usage >= ram_threshold:
                 message = f"High RAM usage alert! RAM usage is {ram_usage}%."
                 asyncio.run(send_message(message))
-                running_containers = os.popen('docker ps -q').read()
+                running_containers = os.popen('docker ps -q').read().splitlines()
                 if running_containers:
-                    # Restart running containers
-                    os.system(f'docker restart {running_containers}')
+                    for container_id in running_containers:
+                        # Restart each running container by ID
+                        os.system(f'docker restart {container_id}')
                     print("Running Docker containers have been restarted.")
+                else:
+                    print("No running Docker containers to restart.")
                 break  # Alert sent successfully, exit the loop
 
         except Exception as e:
