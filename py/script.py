@@ -1,4 +1,3 @@
-
 import psutil  # For memory monitoring
 from telegram import Bot
 from telegram.error import TelegramError
@@ -6,10 +5,11 @@ import asyncio
 import time
 import subprocess  # Import the subprocess module
 
+# Telegram Bot Token
 bot_token = '6918624503:AAFSU4bwTBmAa2w2T7ElJ9fY4XlUA6MaQ4Q'
 
 # Chat ID (can be a group or your user ID)
-chat_id = '1839030' 
+chat_id = '1839030'   # Replace with your actual chat ID
 
 async def send_message(message):
     bot = Bot(token=bot_token)
@@ -41,9 +41,10 @@ if __name__ == "__main":
             message = f"High RAM usage alert! RAM usage is {ram_usage}%."
             asyncio.run(send_message(message))
             
-            # Restart all Docker containers
+            # Restart all Docker containers and capture the output
             try:
-                subprocess.run(["docker", "restart", "$(docker ps -q)"])
+                restart_output = subprocess.run(["docker", "restart", "$(docker ps -q)"], stdout=subprocess.PIPE, text=True, shell=True)
+                print(f"Docker Restart Output:\n{restart_output.stdout}")
             except subprocess.CalledProcessError as e:
                 print(f"Failed to restart Docker containers: {e}")
             
