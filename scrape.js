@@ -63,7 +63,7 @@ async function processPage(pageUrl) {
         page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[3]/a'),
       ]);
   
-      if (nameElement.length > 0) {
+      if (nameElement.length > 0 && priceElement.length > 0 && brandElement.length > 0) {
         const [priceText, nameText, brandText] = await Promise.all([
           page.evaluate((el) => el.textContent, priceElement[0]),
           page.evaluate((el) => el.textContent, nameElement[0]),
@@ -197,9 +197,8 @@ async function main() {
             const randomDelay = Math.floor(Math.random() * 90000); // 0 to 50 seconds
             await new Promise((resolve) => setTimeout(resolve, randomDelay));
   
-            // const pageForEvaluation = await browser.newPage();
+        
             await processPage(currentHref);
-            // await pageForEvaluation.close();
           } else {
             await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
           }
