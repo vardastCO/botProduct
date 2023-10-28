@@ -52,9 +52,10 @@ const initialPage = 'https://www.tileiran.co/fa/%D9%81%D8%B1%D9%88%D8%B4%DA%AF%D
 
 async function processPage(pageUrl) {
   
-  const page = await browser.newPage();
-  await page.goto(pageUrl+ '?filter_نمایش_کالاهای_موجود_54=in_stock', { timeout: 90000 });
+  
   try {
+    const page = await browser.newPage();
+    await page.goto(pageUrl+ '?filter_نمایش_کالاهای_موجود_54=in_stock', { timeout: 120000 });
     const uuid1 = uuidv4();
     if (pageUrl.includes('product')){
       const [priceElement, nameElement, brandElement] = await Promise.all([
