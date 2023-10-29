@@ -46,7 +46,7 @@ if __name__ == "__main__":
                 message = f"High RAM usage alert! RAM usage is {ram_usage}%."
                 asyncio.run(send_message(message))
                 try:
-                    os.system('docker restart $(docker ps -q)')
+                    os.system('cd .. && docker compose up -d --build --scale node-app=70 ')
                     print("All running Docker containers have been restarted.")
                 except Exception as e:
                     print(f"An error occurred: {str(e)}")
