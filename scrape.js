@@ -148,7 +148,7 @@ async function processPage(pageUrl,browser) {
           } else {
             var outputUrl = href;
           }
-          if (outputUrl && outputUrl.startsWith(startUrlPattern2) && outputUrl.includes('limit') ) {
+          if (outputUrl && outputUrl.startsWith(startUrlPattern2) && (outputUrl.includes('limit') || outputUrl.includes('product'))  ) {
             const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
             if (result.rows.length === 0) {
               await pool.query('INSERT INTO unvisited(url) VALUES($1)', [outputUrl]);
