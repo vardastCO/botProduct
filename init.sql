@@ -11,6 +11,7 @@ CREATE TABLE unvisited (
 CREATE TABLE scraped_data (
     id SERIAL PRIMARY KEY,
     name TEXT,
+    name2 TEXT,
     SKU TEXT,
     brand TEXT,
     category TEXT,

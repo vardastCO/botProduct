@@ -57,17 +57,20 @@ async function processPage(pageUrl,browser) {
   try {
     const uuid1 = uuidv4();
     if (pageUrl.includes('product')){
-      const [priceElement, nameElement, brandElement] = await Promise.all([
+      const [priceElement, nameElement, brandElement,nameElement2] = await Promise.all([
         page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[4]/div[1]/span/span/span[1]'),
         page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[1]/a'),
         page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[3]/div[1]/div[3]/a'),
+        page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[1]/h1/span'),
+      
       ]);
   
-      if (nameElement.length > 0 && priceElement.length > 0 && brandElement.length > 0) {
-        const [priceText, nameText, brandText] = await Promise.all([
+      if (nameElement2.length > 0 && priceElement.length > 0 && brandElement.length > 0) {
+        const [priceText, nameText, brandText,nameText2] = await Promise.all([
           page.evaluate((el) => el.textContent, priceElement[0]),
           page.evaluate((el) => el.textContent, nameElement[0]),
           page.evaluate((el) => el.textContent, brandElement[0]),
+          page.evaluate((el) => el.textContent, nameElement2[0]),
         ]);
   
         
@@ -125,9 +128,9 @@ async function processPage(pageUrl,browser) {
             console.log('No imageElement found on the page.');
           }
           console.log('NAME:', nameText.trim(), 'PRICE:', priceText.trim(), 'URL:', pageUrl);
-          await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU,description) VALUES($1, $2, $3, $4, $5,$6)',
+          await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU,description,name2) VALUES($1, $2, $3, $4, $5,$6,$7)',
             [nameText.trim(), pageUrl, priceText.trim() ?? 0, brandText.trim() ?? '', uuid1,
-          formattedTableData]);
+          formattedTableData,nameText2]);
         }
       }
     }
@@ -148,7 +151,7 @@ async function processPage(pageUrl,browser) {
           } else {
             var outputUrl = href;
           }
-          if (outputUrl && outputUrl.startsWith(startUrlPattern2) || outputUrl.includes('limit') || outputUrl.includes('product')  ) {
+          if (outputUrl && outputUrl.startsWith(startUrlPattern2)  ) {
             const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
             if (result.rows.length === 0) {
               await pool.query('INSERT INTO unvisited(url) VALUES($1)', [outputUrl]);
