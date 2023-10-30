@@ -55,7 +55,10 @@ async function processPage(pageUrl,browser) {
   const page = await browser.newPage();
   await page.goto(pageUrl+ '?filter_نمایش_کالاهای_موجود_54=in_stock', { timeout: 110000 });
   try {
-    const uuid1 = uuidv4();
+    const uuidWithHyphens = uuidv4();
+
+// Remove hyphens from the UUID
+      const uuid1 = uuidWithHyphens.replace(/-/g, '');
     if (pageUrl.includes('product')){
       const [priceElement, nameElement, brandElement,nameElement2] = await Promise.all([
         page.$x('/html/body/div[2]/section[3]/div/div/div/main/div[1]/div/div/div/div/div/div/form/div/div[4]/div[1]/span/span/span[1]'),
