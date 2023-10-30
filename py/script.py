@@ -35,7 +35,8 @@ if __name__ == "__main__":
     retry_count = 0
 
     while retry_count < max_retries:
-        ram_threshold = 65  # Adjust the threshold as needed
+
+        ram_threshold = 85  # Adjust the threshold as needed
         ram_usage = get_ram_usage()
 
         try:
@@ -46,7 +47,8 @@ if __name__ == "__main__":
                 message = f"High RAM usage alert! RAM usage is {ram_usage}%."
                 asyncio.run(send_message(message))
                 try:
-                    os.system('docker restart $(docker ps -q)')
+                    os.system('docker stop $(docker ps -q --filter "expose=3002")')
+                    os.system('docker rm $(docker ps -aq --filter "expose=3002")')
                     print("All running Docker containers have been restarted.")
                 except Exception as e:
                     print(f"An error occurred: {str(e)}")
