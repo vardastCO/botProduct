@@ -41,7 +41,7 @@ async function createBrowser() {
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
-        // `--proxy-server=${proxyServer}`,
+        `--proxy-server=${proxyServer}`,
       ],
     });
     return browser;
@@ -175,11 +175,11 @@ async function processPage(pageUrl,browser) {
 async function main() {
   try {;
     // await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
-    await createBrowser();
+  
     await pool.connect();
     cron.schedule('*/6 * * * *', async () => {
       try {
-    
+        await createBrowser();
         const freeMemoryGB = os.freemem() / (1024 * 1024 * 1024);
    
         // let cpuUsage = osUtils.cpuUsage(function (cpuUsage) {
