@@ -51,17 +51,6 @@ async function createBrowser() {
   const beforeProxyIP = await page.$eval('pre', (pre) => pre.textContent);
   console.log('IP address before setting up a proxy:', beforeProxyIP);
 
-  // Set up a proxy server in Puppeteer. Replace with your proxy server details.
-  await page.setRequestInterception(true);
-  page.on('request', (request) => {
-    request.continue({ proxy: proxyServer });
-  });
-
-  // Visit httpbin.org again to get your IP address after setting up the proxy.
-  await page.goto('http://httpbin.org/ip');
-  const afterProxyIP = await page.$eval('pre', (pre) => pre.textContent);
-  console.log('IP address after setting up a proxy:', afterProxyIP);
-
   return browser;
 
 
