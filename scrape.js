@@ -28,7 +28,7 @@ const pool = new Client({
 });
 
 let browser;
-const proxyServer = 'http://91.239.53.55:443';
+const proxyServer = '91.239.53.55:443';
 // const proxyServer =
 // 'ss://YWVzLTI1Ni1nY206d0DVaGt6WGpjRA==@38.54.13.15:31214#main';
 
