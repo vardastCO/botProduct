@@ -36,7 +36,7 @@ async function createBrowser() {
     const browser = await puppeteer.launch({
       headless: true,
       ignoreDefaultArgs: ['--disable-extensions'],
-      executablePath: '/usr/bin/chromium-browser',
+      executablePath: '/usr/bin/google-chrome-stable',
       args: [
           '--no-sandbox',
           `--proxy-server=${proxyServer}`,
