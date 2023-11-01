@@ -33,17 +33,16 @@ const proxyServer =
 
 async function createBrowser() {
   try {
-    browser = await puppeteer.launch({
+    const browser = await puppeteer.launch({
       headless: true,
-      executablePath: process.env.NODE_ENV === "production" ?
-        process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
+      ignoreDefaultArgs: ['--disable-extensions'],
+      executablePath: '/usr/bin/chromium-browser',
       args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        `--proxy-server=${proxyServer}`,
+          '--no-sandbox',
+          `--proxy-server=${proxyServer}`,
+          '--disable-setuid-sandbox',
       ],
-    });
+  });
     const page = await browser.newPage();
 
   // Visit httpbin.org to get your IP address before setting up a proxy.
