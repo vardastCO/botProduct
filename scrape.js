@@ -35,7 +35,6 @@ async function createBrowser() {
   try {
     const browser = await puppeteer.launch({
       headless: true,
-      ignoreDefaultArgs: ['--disable-extensions'],
       executablePath: '/usr/bin/google-chrome-stable',
       args: [
           '--no-sandbox',
@@ -183,11 +182,11 @@ async function processPage(pageUrl,browser) {
 async function main() {
   try {;
     // await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
-  
+    await createBrowser();
     await pool.connect();
     cron.schedule('*/2 * * * *', async () => {
       try {
-        await createBrowser();
+   
         const freeMemoryGB = os.freemem() / (1024 * 1024 * 1024);
    
         // let cpuUsage = osUtils.cpuUsage(function (cpuUsage) {
