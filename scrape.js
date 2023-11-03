@@ -68,7 +68,7 @@ const initialPage = 'https://www.tileiran.co/fa/%D9%81%D8%B1%D9%88%D8%B4%DA%AF%D
 async function processPage(pageUrl,browser) {
   
   const page = await browser.newPage();
-  await page.goto(pageUrl+ '?filter_نمایش_کالاهای_موجود_54=in_stock', { timeout: 90000 });
+  await page.goto(pageUrl+ '?filter_نمایش_کالاهای_موجود_54=in_stock', { timeout: 300000 });
   try {
     const uuidWithHyphens = uuidv4();
 
@@ -189,7 +189,7 @@ async function main() {
     // await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
     await createBrowser();
     await pool.connect();
-    cron.schedule('*/2 * * * *', async () => {
+    cron.schedule('*/10 * * * *', async () => {
       try {
    
         const freeMemoryGB = os.freemem() / (1024 * 1024 * 1024);
@@ -215,7 +215,7 @@ async function main() {
             await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
             await pool.query('INSERT INTO visited(url) VALUES($1)', [currentHref]);
   
-            const randomDelay = Math.floor(Math.random() * 30000); // 0 to 50 seconds
+            const randomDelay = Math.floor(Math.random() * 300000); // 0 to 50 seconds
             await new Promise((resolve) => setTimeout(resolve, randomDelay));
   
         
