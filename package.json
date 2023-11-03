@@ -22,9 +22,6 @@
     "puppeteer-cluster" : "*",
     "generic-pool" : "*",
     "os-utils" : "*",
-    "dockerode" : "*",
-    "puppeteer-extra" : "*",
-    "puppeteer-extra-plugin-stealth" : "*",
-    "puppeteer-extra-plugin-proxy-auth" : "*"
+    "dockerode" : "*"
   }
 }
