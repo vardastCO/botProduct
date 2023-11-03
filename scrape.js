@@ -28,12 +28,39 @@ const pool = new Client({
 });
 
 let browser;
-const proxyServer =
-'ss://YWVzLTI1Ni1nY206d0DVaGt6WGpjRA==@38.54.13.15:31214#main';
+// const proxyServer =
+// 'ss://YWVzLTI1Ni1nY206d0DVaGt6WGpjRA==@38.54.13.15:31214#main';
+
+// const puppeteer = require('puppeteer');
+const puppeteerExtra = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+const PuppeteerProxy = require('puppeteer-extra-plugin-proxy-auth');
+
+// Your proxy server URL
+const proxyServer = 'ss://YWVzLTI1Ni1nY206d0DVaGt6WGpjRA==@38.54.13.15:31214#main';
+
+// Parse the proxy server URL
+const proxyParts = proxyServer.match(/^ss:\/\/(.*):(.*)@(.+):(.+)#(.+)$/);
+const proxyUsername = proxyParts[1];
+const proxyPassword = proxyParts[2];
+const proxyHost = proxyParts[3];
+const proxyPort = parseInt(proxyParts[4]);
+const proxyProtocol = proxyParts[5];
+
+puppeteerExtra.use(StealthPlugin());
+puppeteerExtra.use(PuppeteerProxy({
+  host: proxyHost,
+  port: proxyPort,
+  protocol: proxyProtocol,
+  username: proxyUsername,
+  password: proxyPassword,
+}));
+
+
 
 async function createBrowser() {
   try {
-    browser = await puppeteer.launch({
+    browser = await puppeteerExtra.launch({
        headless: true, // Set to true for headless mode, false for non-headless
        executablePath:  process.env.NODE_ENV === "production" ?
          process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath(),
