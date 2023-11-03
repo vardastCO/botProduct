@@ -1,18 +1,14 @@
-// const puppeteer = require('puppeteer');
-const puppeteer = require('puppeteer-extra');
-const pluginProxy = require('puppeteer-extra-plugin-proxy');
+const puppeteer = require('puppeteer');
 
-puppeteer.use(pluginProxy());
+
 const { Client } = require('pg');
 const cron = require('node-cron');
 const fetch = require('node-fetch');
-const fs = require('fs-extra');
 const { v4: uuidv4 } = require('uuid');
-const path = require('path');
 const Minio = require('minio');
 
 const os = require('os');
-const osUtils = require('os-utils');
+
 
 
 const minioClient = new Minio.Client({
@@ -32,6 +28,7 @@ const pool = new Client({
 });
 
 let browser;
+
 
 
 async function createBrowser() {
