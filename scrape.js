@@ -33,7 +33,8 @@ let browser;
 
 async function createBrowser() {
   try {
-    const proxyServer = 'ss://YWVzLTI1Ni1nY206d0DVaGt6WGpjRA==@38.54.13.15:31214#main';
+    // const proxyServer = 'ss://YWVzLTI1Ni1nY206d0DVaGt6WGpjRA==@38.54.13.15:31214#main';
+    const proxyServer = '45.225.185.62:999';
     browser = await puppeteer.launch({
        headless: true, // Set to true for headless mode, false for non-headless
        executablePath:  process.env.NODE_ENV === "production" ?
