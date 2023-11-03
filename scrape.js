@@ -1,4 +1,8 @@
-const puppeteer = require('puppeteer');
+// const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+const pluginProxy = require('puppeteer-extra-plugin-proxy');
+
+puppeteer.use(pluginProxy());
 const { Client } = require('pg');
 const cron = require('node-cron');
 const fetch = require('node-fetch');
