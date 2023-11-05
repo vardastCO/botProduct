@@ -54,7 +54,7 @@ async function createBrowser() {
 
 }
 const startUrlPattern2 = 'https://alton-home.com/';
-const initialPage = 'https://alton-home.com/';
+const initialPage = 'https://alton-home.com/shop/?product_per_page=-1';
 
 
 async function processPage(pageUrl,browser) {
@@ -183,7 +183,7 @@ async function main() {
 
     await createBrowser();
     await pool.connect();
-        // await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
+        await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
     cron.schedule('*/4 * * * *', async () => {
       try {
    
