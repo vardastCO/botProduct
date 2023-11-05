@@ -74,19 +74,21 @@ async function processPage(pageUrl,browser) {
 // Remove hyphens from the UUID
       const uuid1 = uuidWithHyphens.replace(/-/g, '');
     if (pageUrl.includes('product')){
-      const [ nameElement, brandElement,nameElement2] = await Promise.all([
+      const [ nameElement, brandElement,nameElement2,priceElemt] = await Promise.all([
         page.$x('/html/body/div[3]/div[2]/div/main/div[2]/div[1]/div[2]/h1'),
         page.$x('/html/body/div[3]/div[2]/div/main/div[2]/div[1]/div[2]/div[5]/span[2]/a[1]'),
         page.$x('/html/body/div[3]/div[2]/div/main/div[2]/div[2]/div[1]'),
+        page.$x('/html/body/div[3]/div[2]/div/main/div[2]/div[1]/div[2]/p/span/bdi'),
       
       ]);
   
       if (nameElement2.length > 0  && brandElement.length > 0) {
-        const [ nameText, brandText,nameText2] = await Promise.all([
+        const [ nameText, brandText,nameText2,priceText] = await Promise.all([
 
           page.evaluate((el) => el.textContent, nameElement[0]),
           page.evaluate((el) => el.textContent, brandElement[0]),
           page.evaluate((el) => el.textContent, nameElement2[0]),
+          page.evaluate((el) => el.textContent, priceElemt[0]),
         ]);
   
         
@@ -145,7 +147,7 @@ async function processPage(pageUrl,browser) {
           }
           console.log('NAME:', nameText.trim(), 'PRICE:', '', 'URL:', pageUrl);
           await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU,description,name2) VALUES($1, $2, $3, $4, $5,$6,$7)',
-            [nameText.trim(), pageUrl, 0, brandText.trim() ?? '', uuid1,
+            [nameText.trim(), pageUrl, priceText.trim() ?? 0, brandText.trim() ?? '', uuid1,
           formattedTableData,nameText2]);
         }
       }
