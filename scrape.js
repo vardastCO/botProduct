@@ -60,7 +60,7 @@ const initialPage = 'https://alton-home.com/';
 async function processPage(pageUrl,browser) {
   
   const page = await browser.newPage();
-  await page.goto(pageUrl, { timeout: 300000 });
+  await page.goto(pageUrl, { timeout: 120000 });
   try {
     const uuidWithHyphens = uuidv4();
 
@@ -179,10 +179,11 @@ async function processPage(pageUrl,browser) {
 
 async function main() {
   try {;
-    // await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
+
     await createBrowser();
     await pool.connect();
-    cron.schedule('*/10 * * * *', async () => {
+        await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
+    cron.schedule('*/4 * * * *', async () => {
       try {
    
         const freeMemoryGB = os.freemem() / (1024 * 1024 * 1024);
@@ -208,7 +209,7 @@ async function main() {
             await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
             await pool.query('INSERT INTO visited(url) VALUES($1)', [currentHref]);
   
-            const randomDelay = Math.floor(Math.random() * 300000); // 0 to 50 seconds
+            const randomDelay = Math.floor(Math.random() * 120000); // 0 to 50 seconds
             await new Promise((resolve) => setTimeout(resolve, randomDelay));
   
         
