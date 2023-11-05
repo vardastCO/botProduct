@@ -191,13 +191,16 @@ async function main() {
         // let cpuUsage = osUtils.cpuUsage(function (cpuUsage) {
         //   return cpuUsage ;
         // });
+        console.log('hi1')
         console.log('free',freeMemoryGB)
         if (freeMemoryGB > 3) {
+          console.log('hi2')
           let currentHref = await pool.query('SELECT url FROM unvisited ORDER BY RANDOM() LIMIT 1');
 
           let visitedCount = 0;
   
           if (currentHref.rows.length > 0) {
+            console.log('h3')
             const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [currentHref.rows[0].url]);
             visitedCount = visitedCheckResult.rows[0].count;
             currentHref = currentHref.rows[0].url;
@@ -206,6 +209,7 @@ async function main() {
           }
   
           if (visitedCount == 0) {
+            console.log('hi4')
             await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
             await pool.query('INSERT INTO visited(url) VALUES($1)', [currentHref]);
   
