@@ -44,13 +44,6 @@ async function createBrowser() {
        ],
    });
 
-   console.log('browserrrr',browser)
-   const page = await browser.newPage();
-
-   // Visit httpbin.org to get your IP address before setting up a proxy.
-   await page.goto('http://httpbin.org/ip');
-   const beforeProxyIP = await page.$eval('pre', (pre) => pre.textContent);
-   console.log('IP address before setting up a proxy:', beforeProxyIP);
  
    return browser;
 
