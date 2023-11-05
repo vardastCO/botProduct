@@ -94,6 +94,7 @@ async function processPage(pageUrl,browser) {
             const data = {};
     
             if (table) {
+              console.log('hi table ...............')
               const rows = table.getElementsByTagName('tr');
               for (const row of rows) {
                 const cells = row.getElementsByTagName('td');
