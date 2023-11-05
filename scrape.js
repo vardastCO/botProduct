@@ -75,7 +75,8 @@ async function processPage(pageUrl,browser) {
       
       ]);
   
-      if (nameElement2.length > 0  && brandElement.length > 0) {
+      if (nameElement.length > 0 ) {
+        console.log('hi666')
         const [ nameText, brandText,nameText2,priceText] = await Promise.all([
 
           page.evaluate((el) => el.textContent, nameElement[0]),
