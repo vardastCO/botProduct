@@ -85,23 +85,27 @@ async function processPage(pageUrl,browser) {
         ]);
   
         
-        if (nameText.trim() !== '' ) {
-          var ulElement = document.querySelector("ul.list-unstyled");
-          var liElements = ulElement.querySelectorAll("li");
-          var data = {};
+      
+        if (pageUrl.includes('product')) {
+            const ulElement = await page.evaluate(() => {
+              const xpathResult = document.evaluate("/html/body/main/div/div[3]/div/div/div[2]/div[2]/div/ul", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+              return xpathResult.singleNodeValue;
+            });
           
-          liElements.forEach(function(liElement) {
-              var stlR = liElement.querySelector(".stl_r").textContent.trim();
-              var stlL = liElement.querySelector(".stl_l").textContent.trim();
+            const liElements = await ulElement.querySelectorAll("li");
+            const data = {};
+          
+            liElements.forEach(async (liElement) => {
+              const stlR = await liElement.querySelector(".stl_r").textContent.trim();
+              const stlL = await liElement.querySelector(".stl_l").textContent.trim();
               data[stlR] = stlL;
-          });
+            });
           
-          // Format the data as a string
-          const formattedTableData = Object.keys(data)
+            const formattedTableData = await Object.keys(data)
               .map((key) => `${key}: ${data[key]}`)
               .join('\n');
           
-
+          
               const imageElementsXPath = '/html/body/main/div/div[2]/div/div/div/div[1]/div/div[1]//img';
               const imageElements = await page.$x(imageElementsXPath);
             
