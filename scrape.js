@@ -92,6 +92,7 @@ async function processPage(pageUrl,browser) {
           const tableData = await page.evaluate((tableXPath) => {
             const table = document.evaluate(tableXPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
             const data = {};
+            console.log('by table ......................')
     
             if (table) {
               console.log('hi table ...............')
