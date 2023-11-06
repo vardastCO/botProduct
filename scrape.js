@@ -240,7 +240,7 @@ async function main() {
             await pool.query('INSERT INTO visited(url) VALUES($1)', [currentHref]);
   
             // const randomDelay = Math.floor(Math.random() * 120000); // 0 to 50 seconds
-            await new Promise((resolve) => setTimeout(resolve, randomDelay));
+            // await new Promise((resolve) => setTimeout(resolve, randomDelay));
   
         
             await processPage(currentHref,browser);
