@@ -16,11 +16,6 @@ services:
       - custom_network
     # Add a healthcheck configuration to check the memory usage
   postgres:
-    deploy:
-      resources:
-        limits:
-          cpus: '1'  # Set the CPU limit to 1 (one CPU core)
-          memory: '1G'  # Set the memory limit to 1 gigabyte
     image: postgres
     environment:
       POSTGRES_USER: db
