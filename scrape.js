@@ -17,20 +17,20 @@ const botToken = '6918624503:AAFSU4bwTBmAa2w2T7ElJ9fY4XlUA6MaQ4Q'; // Replace wi
 const chatId = '1839030'; // Replace with your actual chat ID
 
 // Create a new Telegram bot instance
-const bot = new TelegramBot(botToken, { polling: true });
+// const bot = new TelegramBot(botToken, { polling: true });
 
-function sendMessage(message) {
-  bot.sendMessage(chatId, message)
-    .then(() => {
-      console.log(`Message sent: ${message}`);
-    })
-    .catch((error) => {
-      console.error(`Failed to send message: ${error}`);
-    });
-}
+// function sendMessage(message) {
+//   bot.sendMessage(chatId, message)
+//     .then(() => {
+//       console.log(`Message sent: ${message}`);
+//     })
+//     .catch((error) => {
+//       console.error(`Failed to send message: ${error}`);
+//     });
+// }
 
-// Example usage:
-sendMessage('Hello, Telegram Bot!');
+// // Example usage:
+// sendMessage('Hello, Telegram Bot!');
 
 const minioClient = new Minio.Client({
   endPoint: 'storage', // Use the service name defined in your Docker Compose file
@@ -170,7 +170,7 @@ async function processPage(pageUrl,browser) {
             
           
           console.log('NAME:', nameText.trim(), 'PRICE:', '', 'URL:', pageUrl);
-          sendMessage( nameText.trim() );
+          // sendMessage( nameText.trim() );
           await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU,description,name2,category) VALUES($1, $2, $3, $4, $5,$6,$7,$8)',
             [nameText.trim(), pageUrl, priceText.trim() ?? 0, 'kwc', uuid1,
           formattedTableData,nameText2,categorytext.trim() ?? '']);
