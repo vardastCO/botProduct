@@ -88,6 +88,11 @@ async function processPage(pageUrl,browser) {
       
     await page.click('a.class1');
 
+    await page.waitForSelector('a.class1', { visible: true, timeout: 10000 });
+    
+    // Click on the link
+    await page.click('a.class1');
+
     // Wait for a certain element to load on the new page (adjust as needed)
     // Wait for a specific element on the new page to load (if necessary)
     await page.waitForSelector('#Table1');
@@ -126,7 +131,7 @@ async function processPage(pageUrl,browser) {
     for (const href of hrefs) {
       try {
         if (href) { // Check if href is not null
-          if (!href.startsWith('https://')) {
+          if (!href.startsWith('htt')) {
             var outputUrl =  false;
           } else {
             var outputUrl = href;
