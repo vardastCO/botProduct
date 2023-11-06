@@ -115,8 +115,8 @@ async function processPage(pageUrl,browser) {
           const stlLElement = await liElement.$(".stl_l");
         
           if (stlRElement && stlLElement) {
-            const stlR = await stlRElement.textContent();
-            const stlL = await stlLElement.textContent();
+            const stlR = await stlRElement.evaluate(element => element.textContent);
+            const stlL = await stlLElement.evaluate(element => element.textContent);
             data[stlR] = stlL;
           } else {
             console.log("One or more elements not found for this liElement.");
@@ -126,6 +126,9 @@ async function processPage(pageUrl,browser) {
         const formattedTableData = Object.keys(data)
           .map((key) => `${key}: ${data[key]}`)
           .join('\n');
+        
+        console.log(formattedTableData);
+        
         
         
         
