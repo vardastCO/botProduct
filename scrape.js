@@ -87,7 +87,7 @@ async function processPage(pageUrl,browser) {
 
 // Remove hyphens from the UUID
       const uuid1 = uuidWithHyphens.replace(/-/g, '');
-    if (pageUrl.includes('product')){
+    
       const [ categoryElemt,nameElement,nameElement2,priceElemt] = await Promise.all([
 
         page.$x('/html/body/main/div/div[1]/div[1]/div/div/div/ul'),
@@ -107,7 +107,7 @@ async function processPage(pageUrl,browser) {
   
         
       
-        if (pageUrl.includes('product')) {
+    
             const ulElement = await page.evaluate(() => {
               const xpathResult = document.evaluate("/html/body/main/div/div[3]/div/div/div[2]/div[2]/div/ul", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
               return xpathResult.singleNodeValue;
@@ -168,8 +168,8 @@ async function processPage(pageUrl,browser) {
             [nameText.trim(), pageUrl, priceText.trim() ?? 0, 'kwc', uuid1,
           formattedTableData,nameText2,categorytext.trim() ?? '']);
         }
-      }
-    }
+      
+    
   
 
   } catch (error) {
@@ -207,7 +207,7 @@ async function main() {
 
     await createBrowser();
     await pool.connect();
-        await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
+        // await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
     cron.schedule('*/2 * * * *', async () => {
       try {
    
