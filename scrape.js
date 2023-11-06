@@ -106,7 +106,6 @@ async function processPage(pageUrl,browser) {
           page.evaluate((el) => el.textContent, priceElemt[0]),
         ]);
   
-        
         const liElements = await page.$x("/html/body/main/div/div[3]/div/div/div[2]/div[2]/div/ul/li");
         const data = {};
         
@@ -115,9 +114,13 @@ async function processPage(pageUrl,browser) {
           const stlLElement = await liElement.$(".stl_l");
         
           if (stlRElement && stlLElement) {
-            const stlR = await stlRElement.evaluate(element => element.textContent);
-            const stlL = await stlLElement.evaluate(element => element.textContent);
-            data[stlR] = stlL;
+            const stlR = (await stlRElement.evaluate(element => element.textContent)).trim();
+            const stlL = (await stlLElement.evaluate(element => element.textContent)).trim();
+        
+            // Only add to the data if both stlR and stlL have content
+            if (stlR && stlL) {
+              data[stlR] = stlL;
+            }
           } else {
             console.log("One or more elements not found for this liElement.");
           }
@@ -126,9 +129,6 @@ async function processPage(pageUrl,browser) {
         const formattedTableData = Object.keys(data)
           .map((key) => `${key}: ${data[key]}`)
           .join('\n');
-        
-        console.log(formattedTableData);
-        
         
         
         
