@@ -74,8 +74,8 @@ async function createBrowser() {
   }
 
 }
-const startUrlPattern2 = 'https://www.kwciran.com/fa/product';
-const initialPage = 'https://www.kwciran.com/fa/product';
+const startUrlPattern2 = 'http://marja.ir/Search.aspx?t=3';
+const initialPage = 'http://marja.ir/Search.aspx?t=3';
 
 
 async function processPage(pageUrl,browser) {
@@ -84,99 +84,36 @@ async function processPage(pageUrl,browser) {
   await page.goto(pageUrl, { timeout: 90000 });
   try {
     console.log('pageurl',pageUrl)
-    const uuidWithHyphens = uuidv4();
-
-// Remove hyphens from the UUID
-      const uuid1 = uuidWithHyphens.replace(/-/g, '');
     
-      const [ categoryElemt,nameElement,nameElement2,priceElemt] = await Promise.all([
+      
+    await page.click('a.class1');
 
-        page.$x('/html/body/main/div/div[1]/div[1]/div/div/div/ul'),
-        page.$x('/html/body/main/div/div[1]/div[1]/div/div/div/h2'),
-        page.$x('/html/body/main/div/div[3]/div/div/div[2]/div[1]/div/div[2]'),
-        page.$x('/html/body/main/div/div[2]/div/div/div/div[2]/div/div[2]/div[2]/div[3]/div/span'),
-      
-      ]);
-  
-      if (nameElement.length > 0 ) {
-        const [ categorytext,nameText,nameText2,priceText] = await Promise.all([
-          page.evaluate((el) => el.textContent, categoryElemt[0]),
-          page.evaluate((el) => el.textContent, nameElement[0]),
-          page.evaluate((el) => el.textContent, nameElement2[0]),
-          page.evaluate((el) => el.textContent, priceElemt[0]),
-        ]);
-  
-        const liElements = await page.$x("/html/body/main/div/div[3]/div/div/div[2]/div[2]/div/ul/li");
-        const data = {};
-        
-        for (const liElement of liElements) {
-          const stlRElement = await liElement.$(".stl_r");
-          const stlLElement = await liElement.$(".stl_l");
-        
-          if (stlRElement && stlLElement) {
-            const stlR = (await stlRElement.evaluate(element => element.textContent)).trim();
-            const stlL = (await stlLElement.evaluate(element => element.textContent)).trim();
-        
-            // Only add to the data if both stlR and stlL have content
-            if (stlR && stlL) {
-              data[stlR] = stlL;
-            }
-          } else {
-            console.log("One or more elements not found for this liElement.");
-          }
+    // Wait for a certain element to load on the new page (adjust as needed)
+    // Wait for a specific element on the new page to load (if necessary)
+    await page.waitForSelector('#Table1');
+
+    // Extract the data from the table
+    const data = await page.evaluate(() => {
+      const table = document.querySelector('#Table1');
+      const rows = table.querySelectorAll('tr');
+      const keyValuePairs = {};
+
+      for (const row of rows) {
+        const cells = row.querySelectorAll('td');
+
+        if (cells.length === 4) {
+          const key = cells[1].textContent.trim().replace(/:/, ''); // Extract and clean the key
+          const value = cells[2].textContent.trim(); // Extract the value
+          keyValuePairs[key] = value; // Store as key-value pair
         }
-        
-        const formattedTableData = Object.keys(data)
-          .map((key) => `${key}: ${data[key]}`)
-          .join('\n');
-        
-        
-        
-        console.log(formattedTableData);
-          
-          
-              const imageElementsXPath = '/html/body/div[1]/div/div/div/div/div[2]/div/div//img';
-              const imageElements = await page.$x(imageElementsXPath);
-            
-              if (imageElements.length > 0) {
-                for (let i = 0; i < imageElements.length; i++) {
-                  const imageElement = imageElements[i];
-                  const imageUrl = await imageElement.evaluate((img) => img.src);
-                  const response = await fetch(imageUrl);
-            
-                  if (response.ok && uuid1) {
-                    const localFilename = `${uuid1}-${i}.jpg`; // Generate a unique filename for each image
-                    const buffer = await response.buffer();
-            
-                    // Replace with your Minio client setup
-          
-            
-                    const bucketName = 'vardast'; // Replace with your Minio bucket name
-                    const objectName = localFilename;
-            
-                    try {
-                      await minioClient.putObject(bucketName, objectName, buffer, buffer.length);
-                      console.log(`Image uploaded to Minio: ${objectName}`);
-                    } catch (error) {
-                      console.error(`Failed to upload image to Minio: ${error}`);
-                    }
-                  } else {
-                    console.error(`Failed to download image: ${imageUrl}`);
-                  }
-                }
-              } else {
-                console.log('No imageElements found with the specified XPath.');
-              }
-            
-          
-          console.log('NAME:', nameText.trim(), 'PRICE:', '', 'URL:', pageUrl);
-          // sendMessage( nameText.trim() );
-          await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU,description,name2,category) VALUES($1, $2, $3, $4, $5,$6,$7,$8)',
-            [nameText.trim(), pageUrl, priceText.trim() ?? 0, 'kwc', uuid1,
-          formattedTableData,nameText2,categorytext.trim() ?? '']);
-        }
-      
-    
+      }
+
+      return keyValuePairs;
+    });
+
+    console.log(data);
+
+    await pool.query('INSERT INTO scraped_data(name) VALUES($1)', [data]);
   
 
   } catch (error) {
@@ -216,7 +153,7 @@ async function main() {
 
  
     console.log('dd')
-        // await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
+      await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
     cron.schedule('*/2 * * * *', async () => {
       try {
    
