@@ -108,19 +108,27 @@ async function processPage(pageUrl,browser) {
   
         
       
-    
-            const liElements = await page.$$('ul > li');
-            const data = {};
-          
-            liElements.forEach(async (liElement) => {
-              const stlR = await liElement.querySelector(".stl_r").textContent.trim();
-              const stlL = await liElement.querySelector(".stl_l").textContent.trim();
-              data[stlR] = stlL;
-            });
-          
-            const formattedTableData = await Object.keys(data)
-              .map((key) => `${key}: ${data[key]}`)
-              .join('\n');
+        const liElements = await page.$$("/html/body/main/div/div[3]/div/div/div[2]/div[2]/div/ul/li");
+        const data = {};
+        
+        for (const liElement of liElements) {
+          const stlRElement = await liElement.$(".stl_r");
+          const stlLElement = await liElement.$(".stl_l");
+        
+          if (stlRElement && stlLElement) {
+            const stlR = await stlRElement.textContent();
+            const stlL = await stlLElement.textContent();
+            data[stlR] = stlL;
+          } else {
+            console.log("One or more elements not found for this liElement.");
+          }
+        }
+        
+        const formattedTableData = Object.keys(data)
+          .map((key) => `${key}: ${data[key]}`)
+          .join('\n');
+        
+        console.log(formattedTableData);
           
           
               const imageElementsXPath = '/html/body/main/div/div[2]/div/div/div/div[1]/div/div[1]//img';
