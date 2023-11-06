@@ -86,7 +86,9 @@ async function processPage(pageUrl,browser) {
     console.log('pageurl',pageUrl)
     const links = await page.$$('a.class1');
 
+
     for (const link of links) {
+      try {
       // Click on the link
         await link.click();
       
@@ -119,7 +121,9 @@ async function processPage(pageUrl,browser) {
         await pool.query('INSERT INTO scraped_data(name) VALUES($1)', [data]);
         // Go back to the original page
         await page.goBack();
-        
+      }catch(e){
+        console.log(e,'eeeeeeeeeeeeeee')
+      }  
     }
 
   } catch (error) {
