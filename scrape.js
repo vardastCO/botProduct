@@ -171,6 +171,14 @@ async function main() {
  
     console.log('dd')
       await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
+  }catch(e){
+
+  }
+  try {;
+
+ 
+    console.log('dd22')
+
     cron.schedule('*/2 * * * *', async () => {
       try {
    
