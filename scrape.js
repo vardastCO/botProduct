@@ -84,48 +84,54 @@ async function processPage(pageUrl,browser) {
   await page.goto(pageUrl, { timeout: 90000 });
   try {
     console.log('pageurl',pageUrl)
-    const links = await page.$$('a.class1');
 
+    try {
+      await page.goto(pageUrl, { timeout: 90000 });
+  
+      // Find all the links with class "class1"
+      const links = await page.$$('a.class1');
+  
+      for (const link of links) {
+        // Click on the link and await navigation
+        const [response] = await Promise.all([
+          page.waitForNavigation(), // Wait for navigation to complete
+          link.click(), // Click on the link
+        ]);
+  
+        if (response) {
+          // Wait for a specific element on the new page to load (if necessary)
+          await page.waitForSelector('#Table1');
 
-    for (const link of links) {
-      try {
-      // Click on the link
-        await link.click();
-      
-
-        // Wait for a certain element to load on the new page (adjust as needed)
-        // Wait for a specific element on the new page to load (if necessary)
-        await page.waitForSelector('#Table1');
-
-        // Extract the data from the table
-        const data = await page.evaluate(() => {
-          const table = document.querySelector('#Table1');
-          const rows = table.querySelectorAll('tr');
-          const keyValuePairs = {};
-
-          for (const row of rows) {
-            const cells = row.querySelectorAll('td');
-
-            if (cells.length === 4) {
-              const key = cells[1].textContent.trim().replace(/:/, ''); // Extract and clean the key
-              const value = cells[2].textContent.trim(); // Extract the value
-              keyValuePairs[key] = value; // Store as key-value pair
+          // Extract the data from the table
+          const data = await page.evaluate(() => {
+            const table = document.querySelector('#Table1');
+            const rows = table.querySelectorAll('tr');
+            const keyValuePairs = {};
+  
+            for (const row of rows) {
+              const cells = row.querySelectorAll('td');
+  
+              if (cells.length === 4) {
+                const key = cells[1].textContent.trim().replace(/:/, ''); // Extract and clean the key
+                const value = cells[2].textContent.trim(); // Extract the value
+                keyValuePairs[key] = value; // Store as key-value pair
+              }
             }
-          }
-
-          return keyValuePairs;
-        });
-
-        console.log(data);
-
-        await pool.query('INSERT INTO scraped_data(name) VALUES($1)', [data]);
-        // Go back to the original page
-        await page.goBack();
-      }catch(e){
-        console.log(e,'eeeeeeeeeeeeeee')
-      }  
-    }
-
+  
+            return keyValuePairs;
+          });
+  
+          console.log(data);
+  
+          await pool.query('INSERT INTO scraped_data(name) VALUES($1)', [data]);
+          // Go back to the original page
+          await page.goBack();
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    } 
+  
   } catch (error) {
     console.error(error);
   } finally {
