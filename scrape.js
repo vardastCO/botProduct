@@ -136,7 +136,7 @@ async function processPage(pageUrl,browser) {
           // if (href.startsWith('htt')) {
           //   var outputUrl =  false;
           // } else {
-            var outputUrl = initialPage + href;
+            var outputUrl = 'http://marja.ir/' + href;
           // }
           if (outputUrl  ) {
             const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
