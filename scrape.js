@@ -107,8 +107,7 @@ async function processPage(pageUrl,browser) {
         ]);
   
         
-      
-        const liElements = await page.$$("/html/body/main/div/div[3]/div/div/div[2]/div[2]/div/ul/li");
+        const liElements = await page.$x("/html/body/main/div/div[3]/div/div/div[2]/div[2]/div/ul/li");
         const data = {};
         
         for (const liElement of liElements) {
@@ -127,6 +126,8 @@ async function processPage(pageUrl,browser) {
         const formattedTableData = Object.keys(data)
           .map((key) => `${key}: ${data[key]}`)
           .join('\n');
+        
+        
         
         console.log(formattedTableData);
           
