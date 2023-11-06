@@ -135,7 +135,7 @@ async function processPage(pageUrl,browser) {
         console.log(formattedTableData);
           
           
-              const imageElementsXPath = '/html/body/main/div/div[2]/div/div/div/div[1]/div/div[1]//img';
+              const imageElementsXPath = '/html/body/div[1]/div/div/div/div/div[2]/div/div//img';
               const imageElements = await page.$x(imageElementsXPath);
             
               if (imageElements.length > 0) {
@@ -170,8 +170,7 @@ async function processPage(pageUrl,browser) {
             
           
           console.log('NAME:', nameText.trim(), 'PRICE:', '', 'URL:', pageUrl);
-          // sendMessage('NAME:' + nameText.trim() 
-          // + 'PRICE:' + priceText +  'URL:' + pageUrl + 'description'  + formattedTableData +'category' +categorytext );
+          sendMessage( nameText.trim() );
           await pool.query('INSERT INTO scraped_data(name, url, price, brand, SKU,description,name2,category) VALUES($1, $2, $3, $4, $5,$6,$7,$8)',
             [nameText.trim(), pageUrl, priceText.trim() ?? 0, 'kwc', uuid1,
           formattedTableData,nameText2,categorytext.trim() ?? '']);
