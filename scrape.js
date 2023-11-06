@@ -83,6 +83,7 @@ async function processPage(pageUrl,browser) {
   const page = await browser.newPage();
   await page.goto(pageUrl, { timeout: 90000 });
   try {
+    console.log('pageurl',pageUrl)
     const uuidWithHyphens = uuidv4();
 
 // Remove hyphens from the UUID
@@ -108,12 +109,7 @@ async function processPage(pageUrl,browser) {
         
       
     
-            const ulElement = await page.evaluate(() => {
-              const xpathResult = document.evaluate("/html/body/main/div/div[3]/div/div/div[2]/div[2]/div/ul", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
-              return xpathResult.singleNodeValue;
-            });
-          
-            const liElements = await ulElement.querySelectorAll("li");
+            const liElements = await page.$$('ul > li');
             const data = {};
           
             liElements.forEach(async (liElement) => {
