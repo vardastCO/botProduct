@@ -75,7 +75,7 @@ async function createBrowser() {
 
 }
 const startUrlPattern2 = 'http://marja.ir/Search.aspx?t=3';
-const initialPage = 'http://marja.ir/Search.aspx?t=3';
+const initialPage = 'http://marja.ir/Project.aspx?t=3';
 
 
 async function processPage(pageUrl,browser) {
