@@ -81,7 +81,7 @@ const initialPage = 'https://www.kwciran.com/fa/product';
 async function processPage(pageUrl,browser) {
   
   const page = await browser.newPage();
-  await page.goto(pageUrl, { timeout: 180000 });
+  await page.goto(pageUrl, { timeout: 90000 });
   try {
     const uuidWithHyphens = uuidv4();
 
@@ -208,7 +208,7 @@ async function main() {
     await createBrowser();
     await pool.connect();
         await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
-    cron.schedule('*/5 * * * *', async () => {
+    cron.schedule('*/2 * * * *', async () => {
       try {
    
         const freeMemoryGB = os.freemem() / (1024 * 1024 * 1024);
@@ -238,7 +238,7 @@ async function main() {
             await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
             await pool.query('INSERT INTO visited(url) VALUES($1)', [currentHref]);
   
-            const randomDelay = Math.floor(Math.random() * 120000); // 0 to 50 seconds
+            // const randomDelay = Math.floor(Math.random() * 120000); // 0 to 50 seconds
             await new Promise((resolve) => setTimeout(resolve, randomDelay));
   
         
