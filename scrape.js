@@ -132,12 +132,15 @@ async function processPage(pageUrl, browser) {
 
       // Iterate through elements
       elements.forEach((element) => {
+        console.log('ell',element)
         // Click the element
         element.click();
 
         // Extract and log the href value after the click event
         var hrefValue = element.getAttribute('href');
         console.log(hrefValue);
+
+        console.log('ell333',hrefValue)
 
         // Save hrefValue to the array
         hrefArray.push(hrefValue);
