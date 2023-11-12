@@ -129,7 +129,6 @@ async function processPage(pageUrl,browser) {
 
       console.log(`Number of links found: ${links.length}`);
 
-      await page.waitForNavigation({ waitUntil: 'domcontentloaded' });
       for (const link of links) {
         try{
           console.log('Before waitForSelector');
