@@ -126,9 +126,13 @@ async function processPage(pageUrl,browser) {
     
       // Move the links retrieval here
       const links = await page.$$('a.class1');
+
+      console.log(`Number of links found: ${links.length}`);
+
     
       for (const link of links) {
-        await link.waitForSelector('a.class1', { visible: true, timeout: 100000 });
+        await link.waitForSelector('a.class1', { visible: true, timeout: 120000 });
+
     
         // Scroll the element into view if it's not already visible
         await link.evaluate((el) => el.scrollIntoView());
