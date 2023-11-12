@@ -117,12 +117,12 @@ const initialPage = 'http://marja.ir/Project.aspx?t=3';
 async function processPage(pageUrl,browser) {
   
   const page = await browser.newPage();
-  await page.goto(pageUrl, { timeout: 90000 });
+  await page.goto(pageUrl, { timeout: 30000 });
   try {
     console.log('pageurl',pageUrl)
 
     try {
-      await page.goto(pageUrl, { timeout: 120000 });
+      await page.goto(pageUrl, { timeout: 30000 });
     
       // Move the links retrieval here
       const links = await page.$$('a.class1');
@@ -161,7 +161,7 @@ async function processPage(pageUrl,browser) {
         try{
           console.log(link,'link')
           console.log('Before waitForSelector');
-          await link.waitForSelector('a.class1', { visible: true, timeout: 240000 });
+          await link.waitForSelector('a.class1', { visible: true, timeout: 30000 });
           console.log('After waitForSelector');
 
     
@@ -184,7 +184,7 @@ async function processPage(pageUrl,browser) {
             console.log(data, 'data');
       
             try {
-              await newPage.waitForSelector('#Table1', { visible: true, timeout: 60000 });
+              await newPage.waitForSelector('#Table1', { visible: true, timeout: 30000 });
               console.log('Selector found. Continuing with the script...');
               const newData = await newPage.evaluate(() => {
                 const table = document.querySelector('#Table1');
@@ -276,7 +276,7 @@ async function main() {
  
     console.log('dd22')
 
-    cron.schedule('*/2 * * * *', async () => {
+    cron.schedule('*/3 * * * *', async () => {
       try {
    
         const freeMemoryGB = os.freemem() / (1024 * 1024 * 1024);
