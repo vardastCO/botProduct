@@ -165,14 +165,15 @@ async function processPage(pageUrl, browser) {
     });
     for (const href of hrefs) {
       try {
-        if (href) { // Check if href is not null
+        if (href ) { // Check if href is not null
           // if (href.startsWith('htt')) {
           //   var outputUrl =  false;
           // } else {
+            console.log('href',href)
             var outputUrl = 'http://marja.ir/' + href;
             console.log(outputUrl,'outputUrl')
           // }
-          if (outputUrl && !href.includes('http')  ) {
+          if (outputUrl  ) {
             const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
             if (result.rows.length === 0) {
               await pool.query('INSERT INTO unvisited(url) VALUES($1)', [outputUrl]);
