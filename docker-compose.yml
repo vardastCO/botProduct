@@ -15,8 +15,9 @@ services:
     networks:
       - custom_network
     # Add a healthcheck configuration to check the memory usage
+    
   postgres:
-    image: postgres:latest
+    image: postgres
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
