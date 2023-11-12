@@ -107,36 +107,32 @@ async function processPage(pageUrl,browser) {
     
         console.log('Page URL after click:', page.url());
       
-  
-        if (response) {
-          // Wait for a specific element on the new page to load (if necessary)
-          await page.waitForSelector('#Table1');
+        await page.waitForSelector('#Table1');
 
-          // Extract the data from the table
-          const data = await page.evaluate(() => {
-            const table = document.querySelector('#Table1');
-            const rows = table.querySelectorAll('tr');
-            const keyValuePairs = {};
-  
-            for (const row of rows) {
-              const cells = row.querySelectorAll('td');
-  
-              if (cells.length === 4) {
-                const key = cells[1].textContent.trim().replace(/:/, ''); // Extract and clean the key
-                const value = cells[2].textContent.trim(); // Extract the value
-                keyValuePairs[key] = value; // Store as key-value pair
-              }
+        // Extract the data from the table
+        const data = await page.evaluate(() => {
+          const table = document.querySelector('#Table1');
+          const rows = table.querySelectorAll('tr');
+          const keyValuePairs = {};
+
+          for (const row of rows) {
+            const cells = row.querySelectorAll('td');
+
+            if (cells.length === 4) {
+              const key = cells[1].textContent.trim().replace(/:/, ''); // Extract and clean the key
+              const value = cells[2].textContent.trim(); // Extract the value
+              keyValuePairs[key] = value; // Store as key-value pair
             }
-  
-            return keyValuePairs;
-          });
-  
-          console.log(data);
-  
-          await pool.query('INSERT INTO scraped_data(name) VALUES($1)', [data]);
-          // Go back to the original page
-          await page.goBack();
-        }
+          }
+
+          return keyValuePairs;
+        });
+
+        console.log(data);
+
+        await pool.query('INSERT INTO scraped_data(name) VALUES($1)', [data]);
+        // Go back to the original page
+        await page.goBack();
       }
     } catch (error) {
       console.error('Error:', error);
