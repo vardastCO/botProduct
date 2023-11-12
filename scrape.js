@@ -91,19 +91,22 @@ async function processPage(pageUrl,browser) {
       // Find all the links with class "class1"
       const links = await page.$$('a.class1');
       for (const link of links) {
+        let res = [] 
         try {
           console.log('Link:', link);
           console.log('Page URL before click:', page.url());
           
           await link.waitForSelector('a.class1', { visible: true });
           
-          const [response] = await Promise.all([
+          res = await Promise.all([
             page.waitForNavigation(), // Wait for navigation to complete
             link.click(), // Click on the link
           ]);
         }catch(e){
             console.log('eeeee',e)
         }
+
+        console.log(res)
     
         console.log('Page URL after click:', page.url());
       
