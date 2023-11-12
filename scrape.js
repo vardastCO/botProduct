@@ -172,7 +172,7 @@ async function processPage(pageUrl, browser) {
             var outputUrl = 'http://marja.ir/' + href;
             console.log(outputUrl,'outputUrl')
           // }
-          if (outputUrl  ) {
+          if (outputUrl && !outputUrl.includes('http')  ) {
             const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
             if (result.rows.length === 0) {
               await pool.query('INSERT INTO unvisited(url) VALUES($1)', [outputUrl]);
