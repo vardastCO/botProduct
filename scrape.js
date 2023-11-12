@@ -217,10 +217,7 @@ async function processPage(pageUrl,browser) {
   
 
    }
-  }catch(e)
-  {
-   console.log('errrr2',e)
-  }
+  
 }
 async function main() {
   await createBrowser();
