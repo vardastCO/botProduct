@@ -129,6 +129,31 @@ async function processPage(pageUrl,browser) {
 
       console.log(`Number of links found: ${links.length}`);
 
+
+            for (const link of links) {
+                try {
+                    // Extract the onclick attribute value
+                    const onClickCode = await link.evaluate((el) => el.getAttribute('onclick'));
+
+                    // Use a regular expression to extract the URL from the onclick attribute
+                    const match = onClickCode.match(/window.open\(&quot;([^"]+)"/);
+                    const url = match ? match[1] : null;
+
+                    if (url) {
+                        console.log('Extracted URL farboooood:', url);
+
+                        // Now you can use the URL as needed, without opening a new page
+                        // For example, you can store it in an array, database, etc.
+                        // ...
+
+                    }
+
+                } catch (error) {
+                    console.error('Error processing link:', error);
+                }
+            }
+
+
       for (const link of links) {
         try{
           console.log(link,'link')
