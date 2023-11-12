@@ -15,14 +15,14 @@ services:
     networks:
       - custom_network
     # Add a healthcheck configuration to check the memory usage
-  postgres:
+  db:
     image: postgres:latest
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
       POSTGRES_DB: root
     ports:
-      - "5433:5433"
+      - "5432:5432"
     networks:
       - custom_network
     volumes:
