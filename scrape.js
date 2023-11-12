@@ -126,33 +126,33 @@ async function processPage(pageUrl, browser) {
     await page.waitForSelector('.class1');
 
     // Use page.evaluate to run JavaScript in the context of the page
-    const hrefs = await page.evaluate(() => {
-      var elements = document.querySelectorAll('.class1');
-      var hrefArray = [];
+    // const hrefs = await page.evaluate(() => {
+    //   var elements = document.querySelectorAll('.class1');
+    //   var hrefArray = [];
 
-      // Iterate through elements
-      elements.forEach((element) => {
-        console.log('ell',element)
-        // Click the element
-        element.click();
+    //   // Iterate through elements
+    //   elements.forEach((element) => {
+    //     console.log('ell',element)
+    //     // Click the element
+    //     element.click();
 
-        // Extract and log the href value after the click event
-        var hrefValue = element.getAttribute('href');
-        console.log(hrefValue);
+    //     // Extract and log the href value after the click event
+    //     var hrefValue = element.getAttribute('href');
+    //     console.log(hrefValue);
 
-        console.log('ell333',hrefValue)
+    //     console.log('ell333',hrefValue)
 
-        // Save hrefValue to the array
-        hrefArray.push(hrefValue);
+    //     // Save hrefValue to the array
+    //     hrefArray.push(hrefValue);
 
-        // Go back to the previous page
-        window.history.back();
-      });
+    //     // Go back to the previous page
+    //     window.history.back();
+    //   });
 
-      return hrefArray;
-    });
+    //   return hrefArray;
+    // });
 
-    console.log(hrefs);
+    // console.log(hrefs);
 
     
   } catch (error) {
