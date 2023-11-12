@@ -131,6 +131,7 @@ async function processPage(pageUrl,browser) {
 
       for (const link of links) {
         try{
+          console.log(link,'link')
           console.log('Before waitForSelector');
           await link.waitForSelector('a.class1', { visible: true, timeout: 240000 });
           console.log('After waitForSelector');
