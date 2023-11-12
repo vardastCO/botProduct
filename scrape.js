@@ -114,31 +114,38 @@ const startUrlPattern2 = 'http://marja.ir/Search.aspx?t=3';
 const initialPage = 'http://marja.ir/Project.aspx?t=3';
 
 
-async function processPage(pageUrl,browser) {
-  
+async function processPage(pageUrl, browser) {
   const page = await browser.newPage();
-  await page.goto(pageUrl, { timeout: 30000 });
+
   try {
-    console.log('pageurl',pageUrl)
+    console.log('pageurl', pageUrl);
 
     await page.goto(pageUrl, { timeout: 30000, waitUntil: 'domcontentloaded' });
 
     // Wait for the elements to be available on the page
     await page.waitForSelector('.class1');
 
-    // Extract all href attributes using evaluate
+    // Use page.evaluate to run JavaScript in the context of the page
     const hrefs = await page.evaluate(() => {
-      const elements = document.querySelectorAll('.class1');
-      const hrefArray = [];
-      elements.forEach(element => {
-        const onclickValue = element.getAttribute('onclick');
-        if (onclickValue) {
-          const match = onclickValue.match(/window\.open\("([^"]+)"\)/);
-          if (match) {
-            hrefArray.push(match[1]);
-          }
-        }
+      var elements = document.querySelectorAll('.class1');
+      var hrefArray = [];
+
+      // Iterate through elements
+      elements.forEach((element) => {
+        // Click the element
+        element.click();
+
+        // Extract and log the href value after the click event
+        var hrefValue = element.getAttribute('href');
+        console.log(hrefValue);
+
+        // Save hrefValue to the array
+        hrefArray.push(hrefValue);
+
+        // Go back to the previous page
+        window.history.back();
       });
+
       return hrefArray;
     });
 
