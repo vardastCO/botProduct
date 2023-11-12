@@ -35,22 +35,38 @@ function extractData() {
   var extractedData = {};
 
   // Access various elements within the table using querySelector
-  extractedData.tradeName = document.querySelector("#LName").textContent;
-  extractedData.activity = document.querySelector("#LActivity").textContent;
-  extractedData.address = document.querySelector("#LAddr").textContent;
-  extractedData.phone = document.querySelector("#LPhones").textContent;
-  extractedData.fax = document.querySelector("#LFax").textContent;
+  const tradeNameElement = document.querySelector("#LName");
+  extractedData.tradeName = tradeNameElement ? tradeNameElement.textContent : null;
 
-  extractedData.factoryAddress = document.querySelector("#LAddr1").textContent;
-  extractedData.factoryPhone = document.querySelector("#LPhones1").textContent;
-  extractedData.factoryFax = document.querySelector("#LFax1").textContent;
+  const activityElement = document.querySelector("#LActivity");
+  extractedData.activity = activityElement ? activityElement.textContent : null;
 
-  extractedData.email = document.querySelector("#LEMail").textContent;
-  extractedData.website = document.querySelector("#LWebSite").textContent;
+  const addressElement = document.querySelector("#LAddr");
+  extractedData.address = addressElement ? addressElement.textContent : null;
+
+  const phoneElement = document.querySelector("#LPhones");
+  extractedData.phone = phoneElement ? phoneElement.textContent : null;
+
+  const faxElement = document.querySelector("#LFax");
+  extractedData.fax = faxElement ? faxElement.textContent : null;
+
+  const factoryAddressElement = document.querySelector("#LAddr1");
+  extractedData.factoryAddress = factoryAddressElement ? factoryAddressElement.textContent : null;
+
+  const factoryPhoneElement = document.querySelector("#LPhones1");
+  extractedData.factoryPhone = factoryPhoneElement ? factoryPhoneElement.textContent : null;
+
+  const factoryFaxElement = document.querySelector("#LFax1");
+  extractedData.factoryFax = factoryFaxElement ? factoryFaxElement.textContent : null;
+
+  const emailElement = document.querySelector("#LEMail");
+  extractedData.email = emailElement ? emailElement.textContent : null;
+
+  const websiteElement = document.querySelector("#LWebSite");
+  extractedData.website = websiteElement ? websiteElement.textContent : null;
 
   // Return the extracted data object
   return extractedData;
-
 }
 const minioClient = new Minio.Client({
   endPoint: 'storage', // Use the service name defined in your Docker Compose file
