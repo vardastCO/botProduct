@@ -92,30 +92,37 @@ async function processPage(pageUrl,browser) {
       const links = await page.$$('a.class1');
       for (const link of links) {
         let res = [] 
-        try {
-          console.log('Link:', link);
-          console.log('Page URL before click:', page.url());
-        
-          await link.waitForSelector('a.class1', { visible: true, timeout: 60000 });
-        
-          // Save the current URL before clicking the link
-          const currentUrl = page.url();
-        
-          res = await Promise.all([
-            page.waitForNavigation(), // Wait for navigation to complete
-            link.click(), // Click on the link
-          ]);
-        
-          // Check if the page URL is still the same after the click
-          if (page.url() === currentUrl) {
-            console.log('Page URL did not change after click:', page.url());
-          } else {
-            console.log('Page URL changed after click:', page.url());
+        let retryCount = 0;
+        let success = false;
+
+        while (retryCount < 5 && !success) {
+          try {
+            console.log('Link:', link);
+            console.log('Page URL before click:', page.url());
+
+            await link.waitForSelector('a.class1', { visible: true, timeout: 60000 });
+
+            const currentUrl = page.url();
+
+            res = await Promise.all([
+              page.waitForNavigation(),
+              link.click(),
+            ]);
+
+            if (page.url() === currentUrl) {
+              console.log('Page URL did not change after click:', page.url());
+            } else {
+              console.log('Page URL after click:', page.url());
+            }
+
+            success = true;
+          } catch (e) {
+            console.log('Error:', e);
+            retryCount++;
           }
-        } catch (e) {
-          console.log('Error:', e);
         }
-        
+
+      
 
         console.log(res)
     
