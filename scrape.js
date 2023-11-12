@@ -31,7 +31,27 @@ const chatId = '1839030'; // Replace with your actual chat ID
 
 // // Example usage:
 // sendMessage('Hello, Telegram Bot!');
+function extractData() {
+  var extractedData = {};
 
+  // Access various elements within the table using querySelector
+  extractedData.tradeName = document.querySelector("#LName").textContent;
+  extractedData.activity = document.querySelector("#LActivity").textContent;
+  extractedData.address = document.querySelector("#LAddr").textContent;
+  extractedData.phone = document.querySelector("#LPhones").textContent;
+  extractedData.fax = document.querySelector("#LFax").textContent;
+
+  extractedData.factoryAddress = document.querySelector("#LAddr1").textContent;
+  extractedData.factoryPhone = document.querySelector("#LPhones1").textContent;
+  extractedData.factoryFax = document.querySelector("#LFax1").textContent;
+
+  extractedData.email = document.querySelector("#LEMail").textContent;
+  extractedData.website = document.querySelector("#LWebSite").textContent;
+
+  // Return the extracted data object
+  return extractedData;
+
+}
 const minioClient = new Minio.Client({
   endPoint: 'storage', // Use the service name defined in your Docker Compose file
   port: 9000,
@@ -128,7 +148,8 @@ async function processPage(pageUrl,browser) {
     
         console.log('Page URL after click:', page.url());
 
-
+        const data = await page.evaluate(extractData);
+        console.log(data,'data')
         try {
           await page.waitForSelector('#Table1', { visible: true, timeout: 40000 });
           console.log('Selector found. Continuing with the script...');
