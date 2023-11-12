@@ -86,7 +86,7 @@ async function processPage(pageUrl,browser) {
     console.log('pageurl',pageUrl)
 
     try {
-      await page.goto(pageUrl, { timeout: 90000 });
+      await page.goto(pageUrl, { timeout: 120000 });
   
       // Find all the links with class "class1"
       const links = await page.$$('a.class1');
@@ -96,14 +96,14 @@ async function processPage(pageUrl,browser) {
           console.log('Link:', link);
           console.log('Page URL before click:', page.url());
           
-          await link.waitForSelector('a.class1', { visible: true });
+          await link.waitForSelector('a.class1', { visible: true, timeout: 60000  });
           
           res = await Promise.all([
             page.waitForNavigation(), // Wait for navigation to complete
             link.click(), // Click on the link
           ]);
         }catch(e){
-            console.log('eeeee',e)
+            console.log('eror1',e)
         }
 
         console.log(res)
