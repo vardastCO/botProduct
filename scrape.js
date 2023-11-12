@@ -107,51 +107,29 @@ async function processPage(pageUrl,browser) {
 
     try {
       await page.goto(pageUrl, { timeout: 120000 });
-  
-      // Find all the links with class "class1"
-      const links = await page.$$('a.class1');
       for (const link of links) {
-        let res = [] 
-        let retryCount = 0;
-        let success = false;
-
-        while (retryCount < 5 && !success) {
-          try {
-            console.log('Link:', link);
-            console.log('Page URL before click:', page.url());
-
-            await link.waitForSelector('a.class1', { visible: true, timeout: 60000 });
-
-            const currentUrl = page.url();
-
-            res = await Promise.all([
-              page.waitForNavigation(),
-              link.click(),
-            ]);
-
-            if (page.url() === currentUrl) {
-              console.log('Page URL did not change after click:', page.url());
-            } else {
-              console.log('Page URL after click:', page.url());
-            }
-
-            success = true;
-          } catch (e) {
-            console.log('Error:', e);
-            retryCount++;
-          }
-        }
-
+        await link.waitForSelector('a.class1', { visible: true, timeout: 100000 });
       
+        // Scroll the element into view if it's not already visible
+        await link.evaluate((el) => el.scrollIntoView());
+      
+        // Capture the URL from the onclick attribute
+        const url = await page.evaluate((el) => {
+          const onClickCode = el.getAttribute('onclick');
+          const match = onClickCode.match(/window.open\(&quot;([^"]+)"/);
+          return match ? match[1] : null;
+        }, link);
+      
+        if (url) {
+          // Open a new page and navigate to the captured URL
+          const newPage = await browser.newPage();
+          await newPage.goto(url);
 
-        console.log(res)
-    
-        console.log('Page URL after click:', page.url());
-
-        const data = await page.evaluate(extractData);
+          
+        const data = await newPage.evaluate(extractData);
         console.log(data,'data')
         try {
-          await page.waitForSelector('#Table1', { visible: true, timeout: 40000 });
+          await page.waitForSelector('#Table1', { visible: true, timeout: 60000 });
           console.log('Selector found. Continuing with the script...');
           const data = await page.evaluate(() => {
             const table = document.querySelector('#Table1');
@@ -182,10 +160,15 @@ async function processPage(pageUrl,browser) {
 
         // Go back to the original page
         await page.goBack();
+      
+          // Now you can interact with the content of the new page as needed
+      
+          // Close the new page when done
+          await newPage.close();
+        }
+      
+        // Continue with the rest of your logic...
       }
-    } catch (error) {
-      console.error('Error:', error);
-    } 
   
   } catch (error) {
     console.error(error);
