@@ -125,18 +125,20 @@ async function processPage(pageUrl,browser) {
     
     await page.waitForSelector('.class1');
 
-      // Extract the URL using evaluate
-      const url = await page.evaluate(() => {
-        const element = document.querySelector('.class1');
-        if (element) {
-          const onclickValue = element.getAttribute('onclick');
+    // Extract the URL using evaluate
+    const url = await page.evaluate(() => {
+      const element = document.querySelector('.class1');
+      if (element) {
+        const onclickValue = element.getAttribute('onclick');
+        if (onclickValue) {
           const match = onclickValue.match(/window\.open\("([^"]+)"\)/);
           return match ? match[1] : null;
         }
-        return null;
-      });
-  
-      console.log(url);
+      }
+      return null;
+    });
+
+    console.log(url);
 
     
   } catch (error) {
