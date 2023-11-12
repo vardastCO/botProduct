@@ -125,103 +125,103 @@ async function processPage(pageUrl,browser) {
       await page.goto(pageUrl, { timeout: 30000 });
     
       // Move the links retrieval here
-      const links = await page.$$('a.class1');
+      // const links = await page.$$('a.class1');
 
       console.log(`Number of links found: ${links.length}`);
 
 
-            for (const link of links) {
-                try {
-                    // Extract the onclick attribute value
-                    const onClickCode = await link.evaluate((el) => el.getAttribute('onclick'));
+      //       for (const link of links) {
+      //           try {
+      //               // Extract the onclick attribute value
+      //               const onClickCode = await link.evaluate((el) => el.getAttribute('onclick'));
 
 
-                      // Check if onClickCode is not null before attempting to match
-                      if (onClickCode) {
-                          // Use a regular expression to extract the URL from the onclick attribute
-                          const match = onClickCode.match(/window.open\(&quot;([^"]+)"/);
-                          const url = match ? match[1] : null;
+      //                 // Check if onClickCode is not null before attempting to match
+      //                 if (onClickCode) {
+      //                     // Use a regular expression to extract the URL from the onclick attribute
+      //                     const match = onClickCode.match(/window.open\(&quot;([^"]+)"/);
+      //                     const url = match ? match[1] : null;
 
-                          if (url) {
-                              console.log('Extracted URL:', url);
+      //                     if (url) {
+      //                         console.log('Extracted URL:', url);
 
-                              // Now you can use the URL as needed, without opening a new page
-                              // For example, you can store it in an array, database, etc.
-                              // ...
-                          }
-                      }
+      //                         // Now you can use the URL as needed, without opening a new page
+      //                         // For example, you can store it in an array, database, etc.
+      //                         // ...
+      //                     }
+      //                 }
 
-                } catch (error) {
-                    console.error('Error processing link:', error);
-                }
-            }
+      //           } catch (error) {
+      //               console.error('Error processing link:', error);
+      //           }
+      //       }
 
 
-      for (const link of links) {
-        try{
-          console.log(link,'link')
-          console.log('Before waitForSelector');
-          await link.waitForSelector('a.class1', { visible: true, timeout: 30000 });
-          console.log('After waitForSelector');
+      // for (const link of links) {
+      //   try{
+      //     console.log(link,'link')
+      //     console.log('Before waitForSelector');
+      //     await link.waitForSelector('a.class1', { visible: true, timeout: 30000 });
+      //     console.log('After waitForSelector');
 
     
-          // Scroll the element into view if it's not already visible
-          await link.evaluate((el) => el.scrollIntoView());
+      //     // Scroll the element into view if it's not already visible
+      //     await link.evaluate((el) => el.scrollIntoView());
       
-          // Capture the URL from the onclick attribute
-          const url = await page.evaluate((el) => {
-            const onClickCode = el.getAttribute('onclick');
-            const match = onClickCode.match(/window.open\(&quot;([^"]+)"/);
-            return match ? match[1] : null;
-          }, link);
+      //     // Capture the URL from the onclick attribute
+      //     const url = await page.evaluate((el) => {
+      //       const onClickCode = el.getAttribute('onclick');
+      //       const match = onClickCode.match(/window.open\(&quot;([^"]+)"/);
+      //       return match ? match[1] : null;
+      //     }, link);
       
-          if (url) {
-            // Open a new page and navigate to the captured URL
-            const newPage = await browser.newPage();
-            await newPage.goto(url);
+      //     if (url) {
+      //       // Open a new page and navigate to the captured URL
+      //       const newPage = await browser.newPage();
+      //       await newPage.goto(url);
       
-            const data = await newPage.evaluate(extractData);
-            console.log(data, 'data');
+      //       const data = await newPage.evaluate(extractData);
+      //       console.log(data, 'data');
       
-            try {
-              await newPage.waitForSelector('#Table1', { visible: true, timeout: 30000 });
-              console.log('Selector found. Continuing with the script...');
-              const newData = await newPage.evaluate(() => {
-                const table = document.querySelector('#Table1');
-                const rows = table.querySelectorAll('tr');
-                const keyValuePairs = {};
+      //       try {
+      //         await newPage.waitForSelector('#Table1', { visible: true, timeout: 30000 });
+      //         console.log('Selector found. Continuing with the script...');
+      //         const newData = await newPage.evaluate(() => {
+      //           const table = document.querySelector('#Table1');
+      //           const rows = table.querySelectorAll('tr');
+      //           const keyValuePairs = {};
       
-                for (const row of rows) {
-                  const cells = row.querySelectorAll('td');
+      //           for (const row of rows) {
+      //             const cells = row.querySelectorAll('td');
       
-                  if (cells.length === 4) {
-                    const key = cells[1].textContent.trim().replace(/:/, ''); // Extract and clean the key
-                    const value = cells[2].textContent.trim(); // Extract the value
-                    keyValuePairs[key] = value; // Store as key-value pair
-                  }
-                }
+      //             if (cells.length === 4) {
+      //               const key = cells[1].textContent.trim().replace(/:/, ''); // Extract and clean the key
+      //               const value = cells[2].textContent.trim(); // Extract the value
+      //               keyValuePairs[key] = value; // Store as key-value pair
+      //             }
+      //           }
       
-                return keyValuePairs;
-              });
+      //           return keyValuePairs;
+      //         });
       
-              console.log(newData);
+      //         console.log(newData);
       
-              await pool.query('INSERT INTO scraped_data(name) VALUES($1)', [newData]);
-            } catch (error) {
-              console.error('Error waiting for selector:', error);
-            }
+      //         await pool.query('INSERT INTO scraped_data(name) VALUES($1)', [newData]);
+      //       } catch (error) {
+      //         console.error('Error waiting for selector:', error);
+      //       }
       
-            // Close the new page when done
-            await newPage.close();
-          }
+      //       // Close the new page when done
+      //       await newPage.close();
+      //     }
 
-        }catch(e){
-            console.log('dfarbod',e)
-        }
+      //   }catch(e){
+      //       console.log('dfarbod',e)
+      //   }
        
     
-        // Continue with the rest of your logic...
-      }
+      //   // Continue with the rest of your logic...
+      // }
     } catch (error) {
       console.error('Error:', error);
     }
