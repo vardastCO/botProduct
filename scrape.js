@@ -120,7 +120,7 @@ async function processPage(pageUrl, browser) {
   try {
     console.log('pageurl', pageUrl);
 
-    await page.goto(pageUrl, { timeout: 30000, waitUntil: 'domcontentloaded' });
+    await page.goto(pageUrl, { timeout: 30000 });
 
     // const hrefs = await page.evaluate(() => {
     //   const links = Array.from(document.querySelectorAll('a'));
@@ -149,7 +149,7 @@ async function processPage(pageUrl, browser) {
     // }
 
     // Wait for the elements to be available on the page
-    await page.waitForSelector('.class1');
+    // await page.waitForSelector('.class1');
 
     // Use page.evaluate to run JavaScript in the context of the page
     const hrefss = await page.evaluate(() => {
