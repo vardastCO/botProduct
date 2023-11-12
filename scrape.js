@@ -206,7 +206,7 @@ async function processPage(pageUrl,browser) {
           // } else {
             var outputUrl = 'http://marja.ir/' + href;
           // }
-          if (outputUrl  ) {
+          if (outputUrl && href.startsWith('http://marja.ir/Search.aspx?t=3')  ) {
             const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
             if (result.rows.length === 0) {
               await pool.query('INSERT INTO unvisited(url) VALUES($1)', [outputUrl]);
