@@ -121,24 +121,28 @@ async function processPage(pageUrl,browser) {
   try {
     console.log('pageurl',pageUrl)
 
-    await page.goto(pageUrl, { timeout: 30000 });
-    
+    await page.goto(pageUrl, { timeout: 30000, waitUntil: 'domcontentloaded' });
+
+    // Wait for the elements to be available on the page
     await page.waitForSelector('.class1');
 
-    // Extract the URL using evaluate
-    const url = await page.evaluate(() => {
-      const element = document.querySelector('.class1');
-      if (element) {
+    // Extract all href attributes using evaluate
+    const hrefs = await page.evaluate(() => {
+      const elements = document.querySelectorAll('.class1');
+      const hrefArray = [];
+      elements.forEach(element => {
         const onclickValue = element.getAttribute('onclick');
         if (onclickValue) {
           const match = onclickValue.match(/window\.open\("([^"]+)"\)/);
-          return match ? match[1] : null;
+          if (match) {
+            hrefArray.push(match[1]);
+          }
         }
-      }
-      return null;
+      });
+      return hrefArray;
     });
 
-    console.log(url);
+    console.log(hrefs);
 
     
   } catch (error) {
