@@ -78,7 +78,7 @@ const minioClient = new Minio.Client({
 
 const pool = new Client({
   user: 'root',
-  host: 'localhost', // Use the service name defined in docker-compose.yml
+  host: 'postgres', // Use the service name defined in docker-compose.yml
   database: 'root', // This should match the POSTGRES_DB in docker-compose.yml
   password: 'root',
   port: 5432,

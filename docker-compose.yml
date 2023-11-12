@@ -11,11 +11,11 @@ services:
     volumes:
       - "./test:/app/test"
     depends_on:
-      - db
+      - postgres
     networks:
       - custom_network
     # Add a healthcheck configuration to check the memory usage
-  db:
+  postgres:
     image: postgres:latest
     environment:
       POSTGRES_USER: root
