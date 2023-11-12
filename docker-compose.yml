@@ -22,11 +22,12 @@ services:
       POSTGRES_PASSWORD: root
       POSTGRES_DB: root
     ports:
-      - "5432:5432"
+      - "54433:5432"
     networks:
       - custom_network
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
   memory-monitor:
     build:
       context: ./py
