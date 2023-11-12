@@ -181,11 +181,12 @@ async function processPage(pageUrl,browser) {
       
           // Close the new page when done
           await newPage.close();
-        }
+        
       
         // Continue with the rest of your logic...
       }
-  
+      
+    }
   } catch (error) {
     console.error(error);
   } finally {
@@ -214,9 +215,14 @@ async function processPage(pageUrl,browser) {
       }
     }
     await page.close();
+  
+
+   }
+  }catch(e)
+  {
+   console.log('errrr2',e)
   }
 }
-
 async function main() {
   await createBrowser();
   await pool.connect();
