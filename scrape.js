@@ -152,33 +152,43 @@ async function processPage(pageUrl, browser) {
     // await page.waitForSelector('.class1');
 
     // Use page.evaluate to run JavaScript in the context of the page
-    const hrefss = await page.evaluate(() => {
+    const hrefss = await page.evaluate(async () => {
       var elements = document.querySelectorAll('.class1');
-      var hrefArray = [];
 
+      console.log('dddd',elements.length)
+      var hrefArray = [];
+    
       // Iterate through elements
-      elements.forEach((element) => {
-        console.log('ell',element)
+      for (const element of elements) {
+        console.log('ell', element);
+    
         // Click the element
         element.click();
-
+    
+        // Wait for a short delay to allow any asynchronous actions to complete
+        await new Promise(resolve => setTimeout(resolve, 1000));
+    
         // Extract and log the href value after the click event
         var hrefValue = element.getAttribute('href');
-        console.log(hrefValue,'lllllll');
-
-        console.log('ell333',hrefValue)
-
+        console.log(hrefValue, 'lllllll');
+    
+        console.log('ell333', hrefValue);
+    
         // Save hrefValue to the array
         hrefArray.push(hrefValue);
-
+    
         // Go back to the previous page
         window.history.back();
-      });
-
+    
+        // Wait for a short delay again
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    
       return hrefArray;
     });
-
-    console.log('farrrbooood',hrefss);
+    
+    console.log('farrrbooood', hrefss);
+    
 
     
   } catch (error) {
