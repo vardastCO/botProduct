@@ -205,6 +205,7 @@ async function processPage(pageUrl,browser) {
           //   var outputUrl =  false;
           // } else {
             var outputUrl = 'http://marja.ir/' + href;
+            console.log(outputUrl,'outputUrl')
           // }
           if (outputUrl && href.startsWith('http://marja.ir/Search.aspx?t=3')  ) {
             const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
