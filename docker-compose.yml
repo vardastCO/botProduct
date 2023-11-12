@@ -18,9 +18,9 @@ services:
   postgres:
     image: postgres:latest
     environment:
-      POSTGRES_USER: db
+      POSTGRES_USER: root
       POSTGRES_PASSWORD: root
-      POSTGRES_DB: mydb
+      POSTGRES_DB: root
     ports:
       - "5432:5432"
     networks:
