@@ -208,7 +208,7 @@ async function main() {
  
     console.log('dd22')
 
-    cron.schedule('* * * * *', async () => {
+    cron.schedule('*/5 * * * *', async () => {
       try {
    
         const freeMemoryGB = os.freemem() / (1024 * 1024 * 1024);
