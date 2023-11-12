@@ -129,10 +129,12 @@ async function processPage(pageUrl,browser) {
 
       console.log(`Number of links found: ${links.length}`);
 
-    
+      await page.waitForNavigation({ waitUntil: 'domcontentloaded' });
       for (const link of links) {
         try{
-          await link.waitForSelector('a.class1', { visible: true, timeout: 120000 });
+          console.log('Before waitForSelector');
+          await link.waitForSelector('a.class1', { visible: true, timeout: 240000 });
+          console.log('After waitForSelector');
 
     
           // Scroll the element into view if it's not already visible
