@@ -150,9 +150,7 @@ async function processPage(pageUrl, browser) {
 
     // Wait for the elements to be available on the page
     // await page.waitForSelector('.class1');
-
-    // Use page.evaluate to run JavaScript in the context of the page
-    console.log('hi farbooos')
+    console.log('farrrboooodsfsdf');
     const hrefs = await page.evaluate(async () => {
       try {
         const elements = document.querySelectorAll('.class1');
@@ -164,17 +162,22 @@ async function processPage(pageUrl, browser) {
     
           // Click the element in the new page
           newPage.document.body.innerHTML = element.outerHTML;
-          newPage.document.querySelector('.class1').click();
     
           // Wait for a short delay to allow any asynchronous actions to complete
           await new Promise(resolve => setTimeout(resolve, 1000));
     
           // Extract and log the href value after the click event
-          const hrefValue = newPage.document.querySelector('.class1').getAttribute('href');
-          console.log(hrefValue, 'lllllll');
+          const clickedElement = newPage.document.querySelector('.class1');
+          const hrefValue = clickedElement ? clickedElement.getAttribute('href') : null;
     
-          // Save hrefValue to the array
-          hrefArray.push(hrefValue);
+          if (hrefValue !== null) {
+            console.log(hrefValue, 'lllllll');
+    
+            // Save hrefValue to the array
+            hrefArray.push(hrefValue);
+          } else {
+            console.log('Element with class "class1" not found on the new page.');
+          }
     
           // Close the new page
           newPage.close();
