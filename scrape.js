@@ -166,18 +166,20 @@ async function processPage(pageUrl, browser) {
           // Wait for a short delay to allow any asynchronous actions to complete
           await new Promise(resolve => setTimeout(resolve, 1000));
     
-          // Extract and log the href value after the click event
-          const clickedElement = newPage.document.querySelector('.class1');
-          const hrefValue = clickedElement ? clickedElement.getAttribute('href') : null;
+          // Perform the click
+          newPage.document.querySelector('.class1').click();
     
-          if (hrefValue !== null) {
-            console.log(hrefValue, 'lllllll');
+          // Wait for the new page to load
+          await newPage.load; // Replace 'load' with an appropriate event for page load
     
-            // Save hrefValue to the array
-            hrefArray.push(hrefValue);
-          } else {
-            console.log('Element with class "class1" not found on the new page.');
-          }
+          // Get the URL of the new page
+          const newPageUrl = newPage.location.href;
+    
+          // Log the URL
+          console.log('New page URL:', newPageUrl);
+    
+          // Save the URL to the array
+          hrefArray.push(newPageUrl);
     
           // Close the new page
           newPage.close();
@@ -198,7 +200,6 @@ async function processPage(pageUrl, browser) {
     
     
     
-
     
   } catch (error) {
     console.error(error);
