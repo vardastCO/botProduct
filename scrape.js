@@ -152,22 +152,25 @@ async function processPage(pageUrl, browser) {
     // await page.waitForSelector('.class1');
     console.log('farrrboooodsfsdf');
     const someHtmlVariable = await page.content();
-    const regex = /Detail.aspx\?Img=(\d+)&Name=([^&]+)&t=(\d+)&ID=(\d+)/g;
-    let matches;
+    const onclickRegex = /onclick=["']javascript: w=window.open\(&quot;Detail.aspx\?Img=(\d+)&amp;Name=([^&]+)&amp;t=(\d+)&amp;ID=(\d+)&quot;, &quot;window1&quot;, &quot;width=470,height=290,scrollbars=yes,left=0,top=0&quot;,&quot;titlebar=0&quot;\);w\.focus\(\);["']/g;
+    
+    let onclickMatches;
     const extractedURLs = [];
     
-    while ((matches = regex.exec(someHtmlVariable)) !== null) {
-        const imgValue = matches[1];
-        const nameValue = matches[2];
-        const tValue = matches[3];
-        const idValue = matches[4];
+    while ((onclickMatches = onclickRegex.exec(someHtmlVariable)) !== null) {
+        const imgValue = onclickMatches[1];
+        const nameValue = decodeURIComponent(onclickMatches[2]);
+        const tValue = onclickMatches[3];
+        const idValue = onclickMatches[4];
     
         const url = `http://marja.ir/Detail.aspx?Img=${imgValue}&Name=${encodeURIComponent(nameValue)}&t=${tValue}&ID=${idValue}`;
         extractedURLs.push(url);
+        console.log('urrrrrrrrrl',url)
     }
     
-    console.log(extractedURLs);
-  
+    // Log the extracted URLs
+    console.log("Extracted URLs:", extractedURLs);
+    
         
    
   } catch (error) {
