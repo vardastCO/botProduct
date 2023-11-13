@@ -159,21 +159,25 @@ async function processPage(pageUrl, browser) {
         const hrefArray = [];
     
         for (const element of elements) {
-          // Click the element
-          element.click();
+          // Open a new page for each iteration
+          const newPage = await window.open('', '_blank');
+    
+          // Click the element in the new page
+          newPage.document.body.innerHTML = element.outerHTML;
+          newPage.document.querySelector('.class1').click();
     
           // Wait for a short delay to allow any asynchronous actions to complete
           await new Promise(resolve => setTimeout(resolve, 1000));
     
           // Extract and log the href value after the click event
-          const hrefValue = element.getAttribute('href');
+          const hrefValue = newPage.document.querySelector('.class1').getAttribute('href');
           console.log(hrefValue, 'lllllll');
     
           // Save hrefValue to the array
           hrefArray.push(hrefValue);
     
-          // Go back to the previous page
-          await page.goBack();
+          // Close the new page
+          newPage.close();
     
           // Wait for a short delay again
           await new Promise(resolve => setTimeout(resolve, 1000));
@@ -181,12 +185,13 @@ async function processPage(pageUrl, browser) {
     
         return hrefArray;
       } catch (error) {
-        console.error('yyyyyyyyyyyError during page evaluation:', error.message);
+        console.error('Error during page evaluation:', error.message);
         throw error; // Rethrow the error to halt execution if needed
       }
     });
     
     console.log('farrrbooood', hrefs);
+    
     
     
     
