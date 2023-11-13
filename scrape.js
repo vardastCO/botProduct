@@ -152,49 +152,52 @@ async function processPage(pageUrl, browser) {
     // await page.waitForSelector('.class1');
     console.log('farrrboooodsfsdf');
 
-
-
-    const hrefs = await page.evaluate(async (page) => {
+    const hrefs = await page.evaluate(async () => {
       try {
         console.log('kiiilll');
         const elements = document.querySelectorAll('.class1');
         console.log('kiiilll me', elements);
         const hrefArray = [];
     
-        // Set up the event handler before clicking the link
-        page.on('popup', async (newPage) => {
-          // Extract href values from the new page and push them into hrefArray
-          const newPageHrefs = await newPage.evaluate(() => {
-            const links = document.querySelectorAll('.class1');
-            const hrefs = [];
-            links.forEach((link) => {
-              hrefs.push(link.href);
-            });
-            return hrefs;
-          });
-    
-          hrefArray.push(...newPageHrefs);
-    
-          // Close the new page
-          await newPage.close();
-        });
-    
-        // Click the link to open a new window
-        await page.evaluate(() => {
-          const anchor = document.querySelector('.class1');
-          anchor.click();
-        });
-    
-        // Wait for the new page event
-        await page.waitFor(2000);
-    
         return hrefArray;
       } catch (error) {
         console.error('Error during page evaluation:', error.message);
         throw error; // Rethrow the error to halt execution if needed
       }
-    }, page);
-
+    });
+    
+    // Set up the event handler before clicking the link
+    page.on('popup', async (newPage) => {
+      try {
+        // Extract href values from the new page and push them into hrefArray
+        const newPageHrefs = await newPage.evaluate(() => {
+          const links = document.querySelectorAll('.class1');
+          const hrefs = [];
+          links.forEach((link) => {
+            hrefs.push(link.href);
+          });
+          return hrefs;
+        });
+    
+        console.log(newPageHrefs);
+    
+        // Close the new page
+        await newPage.close();
+      } catch (error) {
+        console.error('Error during new page evaluation:', error.message);
+      }
+    });
+    
+    // Click the link to open a new window
+    await page.evaluate(() => {
+      const anchor = document.querySelector('.class1');
+      anchor.click();
+    });
+    
+    // Wait for the new page event
+    await page.waitFor(2000);
+    
+    console.log(hrefs);
     
 
   
