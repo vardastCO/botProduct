@@ -31,7 +31,7 @@ const chatId = '1839030'; // Replace with your actual chat ID
 
 // // Example usage:
 // sendMessage('Hello, Telegram Bot!');
-async function extractData() {
+async function extractData(pool) {
   var extractedData = {};
 
   // Access various elements within the table using querySelector
@@ -180,7 +180,7 @@ async function processPage(pageUrl, browser) {
   
     if (hasDetails) {
       // If details are present, call the extractData function
-      const data = await page.evaluate(extractData);
+      const data = await page.evaluate(extractData(pool));
       console.log('Extracted Data:', data);
     } else {
       console.log('Page does not have the necessary details.');
