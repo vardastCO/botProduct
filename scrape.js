@@ -152,28 +152,21 @@ async function processPage(pageUrl, browser) {
     // await page.waitForSelector('.class1');
     console.log('farrrboooodsfsdf');
     const someHtmlVariable = await page.content();
-    console.log(
-      'goooold',someHtmlVariable
-    )
-    const extractedURLs = await page.evaluate((html) => {
-      console.log('hi html')
-      const regex = /Detail.aspx\?Img=(\d+)&Name=([^&]+)&t=(\d+)&ID=(\d+)/;
-      const matches = html.match(regex);
-
-      if (matches) {
-          const imgValue = matches[1];
-          const nameValue = matches[2];
-          const tValue = matches[3];
-          const idValue = matches[4];
-
-          return `http://marja.ir/Detail.aspx?Img=${imgValue}&Name=${encodeURIComponent(nameValue)}&t=${tValue}&ID=${idValue}`;
-      } else {
-          return null;
-      }
-    } ,someHtmlVariable );
-
+    const regex = /Detail.aspx\?Img=(\d+)&Name=([^&]+)&t=(\d+)&ID=(\d+)/g;
+    let matches;
+    const extractedURLs = [];
+    
+    while ((matches = regex.exec(someHtmlVariable)) !== null) {
+        const imgValue = matches[1];
+        const nameValue = matches[2];
+        const tValue = matches[3];
+        const idValue = matches[4];
+    
+        const url = `http://marja.ir/Detail.aspx?Img=${imgValue}&Name=${encodeURIComponent(nameValue)}&t=${tValue}&ID=${idValue}`;
+        extractedURLs.push(url);
+    }
+    
     console.log(extractedURLs);
-  
   
         
    
