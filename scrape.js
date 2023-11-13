@@ -194,12 +194,11 @@ async function processPage(pageUrl, browser) {
       anchor.click();
     });
     
-    // Wait for the new page event
-    await page.waitFor(2000);
+    // Wait for the new page event using a timeout
+    await new Promise(resolve => setTimeout(resolve, 2000));
     
     console.log(hrefs);
     
-
   
     
     console.log('farrrbooood', hrefs);
