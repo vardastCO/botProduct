@@ -151,60 +151,28 @@ async function processPage(pageUrl, browser) {
     // Wait for the elements to be available on the page
     // await page.waitForSelector('.class1');
     console.log('farrrboooodsfsdf');
+    const extractedURLs = await page.evaluate((html) => {
+      console.log('hi html')
+      const regex = /Detail.aspx\?Img=(\d+)&Name=([^&]+)&t=(\d+)&ID=(\d+)/;
+      const matches = html.match(regex);
 
-    const hrefs = await page.evaluate(async () => {
-      try {
-        console.log('kiiilll');
-        const elements = document.querySelectorAll('.class1');
-        console.log('kiiilll me', elements);
-        const hrefArray = [];
-    
-        return hrefArray;
-      } catch (error) {
-        console.error('Error during page evaluation:', error.message);
-        throw error; // Rethrow the error to halt execution if needed
+      if (matches) {
+          const imgValue = matches[1];
+          const nameValue = matches[2];
+          const tValue = matches[3];
+          const idValue = matches[4];
+
+          return `http://marja.ir/Detail.aspx?Img=${imgValue}&Name=${encodeURIComponent(nameValue)}&t=${tValue}&ID=${idValue}`;
+      } else {
+          return null;
       }
-    });
-    
-    // Set up the event handler before clicking the link
-    page.on('popup', async (newPage) => {
-      try {
-        // Extract href values from the new page and push them into hrefArray
-        const newPageHrefs = await newPage.evaluate(() => {
-          const links = document.querySelectorAll('.class1');
-          const hrefs = [];
-          links.forEach((link) => {
-            hrefs.push(link.href);
-          });
-          return hrefs;
-        });
-    
-        console.log(newPageHrefs);
-    
-        // Close the new page
-        await newPage.close();
-      } catch (error) {
-        console.error('Error during new page evaluation:', error.message);
-      }
-    });
-    
-    // Click the link to open a new window
-    await page.evaluate(() => {
-      const anchor = document.querySelector('.class1');
-      anchor.click();
-    });
-    
-    // Wait for the new page event using a timeout
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    console.log(hrefs);
-    
+  }, htmlCode);
+
+  console.log(extractedURLs);
   
-    
-    console.log('farrrbooood', hrefs);
+  
         
-      
-    
+   
   } catch (error) {
     console.error(error);
   } finally {
@@ -220,36 +188,25 @@ async function main() {
   await createBrowser();
   await pool.connect();
   try {;
-
- 
-    console.log('dd')
       await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
   }catch(e){
 
   }
   try {;
 
- 
-    console.log('dd22')
-
     cron.schedule('*/2 * * * *', async () => {
       try {
    
         const freeMemoryGB = os.freemem() / (1024 * 1024 * 1024);
-   
-        // let cpuUsage = osUtils.cpuUsage(function (cpuUsage) {
-        //   return cpuUsage ;
-        // });
-        console.log('hi1')
         console.log('free',freeMemoryGB)
         if (freeMemoryGB > 3) {
-          console.log('hi2')
+
           let currentHref = await pool.query('SELECT url FROM unvisited ORDER BY RANDOM() LIMIT 1');
 
           let visitedCount = 0;
   
           if (currentHref.rows.length > 0) {
-            console.log('h3')
+
             const visitedCheckResult = await pool.query('SELECT COUNT(*) FROM visited WHERE url = $1', [currentHref.rows[0].url]);
             visitedCount = visitedCheckResult.rows[0].count;
             currentHref = currentHref.rows[0].url;
@@ -258,7 +215,7 @@ async function main() {
           }
   
           if (visitedCount == 0) {
-            console.log('hi4')
+  
             await pool.query('DELETE FROM unvisited WHERE url = $1', [currentHref]);
             await pool.query('INSERT INTO visited(url) VALUES($1)', [currentHref]);
   
