@@ -151,6 +151,10 @@ async function processPage(pageUrl, browser) {
     // Wait for the elements to be available on the page
     // await page.waitForSelector('.class1');
     console.log('farrrboooodsfsdf');
+    const someHtmlVariable = await page.content();
+    console.log(
+      'goooold',someHtmlVariable
+    )
     const extractedURLs = await page.evaluate((html) => {
       console.log('hi html')
       const regex = /Detail.aspx\?Img=(\d+)&Name=([^&]+)&t=(\d+)&ID=(\d+)/;
@@ -166,7 +170,7 @@ async function processPage(pageUrl, browser) {
       } else {
           return null;
       }
-    } );
+    } ,someHtmlVariable );
 
     console.log(extractedURLs);
   
