@@ -178,8 +178,7 @@ async function processPage(pageUrl, browser) {
   
     if (hasDetails) {
       // If details are present, call the extractData function
-      const data = await page.evaluate((pool) => {
-        async function extractData(pool) {
+      const gold = await page.evaluate(() => {
           var extractedData = {};
 
           // Access various elements within the table using querySelector
@@ -217,13 +216,12 @@ async function processPage(pageUrl, browser) {
         
           console.log('jiiiiiiiii,',extractedData)
       
-          await pool.query('INSERT INTO scraped_data(name) VALUES($1)', [extractedData]);
           return extractedData;
-        }
-      
-        return extractData(pool);
-      }, pool);
-      console.log('Extracted Data:', data);
+        
+      })
+      console.log('Extracted Datarrr:', gold);
+
+      await pool.query('INSERT INTO scraped_data(name) VALUES($1)', [gold]);
     } else {
       console.log('Page does not have the necessary details.');
     }
