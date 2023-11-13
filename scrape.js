@@ -154,11 +154,11 @@ async function processPage(pageUrl, browser) {
     // Use page.evaluate to run JavaScript in the context of the page
     console.log('hi farbooos')
     const hrefs = await page.evaluate(async () => {
-      const elements = document.querySelectorAll('.class1');
-      const hrefArray = [];
+      try {
+        const elements = document.querySelectorAll('.class1');
+        const hrefArray = [];
     
-      for (const element of elements) {
-        try {
+        for (const element of elements) {
           // Click the element
           element.click();
     
@@ -171,21 +171,23 @@ async function processPage(pageUrl, browser) {
     
           // Save hrefValue to the array
           hrefArray.push(hrefValue);
-        } catch (error) {
-          console.error('Error during element interaction:', error.message);
-        } finally {
+    
           // Go back to the previous page
           await page.goBack();
     
           // Wait for a short delay again
           await new Promise(resolve => setTimeout(resolve, 1000));
         }
-      }
     
-      return hrefArray;
+        return hrefArray;
+      } catch (error) {
+        console.error('yyyyyyyyyyyError during page evaluation:', error.message);
+        throw error; // Rethrow the error to halt execution if needed
+      }
     });
     
     console.log('farrrbooood', hrefs);
+    
     
     
 
