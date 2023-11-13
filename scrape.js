@@ -152,42 +152,41 @@ async function processPage(pageUrl, browser) {
     // await page.waitForSelector('.class1');
 
     // Use page.evaluate to run JavaScript in the context of the page
-    const hrefss = await page.evaluate(async () => {
-      var elements = document.querySelectorAll('.class1');
-
-      console.log('dddd',elements.length)
-      var hrefArray = [];
+    console.log('hi farbooos')
+    const hrefs = await page.evaluate(async () => {
+      const elements = document.querySelectorAll('.class1');
+      const hrefArray = [];
     
-      // Iterate through elements
       for (const element of elements) {
-        console.log('ell', element);
+        try {
+          // Click the element
+          element.click();
     
-        // Click the element
-        element.click();
+          // Wait for a short delay to allow any asynchronous actions to complete
+          await new Promise(resolve => setTimeout(resolve, 1000));
     
-        // Wait for a short delay to allow any asynchronous actions to complete
-        await new Promise(resolve => setTimeout(resolve, 1000));
+          // Extract and log the href value after the click event
+          const hrefValue = element.getAttribute('href');
+          console.log(hrefValue, 'lllllll');
     
-        // Extract and log the href value after the click event
-        var hrefValue = element.getAttribute('href');
-        console.log(hrefValue, 'lllllll');
+          // Save hrefValue to the array
+          hrefArray.push(hrefValue);
+        } catch (error) {
+          console.error('Error during element interaction:', error.message);
+        } finally {
+          // Go back to the previous page
+          await page.goBack();
     
-        console.log('ell333', hrefValue);
-    
-        // Save hrefValue to the array
-        hrefArray.push(hrefValue);
-    
-        // Go back to the previous page
-        window.history.back();
-    
-        // Wait for a short delay again
-        await new Promise(resolve => setTimeout(resolve, 1000));
+          // Wait for a short delay again
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
       }
     
       return hrefArray;
     });
     
-    console.log('farrrbooood', hrefss);
+    console.log('farrrbooood', hrefs);
+    
     
 
     
