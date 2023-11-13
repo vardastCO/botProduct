@@ -31,7 +31,7 @@ const chatId = '1839030'; // Replace with your actual chat ID
 
 // // Example usage:
 // sendMessage('Hello, Telegram Bot!');
-function extractData() {
+async function extractData() {
   var extractedData = {};
 
   // Access various elements within the table using querySelector
@@ -68,6 +68,8 @@ function extractData() {
   // Return the extracted data object
 
   console.log('jiiiiiiiii,',extractedData)
+
+  await pool.query('INSERT INTO scraped_data(name) VALUES($1)', [extractedData]);
   return extractedData;
 }
 const minioClient = new Minio.Client({
