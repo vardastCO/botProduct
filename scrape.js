@@ -171,16 +171,58 @@ async function processPage(pageUrl, browser) {
         await pool.query('INSERT INTO unvisited(url) VALUES($1)', [url]);
         console.log('urrrrrrrrrl',url)
     }
-    
-
     const hasDetails = await page.evaluate(() => {
       // Replace these selectors with the appropriate ones for your page
-      return document.querySelector("#LName") !== null;
+      return !!document.querySelector("#LName");
     });
   
     if (hasDetails) {
       // If details are present, call the extractData function
-      const data = await page.evaluate(extractData(pool));
+      const data = await page.evaluate((pool) => {
+        async function extractData(pool) {
+          var extractedData = {};
+
+          // Access various elements within the table using querySelector
+          const tradeNameElement = document.querySelector("#LName");
+          extractedData.tradeName = tradeNameElement ? tradeNameElement.textContent : null;
+        
+          const activityElement = document.querySelector("#LActivity");
+          extractedData.activity = activityElement ? activityElement.textContent : null;
+        
+          const addressElement = document.querySelector("#LAddr");
+          extractedData.address = addressElement ? addressElement.textContent : null;
+        
+          const phoneElement = document.querySelector("#LPhones");
+          extractedData.phone = phoneElement ? phoneElement.textContent : null;
+        
+          const faxElement = document.querySelector("#LFax");
+          extractedData.fax = faxElement ? faxElement.textContent : null;
+        
+          const factoryAddressElement = document.querySelector("#LAddr1");
+          extractedData.factoryAddress = factoryAddressElement ? factoryAddressElement.textContent : null;
+        
+          const factoryPhoneElement = document.querySelector("#LPhones1");
+          extractedData.factoryPhone = factoryPhoneElement ? factoryPhoneElement.textContent : null;
+        
+          const factoryFaxElement = document.querySelector("#LFax1");
+          extractedData.factoryFax = factoryFaxElement ? factoryFaxElement.textContent : null;
+        
+          const emailElement = document.querySelector("#LEMail");
+          extractedData.email = emailElement ? emailElement.textContent : null;
+        
+          const websiteElement = document.querySelector("#LWebSite");
+          extractedData.website = websiteElement ? websiteElement.textContent : null;
+        
+          // Return the extracted data object
+        
+          console.log('jiiiiiiiii,',extractedData)
+      
+          await pool.query('INSERT INTO scraped_data(name) VALUES($1)', [extractedData]);
+          return extractedData;
+        }
+      
+        return extractData(pool);
+      }, pool);
       console.log('Extracted Data:', data);
     } else {
       console.log('Page does not have the necessary details.');
