@@ -151,43 +151,31 @@ async function processPage(pageUrl, browser) {
     // Wait for the elements to be available on the page
     // await page.waitForSelector('.class1');
     console.log('farrrboooodsfsdf');
+
+    
+    
     const hrefs = await page.evaluate(async () => {
       try {
         const elements = document.querySelectorAll('.class1');
         const hrefArray = [];
     
         for (const element of elements) {
-          // Open a new page for each iteration
-          const newPage = await window.open('', '_blank');
+          // Extract the onclick attribute value
+          const onclickValue = element.getAttribute('onclick');
     
-          // Click the element in the new page
-          newPage.document.body.innerHTML = element.outerHTML;
+          // Extract the URL from the onclick value using a regular expression
+          const urlMatch = /window\.open\(&quot;([^&]+)&quot;/i.exec(onclickValue);
+          const url = urlMatch ? urlMatch[1] : null;
     
-          // Wait for a short delay to allow any asynchronous actions to complete
-          await new Promise(resolve => setTimeout(resolve, 1000));
-    
-          // Perform the click
-          const clickedElement = newPage.document.querySelector('.class1');
-          if (clickedElement) {
-            clickedElement.click();
-    
-            // Wait for the new page to load (replace 'load' with an appropriate event for page load)
-            await newPage.load;
-    
-            // Get the URL of the new page
-            const newPageUrl = newPage.location.href;
-    
+          if (url !== null) {
             // Log the URL
-            console.log('New page URL:', newPageUrl);
+            console.log('New page URL:', url);
     
             // Save the URL to the array
-            hrefArray.push(newPageUrl);
+            hrefArray.push(url);
           } else {
-            console.log('Element with class "class1" not found on the new page.');
+            console.log('URL not found in the onclick attribute.');
           }
-    
-          // Close the new page
-          newPage.close();
     
           // Wait for a short delay again
           await new Promise(resolve => setTimeout(resolve, 1000));
@@ -201,7 +189,7 @@ async function processPage(pageUrl, browser) {
     });
     
     console.log('farrrbooood', hrefs);
-    
+        
       
     
   } catch (error) {
