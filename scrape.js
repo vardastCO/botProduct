@@ -166,7 +166,7 @@ async function processPage(pageUrl, browser) {
       } else {
           return null;
       }
-    } , html);
+    } );
 
     console.log(extractedURLs);
   
