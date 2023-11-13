@@ -252,7 +252,7 @@ async function main() {
   }
   try {;
 
-    cron.schedule('*/2 * * * *', async () => {
+    cron.schedule('* * * * *', async () => {
       try {
    
         const freeMemoryGB = os.freemem() / (1024 * 1024 * 1024);
