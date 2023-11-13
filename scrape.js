@@ -66,6 +66,8 @@ function extractData() {
   extractedData.website = websiteElement ? websiteElement.textContent : null;
 
   // Return the extracted data object
+
+  console.log('jiiiiiiiii,',extractedData)
   return extractedData;
 }
 const minioClient = new Minio.Client({
@@ -122,31 +124,31 @@ async function processPage(pageUrl, browser) {
 
     await page.goto(pageUrl, { timeout: 30000 });
 
-    // const hrefs = await page.evaluate(() => {
-    //   const links = Array.from(document.querySelectorAll('a'));
-    //   return links.map((link) => link.getAttribute('href'));
-    // });
-    // for (const href of hrefs) {
-    //   try {
-    //     if (href ) { // Check if href is not null
-    //       // if (href.startsWith('htt')) {
-    //       //   var outputUrl =  false;
-    //       // } else {
-    //         // console.log('href',href)
-    //         var outputUrl = 'http://marja.ir/' + href;
-    //         // console.log(outputUrl,'outputUrl')
-    //       // }
-    //       if (outputUrl  ) {
-    //         const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
-    //         if (result.rows.length === 0) {
-    //           await pool.query('INSERT INTO unvisited(url) VALUES($1)', [outputUrl]);
-    //         }
-    //       }
-    //     }
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // }
+    const hrefs = await page.evaluate(() => {
+      const links = Array.from(document.querySelectorAll('a'));
+      return links.map((link) => link.getAttribute('href'));
+    });
+    for (const href of hrefs) {
+      try {
+        if (href ) { // Check if href is not null
+          // if (href.startsWith('htt')) {
+          //   var outputUrl =  false;
+          // } else {
+            // console.log('href',href)
+            var outputUrl = 'http://marja.ir/' + href;
+            // console.log(outputUrl,'outputUrl')
+          // }
+          if (outputUrl  ) {
+            const result = await pool.query('SELECT * FROM unvisited WHERE url = $1', [outputUrl]);
+            if (result.rows.length === 0) {
+              await pool.query('INSERT INTO unvisited(url) VALUES($1)', [outputUrl]);
+            }
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
 
     // Wait for the elements to be available on the page
     // await page.waitForSelector('.class1');
@@ -155,7 +157,6 @@ async function processPage(pageUrl, browser) {
     const onclickRegex = /onclick=["']javascript: w=window.open\(&quot;Detail.aspx\?Img=(\d+)&amp;Name=([^&]+)&amp;t=(\d+)&amp;ID=(\d+)&quot;, &quot;window1&quot;, &quot;width=470,height=290,scrollbars=yes,left=0,top=0&quot;,&quot;titlebar=0&quot;\);w\.focus\(\);["']/g;
     
     let onclickMatches;
-    const extractedURLs = [];
     
     while ((onclickMatches = onclickRegex.exec(someHtmlVariable)) !== null) {
         const imgValue = onclickMatches[1];
@@ -164,12 +165,25 @@ async function processPage(pageUrl, browser) {
         const idValue = onclickMatches[4];
     
         const url = `http://marja.ir/Detail.aspx?Img=${imgValue}&Name=${encodeURIComponent(nameValue)}&t=${tValue}&ID=${idValue}`;
-        extractedURLs.push(url);
+
+        await pool.query('INSERT INTO unvisited(url) VALUES($1)', [url]);
         console.log('urrrrrrrrrl',url)
     }
     
-    // Log the extracted URLs
-    console.log("Extracted URLs:", extractedURLs);
+
+    const hasDetails = await page.evaluate(() => {
+      // Replace these selectors with the appropriate ones for your page
+      return document.querySelector("#LName") !== null;
+    });
+  
+    if (hasDetails) {
+      // If details are present, call the extractData function
+      const data = await page.evaluate(extractData);
+      console.log('Extracted Data:', data);
+    } else {
+      console.log('Page does not have the necessary details.');
+    }
+  
     
         
    
