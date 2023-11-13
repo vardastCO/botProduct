@@ -166,9 +166,9 @@ async function processPage(pageUrl, browser) {
       } else {
           return null;
       }
-  }, htmlCode);
+    } , html);
 
-  console.log(extractedURLs);
+    console.log(extractedURLs);
   
   
         
