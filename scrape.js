@@ -252,20 +252,13 @@ async function main() {
 
     cron.schedule('* * * * *', async () => {
       try {
-        const queryString = `
+        let deleteoption = await pool.query(`
         DELETE FROM unvisited
         WHERE url NOT LIKE 'http://marja.ir/Project.aspx?t=3%'
           AND url NOT LIKE '%http://marja.ir/Detail.aspx?%'
           AND url NOT LIKE '%http://marja.ir/Search.aspx?t=3%';
-      `;
-      
-      // Use the pool to execute the query
-        pool.query(queryString, (error, results) => {
-        if (error) {
-          console.error('Error executing query:', error);
-        } else {
-          console.log('Rows affected:', results.rowCount);
-        }
+      `);
+      console.log('Rows affected by DELETE:', deleteoption.rowCount);
         const freeMemoryGB = os.freemem() / (1024 * 1024 * 1024);
         console.log('free',freeMemoryGB)
         if (freeMemoryGB > 3) {
