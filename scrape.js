@@ -243,11 +243,11 @@ async function processPage(pageUrl, browser) {
 async function main() {
   await createBrowser();
   await pool.connect();
-  try {;
-      await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
-  }catch(e){
+  // try {;
+  //     await pool.query('INSERT INTO unvisited(url) VALUES($1)', [initialPage]);
+  // }catch(e){
 
-  }
+  // }
   try {;
 
     cron.schedule('* * * * *', async () => {
