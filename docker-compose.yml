@@ -7,7 +7,7 @@ services:
     build:
       context: .
     ports:
-      - "3002-3101:3002"
+      - "3002:3002"
     volumes:
       - "./test:/app/test"
     depends_on:
@@ -19,9 +19,9 @@ services:
   postgres:
     image: postgres
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: root
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: price
     ports:
       - "5432:5432"
     networks:
