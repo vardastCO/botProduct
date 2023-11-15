@@ -72,12 +72,10 @@ async function main() {
       try {
         let offset = 0;
         let batchNumber = 1;
+
+        const totalCountResult = await pool.query('SELECT COUNT(*) FROM bot_price');
     
-        // Get the total count of logs
-        const totalCountResult = await pool.query('SELECT COUNT(*) FROM bot_price', [], a => +a.count);
-    
-        // Check if totalCountResult is not null before accessing count property
-        if (totalCountResult !== null) {
+        if (totalCountResult.rows.length > 0 ) {
             const totalCount = totalCountResult.count || 0;
     
             while (offset < totalCount) {
