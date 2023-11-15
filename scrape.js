@@ -76,10 +76,10 @@ async function main() {
         let batchNumber = 1;
 
         const totalCountResult = await pool.query('SELECT COUNT(*) FROM bot_price');
-    
+        console.log('hiii',totalCountResult)
         if (totalCountResult.rows.length > 0 ) {
             const totalCount = totalCountResult.count || 0;
-    
+            console.log('hiii23423434')
             while (offset < totalCount) {
                 // Retrieve logs from the 'bot_price' table in batches
                 const logs = await pool.query(`SELECT * FROM bot_price ORDER BY id OFFSET $1 LIMIT $2`, [offset, batchSize]);
