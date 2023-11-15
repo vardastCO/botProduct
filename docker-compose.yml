@@ -16,6 +16,7 @@ services:
       - custom_network
     # Add a healthcheck configuration to check the memory usage
     
+    
   postgres:
     image: postgres
     environment:

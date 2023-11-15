@@ -1,6 +1,8 @@
 # Use the Puppeteer base image
 FROM ghcr.io/puppeteer/puppeteer:19.7.2
 
+
+
 # Set the working directory for your application
 WORKDIR /usr/src/app
 
