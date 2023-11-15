@@ -76,8 +76,8 @@ async function main() {
         // Get the total count of logs
         const totalCountResult = await pool.query('SELECT COUNT(*) FROM bot_price', [], a => +a.count);
     
-        // Check if totalCountResult is not null before accessing count property
-        const totalCount = totalCountResult !== null ? totalCountResult.count : 0;
+        // Check if totalCountResult is not null or undefined before accessing count property
+        const totalCount = totalCountResult !== null && totalCountResult !== undefined ? totalCountResult.count : 0;
     
         while (offset < totalCount) {
             // Retrieve logs from the 'bot_price' table in batches
@@ -87,7 +87,7 @@ async function main() {
             console.log(`Batch ${batchNumber}:`);
             logs.forEach(log => {
                 // Process each log (replace this with your logic)
-                console.log(`ID: ${log}`);
+                console.log(`ID: ${log.id}, Timestamp: ${log.timestamp}, Message: ${log.message}`);
             });
     
             // Update offset for the next batch
@@ -97,8 +97,10 @@ async function main() {
     } catch (error) {
         console.error('Error:', error);
     } finally {
-       
+        // Close the database connection
+        pgp.end();
     }
+    
     
     });
   } catch (error) {
