@@ -72,28 +72,34 @@ async function main() {
       try {
         let offset = 0;
         let batchNumber = 1;
-
+    
         // Get the total count of logs
-        const totalCount = await pool.query('SELECT COUNT(*) FROM bot_price', [], a => +a.count);
-
+        const totalCountResult = await pool.query('SELECT COUNT(*) FROM bot_price', [], a => +a.count);
+    
+        // Check if totalCountResult is not null before accessing count property
+        const totalCount = totalCountResult !== null ? totalCountResult.count : 0;
+    
         while (offset < totalCount) {
-            // Retrieve logs from the 'logs' table in batches
+            // Retrieve logs from the 'bot_price' table in batches
             const logs = await pool.query(`SELECT * FROM bot_price ORDER BY id OFFSET $1 LIMIT $2`, [offset, batchSize]);
-
+    
             // Process each log batch
             console.log(`Batch ${batchNumber}:`);
             logs.forEach(log => {
                 // Process each log (replace this with your logic)
                 console.log(`ID: ${log}`);
             });
-
+    
             // Update offset for the next batch
             offset += batchSize;
             batchNumber++;
         }
     } catch (error) {
         console.error('Error:', error);
-    } 
+    } finally {
+       
+    }
+    
     });
   } catch (error) {
     console.error(error);
