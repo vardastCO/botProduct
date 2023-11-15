@@ -22,7 +22,6 @@
     "puppeteer-cluster" : "*",
     "generic-pool" : "*",
     "os-utils" : "*",
-    "@apollo/client" : "*",
     "dockerode" : "*",
     "node-telegram-bot-api" : "*"
   }
