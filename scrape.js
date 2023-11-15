@@ -78,7 +78,9 @@ async function main() {
         const totalCountResult = await pool.query('SELECT COUNT(*) FROM bot_price');
         console.log('hiii',totalCountResult)
         if (totalCountResult.rows.length > 0 ) {
-            const totalCount = totalCountResult.rows.count;
+      
+            const totalCount = totalCountResult.rowCount;
+            console.log(offset,'ofset','total',totalCount)
             console.log('hiii23423434')
             while (offset < totalCount) {
 
