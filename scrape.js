@@ -76,27 +76,34 @@ async function main() {
         // Get the total count of logs
         const totalCountResult = await pool.query('SELECT COUNT(*) FROM bot_price', [], a => +a.count);
     
-        // Check if totalCountResult is not null or undefined before accessing count property
-        const totalCount = totalCountResult !== null && totalCountResult !== undefined ? totalCountResult.count : 0;
+        // Check if totalCountResult is not null before accessing count property
+        if (totalCountResult !== null) {
+            const totalCount = totalCountResult.count || 0;
     
-        while (offset < totalCount) {
-            // Retrieve logs from the 'bot_price' table in batches
-            const logs = await pool.query(`SELECT * FROM bot_price ORDER BY id OFFSET $1 LIMIT $2`, [offset, batchSize]);
+            while (offset < totalCount) {
+                // Retrieve logs from the 'bot_price' table in batches
+                const logs = await pool.query(`SELECT * FROM bot_price ORDER BY id OFFSET $1 LIMIT $2`, [offset, batchSize]);
     
-            // Process each log batch
-            console.log(`Batch ${batchNumber}:`);
-            logs.forEach(log => {
-                // Process each log (replace this with your logic)
-                console.log(`ID: ${log.id}, Timestamp: ${log.timestamp}, Message: ${log.message}`);
-            });
+                // Process each log batch
+                console.log(`Batch ${batchNumber}:`);
+                logs.forEach(log => {
+                    // Process each log (replace this with your logic)
+                    console.log(`ID: ${log.id}, Timestamp: ${log.timestamp}, Message: ${log.message}`);
+                });
     
-            // Update offset for the next batch
-            offset += batchSize;
-            batchNumber++;
+                // Update offset for the next batch
+                offset += batchSize;
+                batchNumber++;
+            }
+        } else {
+            console.error('Error: Unable to retrieve total count.');
         }
     } catch (error) {
         console.error('Error:', error);
-    } 
+    } finally {
+        // Close the database connection
+        pgp.end();
+    }
     
     
     });
