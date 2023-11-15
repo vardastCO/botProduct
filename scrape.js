@@ -66,10 +66,12 @@ async function processPage(pageUrl, browser) {
 async function main() {
   await createBrowser();
   await pool.connect();
+  console.log('hiii')
   try {;
-
-    cron.schedule('* * * * *', async () => {
+    console.log('hiii32323')
+    // cron.schedule('* * * * *', async () => {
       try {
+        console.log('hiii54345345')
         let offset = 0;
         let batchNumber = 1;
 
@@ -99,12 +101,11 @@ async function main() {
     } catch (error) {
         console.error('Error:', error);
     } finally {
-        // Close the database connection
-        pgp.end();
+
     }
     
     
-    });
+    // });
   } catch (error) {
     console.error(error);
   }
