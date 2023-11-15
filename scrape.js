@@ -91,7 +91,7 @@ async function main() {
                 console.log('logs',logs)
                 // Process each log batch
                 console.log(`Batch ${batchNumber}:`);
-                logs.forEach(log => {
+                logs.rows.forEach(log => {
                     // Process each log (replace this with your logic)
                     console.log(`ID: ${log.id}`);
                 });
