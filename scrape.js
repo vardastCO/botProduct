@@ -65,7 +65,7 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath) {
     `;
 
     const createProductPriceQuery = `
-    INSERT INTO product_price("productId", "sellerId" ,"amount" , "type" ,"isPublic")
+    INSERT INTO product_prices ("productId", "sellerId" ,"amount" , "type" ,"isPublic")
     VALUES ($1,$2,$3,$4,$5)
     RETURNING *;
     `;
