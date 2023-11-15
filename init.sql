@@ -3,5 +3,5 @@ CREATE TABLE bot_price (
     selLerid INT,
     productid INT,
     url TEXT,
-    pricexpath TEXT,
+    price_xpath TEXT
 );

@@ -63,7 +63,7 @@ async function processPage(pageUrl, browser) {
 }
 async function main() {
   await createBrowser();
-  await pool.connect();
+  // await pool.connect();
   try {;
 
     cron.schedule('* * * * *', async () => {
