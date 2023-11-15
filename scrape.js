@@ -5,13 +5,13 @@ const { Client } = require('pg');
 const cron = require('node-cron');
 
 
-const pool = new Client({
-  user: 'root',
-  host: 'postgres', // Use the service name defined in docker-compose.yml
-  database: 'root', // This should match the POSTGRES_DB in docker-compose.yml
-  password: 'root',
-  port: 5432,
-});
+// const pool = new Client({
+//   user: 'root',
+//   host: 'postgres', // Use the service name defined in docker-compose.yml
+//   database: 'root', // This should match the POSTGRES_DB in docker-compose.yml
+//   password: 'root',
+//   port: 5432,
+// });
 
 let browser;
 
