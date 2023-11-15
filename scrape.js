@@ -4,7 +4,7 @@ const puppeteer = require('puppeteer');
 const { Client } = require('pg');
 const cron = require('node-cron');
 
-import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
+const { ApolloClient, InMemoryCache, gql }  = require('@apollo/client');
 
 const client = new ApolloClient({
   uri: 'https://api.vardast.com/graphql',
