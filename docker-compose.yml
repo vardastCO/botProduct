@@ -30,37 +30,6 @@ services:
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
-  memory-monitor:
-    build:
-      context: ./py
-      dockerfile: Dockerfile
-    environment:
-      - BOT_TOKEN=6918624503:AAFSU4bwTBmAa2w2T7ElJ9fY4XlUA6MaQ4Q
-      - CHAT_ID=1839030
-    restart: always 
-    volumes:
-      - ./py/requirements.txt:/app/requirements.txt
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - custom_network
-  storage:
-    image: minio/minio
-    restart: always
-    ports:
-      - 80:9000
-      - 9090:9090
-    environment:
-      MINIO_ROOT_USER: ndp
-      MINIO_ROOT_PASSWORD: str0ngP@ss
-    volumes:
-      - minio-data:/data
-    command: server /data --console-address ":9090"
-    networks:
-      - custom_network
-
-volumes:
-  minio-data:
-
 networks:
   custom_network:
     external: true
