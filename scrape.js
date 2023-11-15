@@ -58,9 +58,20 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath) {
     ]);
     console.log('price',priceText)
 
-
-    
-        
+    const createProductOfferQuery = `
+    INSERT INTO product_offer (productId, sellerId)
+    VALUES ($1, $2)
+    RETURNING *;
+    `;
+    // Execute the query
+    db.one(createProductOfferQuery, [productid, sellerid])
+        .then(result => {
+            console.log('New product offer created:', result);
+        })
+        .catch(error => {
+            console.error('Error creating product offer:', error);
+    })
+     
     
   } catch (error) {
     console.error(error);
@@ -73,6 +84,10 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath) {
    }
   
 }
+
+const pgp = require('pg-promise')();
+const db = pgp('postgres://postgres:vardast@1234@128.140.109.3:5432/vardast');
+
 async function main() {
   await createBrowser();
   await pool.connect();

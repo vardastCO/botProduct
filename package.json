@@ -23,6 +23,7 @@
     "generic-pool" : "*",
     "os-utils" : "*",
     "dockerode" : "*",
-    "node-telegram-bot-api" : "*"
+    "node-telegram-bot-api" : "*",
+    "pg-promise" : "*"
   }
 }
