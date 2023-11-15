@@ -84,7 +84,7 @@ async function main() {
             console.log(`Batch ${batchNumber}:`);
             logs.forEach(log => {
                 // Process each log (replace this with your logic)
-                console.log(`ID: ${log.id}, Timestamp: ${log.timestamp}, Message: ${log.message}`);
+                console.log(`ID: ${log}`);
             });
 
             // Update offset for the next batch
@@ -93,10 +93,7 @@ async function main() {
         }
     } catch (error) {
         console.error('Error:', error);
-    } finally {
-        // Close the database connection
-        pgp.end();
-    }
+    } 
     });
   } catch (error) {
     console.error(error);
