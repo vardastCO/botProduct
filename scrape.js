@@ -41,17 +41,27 @@ async function createBrowser() {
 }
 
 
-async function processPage(pageUrl, browser) {
+async function processPage(pageUrl, browser,sellerid,productid,xpath) {
   const page = await browser.newPage();
 
   try {
     console.log('pageurl', pageUrl);
 
-    // await page.goto(pageUrl, { timeout: 30000 });
+    await page.goto(pageUrl, { timeout: 30000 });
+
+    const [priceElement] = await Promise.all([
+      page.$x( xpath),
+    ]);
+
+    const [priceText] = await Promise.all([
+      page.evaluate((el) => el.textContent, priceElement[0]),
+    ]);
+    console.log('price',priceText)
+
 
     
         
-   
+    
   } catch (error) {
     console.error(error);
   } finally {
@@ -66,34 +76,28 @@ async function processPage(pageUrl, browser) {
 async function main() {
   await createBrowser();
   await pool.connect();
-  console.log('hiii')
   try {;
-    console.log('hiii32323')
     // cron.schedule('* * * * *', async () => {
       try {
-        console.log('hiii54345345')
+
         let offset = 0;
         let batchNumber = 1;
         const batchSize = 100; 
 
         const totalCountResult = await pool.query('SELECT COUNT(*) FROM bot_price');
-        console.log('hiii',totalCountResult)
+
         if (totalCountResult.rows.length > 0 ) {
       
             const totalCount = totalCountResult.rowCount;
-            console.log(offset,'ofset','total',totalCount)
-            console.log('hiii23423434')
             while (offset < totalCount) {
-
-              console.log(offset,'ofset','total',totalCount)
                 // Retrieve logs from the 'bot_price' table in batches
                 const logs = await pool.query(`SELECT * FROM bot_price ORDER BY id OFFSET $1 LIMIT $2`, [offset, batchSize]);
-                console.log('logs',logs)
-                // Process each log batch
-                console.log(`Batch ${batchNumber}:`);
+
                 logs.rows.forEach(log => {
                     // Process each log (replace this with your logic)
-                    console.log(`ID: ${log.id}`);
+                    console.log(`ID: ${log.url}`);
+                    processPage(log.url,browser,log.sellerid,log.productid,log.price_xpath)
+
                 });
     
                 // Update offset for the next batch
