@@ -63,10 +63,19 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath) {
     VALUES ($1, $2)
     RETURNING *;
     `;
+
+    const createProductPriceQuery = `
+    INSERT INTO product_price("productId", "sellerId" ,"amount" , "type" ,"isPublic")
+    VALUES ($1,$2,$3,$4,$5)
+    RETURNING *;
+    `;
     // Execute the query
     db.one(createProductOfferQuery, [productid, sellerid])
         .then(result => {
             console.log('New product offer created:', result);
+            db.one(createProductPriceQuery, [productid, sellerid,priceText,1,true]).then(result => {
+              console.log('New product price created:', result);
+            })
         })
         .catch(error => {
             console.error('Error creating product offer:', error);
