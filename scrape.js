@@ -93,7 +93,7 @@ async function main() {
                 console.log(`Batch ${batchNumber}:`);
                 logs.forEach(log => {
                     // Process each log (replace this with your logic)
-                    console.log(`ID: ${log}`);
+                    console.log(`ID: ${log.id}`);
                 });
     
                 // Update offset for the next batch
