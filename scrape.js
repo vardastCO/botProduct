@@ -74,11 +74,11 @@ async function main() {
         let batchNumber = 1;
 
         // Get the total count of logs
-        const totalCount = await db.one('SELECT COUNT(*) FROM bot_price', [], a => +a.count);
+        const totalCount = await pool.one('SELECT COUNT(*) FROM bot_price', [], a => +a.count);
 
         while (offset < totalCount) {
             // Retrieve logs from the 'logs' table in batches
-            const logs = await db.any(`SELECT * FROM bot_price ORDER BY id OFFSET $1 LIMIT $2`, [offset, batchSize]);
+            const logs = await pool.any(`SELECT * FROM bot_price ORDER BY id OFFSET $1 LIMIT $2`, [offset, batchSize]);
 
             // Process each log batch
             console.log(`Batch ${batchNumber}:`);
