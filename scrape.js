@@ -73,7 +73,7 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath) {
     db.one(createProductOfferQuery, [productid, sellerid])
         .then(result => {
             console.log('New product offer created:', result);
-            db.one(createProductPriceQuery, [productid, sellerid,parseInt(priceText),true,1]).then(result => {
+            db.one(createProductPriceQuery, [productid, sellerid,parseInt(priceText.replace(/,/g, ''), 10),true,1]).then(result => {
               console.log('New product price created:', result);
             })
         })
