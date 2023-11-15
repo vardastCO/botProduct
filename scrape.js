@@ -69,9 +69,9 @@ async function main() {
     cron.schedule('* * * * *', async () => {
       try {
 
-  
-  
-            await processPage(currentHref,browser);
+
+            console.log('hi')
+            // await processPage(currentHref,browser);
          
        
       } catch (error) {
