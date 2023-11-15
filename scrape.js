@@ -65,15 +65,15 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath) {
     `;
 
     const createProductPriceQuery = `
-    INSERT INTO product_prices ("productId", "sellerId" ,"amount" , "type" ,"isPublic")
-    VALUES ($1,$2,$3,$4,$5)
+    INSERT INTO product_prices ("productId", "sellerId" ,"amount"  ,"isPublic")
+    VALUES ($1,$2,$3,$4)
     RETURNING *;
     `;
     // Execute the query
     db.one(createProductOfferQuery, [productid, sellerid])
         .then(result => {
             console.log('New product offer created:', result);
-            db.one(createProductPriceQuery, [productid, sellerid,parseInt(priceText),1,true]).then(result => {
+            db.one(createProductPriceQuery, [productid, sellerid,parseInt(priceText),true]).then(result => {
               console.log('New product price created:', result);
             })
         })
