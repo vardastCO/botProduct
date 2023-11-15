@@ -4,14 +4,22 @@ const puppeteer = require('puppeteer');
 const { Client } = require('pg');
 const cron = require('node-cron');
 
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
 
-// const pool = new Client({
-//   user: 'root',
-//   host: 'postgres', // Use the service name defined in docker-compose.yml
-//   database: 'root', // This should match the POSTGRES_DB in docker-compose.yml
-//   password: 'root',
-//   port: 5432,
-// });
+const client = new ApolloClient({
+  uri: 'https://api.vardast.com/graphql',
+  cache: new InMemoryCache(),
+});
+
+
+
+const pool = new Client({
+  user: 'user',
+  host: 'postgres', // Use the service name defined in docker-compose.yml
+  database: 'price', // This should match the POSTGRES_DB in docker-compose.yml
+  password: 'password',
+  port: 5432,
+});
 
 let browser;
 
@@ -63,20 +71,38 @@ async function processPage(pageUrl, browser) {
 }
 async function main() {
   await createBrowser();
-  // await pool.connect();
+  await pool.connect();
   try {;
 
     cron.schedule('* * * * *', async () => {
       try {
+        let offset = 0;
+        let batchNumber = 1;
 
+        // Get the total count of logs
+        const totalCount = await db.one('SELECT COUNT(*) FROM bot_price', [], a => +a.count);
 
-            console.log('hi')
-            // await processPage(currentHref,browser);
-         
-       
-      } catch (error) {
-        console.error(error);
-      }
+        while (offset < totalCount) {
+            // Retrieve logs from the 'logs' table in batches
+            const logs = await db.any(`SELECT * FROM bot_price ORDER BY id OFFSET $1 LIMIT $2`, [offset, batchSize]);
+
+            // Process each log batch
+            console.log(`Batch ${batchNumber}:`);
+            logs.forEach(log => {
+                // Process each log (replace this with your logic)
+                console.log(`ID: ${log.id}, Timestamp: ${log.timestamp}, Message: ${log.message}`);
+            });
+
+            // Update offset for the next batch
+            offset += batchSize;
+            batchNumber++;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    } finally {
+        // Close the database connection
+        pgp.end();
+    }
     });
   } catch (error) {
     console.error(error);
