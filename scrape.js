@@ -59,7 +59,7 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath) {
     console.log('price',priceText)
 
     const createProductOfferQuery = `
-    INSERT INTO product_offers (productId, sellerId)
+    INSERT INTO product_offers ("productId", "sellerId")
     VALUES ($1, $2)
     RETURNING *;
     `;
