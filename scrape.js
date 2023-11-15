@@ -74,6 +74,7 @@ async function main() {
         console.log('hiii54345345')
         let offset = 0;
         let batchNumber = 1;
+        const batchSize = 100; 
 
         const totalCountResult = await pool.query('SELECT COUNT(*) FROM bot_price');
         console.log('hiii',totalCountResult)
