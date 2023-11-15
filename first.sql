@@ -1,5 +1,5 @@
 CREATE TABLE bot_price (
-    id SERIAL PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     sellerid INT,
     productid INT,
     url TEXT,
