@@ -96,10 +96,7 @@ async function main() {
         }
     } catch (error) {
         console.error('Error:', error);
-    } finally {
-        // Close the database connection
-        pgp.end();
-    }
+    } 
     
     
     });
