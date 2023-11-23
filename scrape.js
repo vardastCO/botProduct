@@ -41,11 +41,12 @@ async function createBrowser() {
 }
 
 
-async function processPage(pageUrl, browser,sellerid,productid,xpath) {
+async function processPage(pageUrl, browser,sellerid,productid,xpath,currency) {
   const page = await browser.newPage();
 
   try {
     console.log('pageurl', pageUrl);
+    await new Promise(resolve => setTimeout(resolve, 3000));
 
     await page.goto(pageUrl, { timeout: 30000 });
 
@@ -73,12 +74,16 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath) {
     db.one(createProductOfferQuery, [productid, sellerid])
         .then(result => {
             console.log('New product offer created:', result);
-            db.one(createProductPriceQuery, [productid, sellerid,parseInt(priceText.replace(/,/g, ''), 10),true,1]).then(result => {
-              console.log('New product price created:', result);
-            })
+            
         })
         .catch(error => {
-            console.error('Error creating product offer:', error);
+            console.error('Error creating product offer:', error)
+        .finally(()=>{
+          let amount = currency ? parseInt(priceText.replace(/,/g, ''),10)/10 : parseInt(priceText.replace(/,/g, ''),10)
+          db.one(createProductPriceQuery, [productid, sellerid,amount,true,1]).then(result => {
+            console.log('New product price created:', result);
+          })
+        })    
     })
      
     
@@ -101,7 +106,7 @@ async function main() {
   await createBrowser();
   await pool.connect();
   try {;
-    // cron.schedule('* * * * *', async () => {
+    // cron.schedule('0 0 * * 0', async () => {
       try {
 
         let offset = 0;
@@ -120,7 +125,7 @@ async function main() {
                 logs.rows.forEach(log => {
                     // Process each log (replace this with your logic)
                     console.log(`ID: ${log.url}`);
-                    processPage(log.url,browser,log.sellerid,log.productid,log.price_xpath)
+                    processPage(log.url,browser,log.sellerid,log.productid,log.price_xpath,log.currency)
 
                 });
     
@@ -131,13 +136,11 @@ async function main() {
         } else {
             console.error('Error: Unable to retrieve total count.');
         }
-    } catch (error) {
-        console.error('Error:', error);
-    } finally {
+      } catch (error) {
+          console.error('Error:', error);
+      } finally {
 
-    }
-    
-    
+      }
     // });
   } catch (error) {
     console.error(error);
