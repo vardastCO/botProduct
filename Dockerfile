@@ -15,6 +15,8 @@ COPY package*.json ./
 
 
 
+
+
 USER root
 
 # Install Node.js dependencies
