@@ -4,8 +4,8 @@ CREATE TABLE bot_price (
     productid INT,
     url TEXT,
     price_xpath TEXT,
-    price_xpath namev,
-    price_xpath name,
+    namev TEXT,
+    name TEXT,
     currency BOOLEAN DEFAULT false  
 );
 
