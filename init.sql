@@ -8,3 +8,5 @@ CREATE TABLE bot_price (
     price_xpath name,
     currency BOOLEAN DEFAULT false  
 );
+
+
