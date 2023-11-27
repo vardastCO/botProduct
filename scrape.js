@@ -106,7 +106,7 @@ async function main() {
   await createBrowser();
   await pool.connect();
   try {;
-    cron.schedule('0 0 * * 0', async () => {
+    cron.schedule('0 0 * * TUE', async () => {
       try {
 
         let offset = 0;
@@ -122,12 +122,14 @@ async function main() {
                 // Retrieve logs from the 'bot_price' table in batches
                 const logs = await pool.query(`SELECT * FROM bot_price ORDER BY id OFFSET $1 LIMIT $2`, [offset, batchSize]);
 
-                logs.rows.forEach(log => {
-                    // Process each log (replace this with your logic)
-                    console.log(`ID: ${log.url}`);
-                    processPage(log.url,browser,log.sellerid,log.productid,log.price_xpath,log.currency)
-
-                });
+                for (const log of logs.rows) {
+                  // Process each log (replace this with your logic)
+                  console.log(`ID: ${log.url}`);
+                  
+                  // Process the page step by step
+                  await processPage(log.url, browser, log.sellerid, log.productid, log.price_xpath, log.currency);
+              }
+          
     
                 // Update offset for the next batch
                 offset += batchSize;
