@@ -50,9 +50,13 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath,currency) {
 
     await page.goto(pageUrl, { timeout: 30000 });
 
+    console.log('step one',page.$x(xpath))
+
     const [priceElement] = await Promise.all([
-      page.$x( xpath),
+      page.$x(xpath),
     ]);
+
+    console.log('priceelemt',priceElement)
 
     const [priceText] = await Promise.all([
       page.evaluate((el) => el.textContent, priceElement[0]),
