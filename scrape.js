@@ -106,7 +106,7 @@ async function main() {
   await createBrowser();
   await pool.connect();
   try {;
-    cron.schedule('0 0 * * TUE', async () => {
+    // cron.schedule('0 0 * * TUE', async () => {
       try {
 
         let offset = 0;
@@ -143,7 +143,7 @@ async function main() {
       } finally {
 
       }
-    });
+    // });
   } catch (error) {
     console.error(error);
   }
