@@ -49,48 +49,45 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath,currency) {
     await new Promise(resolve => setTimeout(resolve, 3000));
 
     await page.goto(pageUrl, { timeout: 30000 });
-    console.log('step one');
     const [priceElement] = await page.$x(xpath);
-    
-    console.log('priceelemt', priceElement);
-    
+
     if (priceElement) {
       const [priceText] = await Promise.all([
         page.evaluate((el) => el.textContent, priceElement),
       ]);
-      console.log('price', priceText);
+      const createProductOfferQuery = `
+      INSERT INTO product_offers ("productId", "sellerId")
+      VALUES ($1, $2)
+      RETURNING *;
+      `;
+  
+      const createProductPriceQuery = `
+      INSERT INTO product_prices ("productId", "sellerId" ,"amount"  ,"isPublic","createdById")
+      VALUES ($1,$2,$3,$4,$5)
+      RETURNING *;
+      `;
+      // Execute the query
+      db.one(createProductOfferQuery, [productid, sellerid])
+          .then(result => {
+              console.log('New product offer created:', result);
+              
+          })
+          .catch(error => {
+              console.error('Error creating product offer:', error)
+          .finally(()=>{
+            let amount = currency ? parseInt(priceText.replace(/,/g, ''),10)/10 : parseInt(priceText.replace(/,/g, ''),10)
+            db.one(createProductPriceQuery, [productid, sellerid,amount,true,1]).then(result => {
+              console.log('New product price created:', result);
+            })
+          })    
+      })
+       
     } else {
-      console.error('Price element not found');
+      // console.error('Price element not found');
     }
     
 
-    const createProductOfferQuery = `
-    INSERT INTO product_offers ("productId", "sellerId")
-    VALUES ($1, $2)
-    RETURNING *;
-    `;
-
-    const createProductPriceQuery = `
-    INSERT INTO product_prices ("productId", "sellerId" ,"amount"  ,"isPublic","createdById")
-    VALUES ($1,$2,$3,$4,$5)
-    RETURNING *;
-    `;
-    // Execute the query
-    db.one(createProductOfferQuery, [productid, sellerid])
-        .then(result => {
-            console.log('New product offer created:', result);
-            
-        })
-        .catch(error => {
-            console.error('Error creating product offer:', error)
-        .finally(()=>{
-          let amount = currency ? parseInt(priceText.replace(/,/g, ''),10)/10 : parseInt(priceText.replace(/,/g, ''),10)
-          db.one(createProductPriceQuery, [productid, sellerid,amount,true,1]).then(result => {
-            console.log('New product price created:', result);
-          })
-        })    
-    })
-     
+ 
     
   } catch (error) {
     console.error(error);
