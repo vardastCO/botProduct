@@ -66,26 +66,16 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath,currency) {
       VALUES ($1,$2,$3,$4,$5)
       RETURNING *;
       `;
-      // Execute the query
-      db.one(createProductOfferQuery, [productid, sellerid])
-          .then(result => {
-           
-          })
-          .catch(error => {
-              console.error('Error creating product offer:', error)   
-          })
+     // Execute the query
+     
       let amount = currency ? parseInt(priceText.replace(/,/g, ''),10)/10 : parseInt(priceText.replace(/,/g, ''),10)
       db.one(createProductPriceQuery, [productid, sellerid,amount,true,1]).then(result => {
+        db.one(createProductOfferQuery, [productid, sellerid])
         console.log('New product price created:', result);
       })
           
        
-    } else {
-      // console.error('Price element not found');
-    }
-    
-
- 
+    } 
     
   } catch (error) {
     console.error(error);
