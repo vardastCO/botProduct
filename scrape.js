@@ -70,17 +70,15 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath,currency) {
       db.one(createProductOfferQuery, [productid, sellerid])
           .then(result => {
               console.log('New product offer created:', result);
+              let amount = currency ? parseInt(priceText.replace(/,/g, ''),10)/10 : parseInt(priceText.replace(/,/g, ''),10)
+              db.one(createProductPriceQuery, [productid, sellerid,amount,true,1]).then(result => {
+                console.log('New product price created:', result);
+              })
               
           })
           .catch(error => {
-              console.error('Error creating product offer:', error)
-          .finally(()=>{
-            let amount = currency ? parseInt(priceText.replace(/,/g, ''),10)/10 : parseInt(priceText.replace(/,/g, ''),10)
-            db.one(createProductPriceQuery, [productid, sellerid,amount,true,1]).then(result => {
-              console.log('New product price created:', result);
-            })
-          })    
-      })
+              console.error('Error creating product offer:', error)   
+          })
        
     } else {
       // console.error('Price element not found');
