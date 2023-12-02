@@ -127,11 +127,13 @@ async function main() {
                 batchNumber++;
             }
         } else {
+          await new Promise(resolve => setTimeout(resolve, 30000000000000000000));
             console.error('Error: Unable to retrieve total count.');
         }
       } catch (error) {
           console.error('Error:', error);
       } finally {
+
 
       }
     // });
