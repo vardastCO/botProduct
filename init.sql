@@ -6,6 +6,7 @@ CREATE TABLE bot_price (
     price_xpath TEXT,
     namev TEXT,
     name TEXT,
+    sku TEXT,
     currency BOOLEAN DEFAULT false  
 );
 
