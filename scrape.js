@@ -46,7 +46,7 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath,currency) {
 
   try {
     console.log('pageurl', pageUrl);
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 30000));
 
     await page.goto(pageUrl, { timeout: 300000 });
     const [priceElement] = await page.$x(xpath);
