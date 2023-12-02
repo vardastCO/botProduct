@@ -49,19 +49,20 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath,currency) {
     await new Promise(resolve => setTimeout(resolve, 3000));
 
     await page.goto(pageUrl, { timeout: 30000 });
-
-    console.log('step one',page.$x(xpath))
-
-    const [priceElement] = await Promise.all([
-      page.$x(xpath),
-    ]);
-
-    console.log('priceelemt',priceElement)
-
-    const [priceText] = await Promise.all([
-      page.evaluate((el) => el.textContent, priceElement[0]),
-    ]);
-    console.log('price',priceText)
+    console.log('step one');
+    const [priceElement] = await page.$x(xpath);
+    
+    console.log('priceelemt', priceElement);
+    
+    if (priceElement) {
+      const [priceText] = await Promise.all([
+        page.evaluate((el) => el.textContent, priceElement),
+      ]);
+      console.log('price', priceText);
+    } else {
+      console.error('Price element not found');
+    }
+    
 
     const createProductOfferQuery = `
     INSERT INTO product_offers ("productId", "sellerId")
