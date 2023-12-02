@@ -48,7 +48,7 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath,currency) {
     console.log('pageurl', pageUrl);
     await new Promise(resolve => setTimeout(resolve, 3000));
 
-    await page.goto(pageUrl, { timeout: 300000 });
+    await page.goto(pageUrl, { timeout: 1800000 });
     const [priceElement] = await page.$x(xpath);
 
     if (priceElement) {
@@ -96,7 +96,7 @@ async function main() {
   await createBrowser();
   await pool.connect();
   try {;
-    cron.schedule('0 0 * * *', async () => {
+    // cron.schedule('0 0 * * *', async () => {
       try {
 
         let offset = 0;
@@ -118,6 +118,7 @@ async function main() {
                   
                   // Process the page step by step
                   await processPage(log.url, browser, log.sellerid, log.productid, log.price_xpath, log.currency);
+                  await pool.query(`DELETE FROM bot_price WHERE id = $1`, [log.id]);
               }
           
     
@@ -133,7 +134,7 @@ async function main() {
       } finally {
 
       }
-    });
+    // });
   } catch (error) {
     console.error(error);
   }
