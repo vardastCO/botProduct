@@ -7,6 +7,7 @@ CREATE TABLE bot_price (
     namev TEXT,
     name TEXT,
     sku TEXT,
+    skuv TEXT,
     currency BOOLEAN DEFAULT false  
 );
 
