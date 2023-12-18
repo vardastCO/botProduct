@@ -46,7 +46,7 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath,currency) {
 
   try {
     console.log('pageurl', pageUrl);
-    await new Promise(resolve => setTimeout(resolve, 30000));
+    await new Promise(resolve => setTimeout(resolve, 3000));
 
     await page.goto(pageUrl, { timeout: 300000 });
     const [priceElement] = await page.$x(xpath);
@@ -109,16 +109,18 @@ async function main() {
       
             const totalCount = totalCountResult.rowCount;
             while (offset < totalCount) {
+              const delay = getRandomDelay(1000, 9000); // Random delay between 1 to 3 seconds
+              await new Promise(resolve => setTimeout(resolve, delay));
                 // Retrieve logs from the 'bot_price' table in batches
                 const logs = await pool.query(`SELECT * FROM bot_price ORDER BY id OFFSET $1 LIMIT $2`, [offset, batchSize]);
 
                 for (const log of logs.rows) {
-                  // Process each log (replace this with your logic)
-                  console.log(`ID: ${log.url}`);
                   
+                  console.log(`ID: ${log.url}`);
+                  await pool.query(`DELETE FROM bot_price WHERE id = $1`, [log.id]);
                   // Process the page step by step
                   await processPage(log.url, browser, log.sellerid, log.productid, log.price_xpath, log.currency);
-                  await pool.query(`DELETE FROM bot_price WHERE id = $1`, [log.id]);
+                 
               }
           
     
@@ -141,5 +143,7 @@ async function main() {
     console.error(error);
   }
 }
-
+function getRandomDelay(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 main();
