@@ -47,14 +47,16 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath,currency) {
   try {
     console.log('pageurl', pageUrl);
     await new Promise(resolve => setTimeout(resolve, 3000));
-
+    console.log('ddd0',xpath)
     await page.goto(pageUrl, { timeout: 300000 });
     const [priceElement] = await page.$x(xpath);
-
+    console.log('ddd',priceElement)
     if (priceElement) {
       const [priceText] = await Promise.all([
         page.evaluate((el) => el.textContent, priceElement),
       ]);
+  
+      console.log('ddd2',priceText)
       const createProductOfferQuery = `
       INSERT INTO product_offers ("productId", "sellerId")
       VALUES ($1, $2)
