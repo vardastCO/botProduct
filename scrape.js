@@ -49,12 +49,12 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath,currency) {
     await new Promise(resolve => setTimeout(resolve, 3000));
     console.log('ddd0',xpath)
     await page.goto(pageUrl, { timeout: 180000 })
-    const priceElement = await page.waitForXPath(xpath, { timeout: 8000 }).then((result) => console.log('result : ', result)).catch((err) => console.log('Error: ', err));
+    const [priceElement] = await page.waitForXPath(xpath, { timeout: 8000 }).then((result) => console.log('result : ', result)).catch((err) => console.log('Error: ', err));
     console.log('ddd',await priceElement)
     
-      const [priceText] = await Promise.all([
-        page.evaluate((el) => el.textContent?.replace(/[^\u06F0-\u06F90-9]/g, ""), priceElement),
-      ]);
+    const [priceText] = await Promise.all([
+      page.evaluate((el) => el.textContent?.replace(/[^\u06F0-\u06F90-9]/g, ""), priceElement),
+    ]);
 
       let englishNumber = convertPersianToEnglish(priceText)
       
