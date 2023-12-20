@@ -111,9 +111,6 @@ async function main() {
     // cron.schedule('0 0 * * *', async () => {
       try {
 
-        let offset = 0;
-        let batchNumber = 1;
-        const batchSize = 100; 
 
         const totalCountResult = await pool.query('SELECT COUNT(*) FROM bot_price');
 
@@ -121,14 +118,15 @@ async function main() {
       
             const totalCount = totalCountResult.rowCount;
             while (offset < totalCount) {
-              const delay = getRandomDelay(1000, 9000); // Random delay between 1 to 3 seconds
-              await new Promise(resolve => setTimeout(resolve, delay));
+              // const delay = getRandomDelay(1000, 9000); // Random delay between 1 to 3 seconds
+              // await new Promise(resolve => setTimeout(resolve, delay));
                 // Retrieve logs from the 'bot_price' table in batches
-                const logs = await pool.query(`SELECT * FROM bot_price ORDER BY id OFFSET $1 LIMIT $2`, [offset, batchSize]);
+
+                const logs = await pool.query(`SELECT * FROM bot_price ORDER BY id limit 1`);
 
                 for (const log of logs.rows) {
                   
-                  console.log(`ID: ${log.url}`);
+                  console.log(`Before process : ${log.url}`);
                   await pool.query(`DELETE FROM bot_price WHERE id = $1`, [log.id]);
                   // Process the page step by step
                   await processPage(log.url, browser, log.sellerid, log.productid, log.price_xpath, log.currency);
@@ -136,9 +134,7 @@ async function main() {
               }
           
     
-                // Update offset for the next batch
-                offset += batchSize;
-                batchNumber++;
+
             }
         } else {
           await new Promise(resolve => setTimeout(resolve, 300000));
