@@ -56,12 +56,11 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath,currency) {
         page.evaluate((el) => el.textContent?.replace(/[^\u06F0-\u06F90-9]/g, ""), priceElement),
       ]);
 
-      let persianNumber = convertPersianToEnglish(priceText)
-      
+      let englishNumber = convertPersianToEnglish(priceText)
       
       console.log('ddd2',priceText)
-      console.log('ddd3',persianNumber);
-      
+      console.log('ddd3',englishNumber);
+      console.log('start process');
       const createProductOfferQuery = `
       INSERT INTO product_offers ("productId", "sellerId")
       VALUES ($1, $2)
@@ -76,7 +75,13 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath,currency) {
      // Execute the query
      
       let amount = currency ? parseInt(priceText.replace(/,/g, ''),10)/10 : parseInt(priceText.replace(/,/g, ''),10)
+      console.log('amount: ', amount);
+
       db.one(createProductPriceQuery, [productid, sellerid,amount,true,1]).then(result => {
+        console.log('Currect db job')
+      }).catch(error => {
+        console.log("Error db: ", error)
+      }).finally(() => {
         db.one(createProductOfferQuery, [productid, sellerid])
         console.log('New product price created:', result);
       })
