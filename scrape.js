@@ -76,7 +76,7 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath,currency) {
       `;
      // Execute the query
      
-      let amount = currency ? parseInt(priceText.replace(/,/g, ''),10)/10 : parseInt(priceText.replace(/,/g, ''),10)
+      let amount = currency ? parseInt(englishNumber.replace(/,/g, ''),10)/10 : parseInt(englishNumber.replace(/,/g, ''),10)
       console.log('amount: ', amount);
 
       db.one(createProductPriceQuery, [productid, sellerid,amount,true,1]).then(result => {
