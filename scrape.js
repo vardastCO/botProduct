@@ -3,7 +3,7 @@ const puppeteer = require('puppeteer');
 
 const { Client } = require('pg');
 const cron = require('node-cron');
-
+const { convertPersianToEnglish } = require('./utils')
 
 
 
@@ -53,10 +53,15 @@ async function processPage(pageUrl, browser,sellerid,productid,xpath,currency) {
     console.log('ddd',priceElement)
     if (priceElement) {
       const [priceText] = await Promise.all([
-        page.evaluate((el) => el.textContent, priceElement),
+        page.evaluate((el) => el.textContent?.replace(/[^\u06F0-\u06F90-9]/g, ""), priceElement),
       ]);
-  
+
+      let persianNumber = convertPersianToEnglish(priceText)
+      
+      
       console.log('ddd2',priceText)
+      console.log('ddd3',persianNumber);
+      
       const createProductOfferQuery = `
       INSERT INTO product_offers ("productId", "sellerId")
       VALUES ($1, $2)
