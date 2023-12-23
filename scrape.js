@@ -25,7 +25,8 @@ async function createBrowser() {
           : puppeteer.executablePath(),
        args: ["--no-sandbox", "--disable-setuid-sandbox",`--proxy-server=${proxyServer}`,],
     });
-
+   
+    
     return browser;
   } catch (error) {
     console.error("Error while launching the browser:", error);
