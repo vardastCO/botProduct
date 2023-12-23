@@ -43,14 +43,8 @@ async function processPage(
   const page = await browser.newPage();
 
   try {
-    console.log("pageurl", pageUrl);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    console.log("ddd0", xpath);
     await page.goto(pageUrl, { timeout: 300000 });
-
-    await new Promise((resolve) => setTimeout(resolve, 5000));
     const [priceElement] = await page.$x(xpath);
-    console.log("ddd", await priceElement);
 
     const [priceText] = await Promise.all([
       page.evaluate(
@@ -61,9 +55,6 @@ async function processPage(
 
     let englishNumber = convertPersianToEnglish(priceText);
 
-    console.log("ddd2", priceText);
-    console.log("ddd3", englishNumber);
-    console.log("start process");
     const createProductOfferQuery = `
       INSERT INTO product_offers ("productId", "sellerId")
       VALUES ($1, $2)
@@ -80,7 +71,7 @@ async function processPage(
     let amount = currency
       ? parseInt(englishNumber.replace(/,/g, ""), 10) / 10
       : parseInt(englishNumber.replace(/,/g, ""), 10);
-    console.log("amount: ", amount);
+
 
     db.one(createProductPriceQuery, [productid, sellerid, amount, true, 1])
       .then((result) => {
