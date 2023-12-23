@@ -16,14 +16,14 @@ let browser;
 
 async function createBrowser() {
   try {
-    // const proxyServer = 'ss://YWVzLTI1Ni1nY206d0DVaGt6WGpjRA==@38.54.13.15:31214#main';
+    const proxyServer = 'ss://YWVzLTI1Ni1nY206d0DVaGt6WGpjRA==@38.54.13.15:31214#main';
     browser = await puppeteer.launch({
       headless: true, // Set to true for headless mode, false for non-headless
       executablePath:
         process.env.NODE_ENV === "production"
           ? process.env.PUPPETEER_EXECUTABLE_PATH
           : puppeteer.executablePath(),
-        args: ["--no-sandbox", "--disable-setuid-sandbox", "--proxy-server=188.121.147.18:8080"],
+       args: ["--no-sandbox", "--disable-setuid-sandbox",`--proxy-server=${proxyServer}`,],
     });
 
     return browser;
