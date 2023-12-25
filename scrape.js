@@ -72,9 +72,8 @@ async function processPage(
     let amount = currency
       ? parseInt(englishNumber.replace(/,/g, ""), 10) / 10
       : parseInt(englishNumber.replace(/,/g, ""), 10);
-
-
-    db.one(createProductPriceQuery, [productid, sellerid, amount, true, 1])
+     try {
+      db.one(createProductPriceQuery, [productid, sellerid, amount, true, 1])
       .then((result) => {
         console.log("Currect db job");
       })
@@ -89,6 +88,12 @@ async function processPage(
           
         });
       });
+
+     }catch(e){
+      console.log('what??/',e)
+     }
+
+    
   } catch (error) {
     console.error(error);
   } finally {
