@@ -83,7 +83,7 @@ async function processPage(
       .finally(() => {
         db.one(createProductOfferQuery, [productid, sellerid]).finally(() => {
           console.log('finish')
-          process.exit(0);
+
 
           
         });
@@ -97,8 +97,6 @@ async function processPage(
   } catch (error) {
     console.error(error);
   } finally {
-    console.log('what??/ finish')
-    process.exit(0);
     await page.close();
   }
 }
@@ -146,11 +144,9 @@ async function main() {
       console.error("Error:", error);
     } finally {
       console.error("finish");
-      process.exit(0);
     }
     // });
   } catch (error) {
-    process.exit(0);
     console.error(error);
   }
 }
