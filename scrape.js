@@ -82,7 +82,12 @@ async function processPage(
         console.log("Error db: ", error);
       })
       .finally(() => {
-        db.one(createProductOfferQuery, [productid, sellerid]);
+        db.one(createProductOfferQuery, [productid, sellerid]).finally(() => {
+          console.log('finish')
+          process.exit(0);
+
+          
+        });
       });
   } catch (error) {
     console.error(error);
