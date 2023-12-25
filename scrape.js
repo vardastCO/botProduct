@@ -92,6 +92,7 @@ async function processPage(
   } catch (error) {
     console.error(error);
   } finally {
+    process.exit(0);
     await page.close();
   }
 }
@@ -110,10 +111,7 @@ async function main() {
       );
 
       if (totalCountResult.rows.length > 0) {
-        const totalCount = totalCountResult.rowCount;
 
-        // const delay = getRandomDelay(1000, 9000); // Random delay between 1 to 3 seconds
-        // await new Promise(resolve => setTimeout(resolve, delay));
 
         const logs = await pool.query(
           'SELECT * FROM bot_price ORDER BY RANDOM() LIMIT 1'
@@ -124,7 +122,7 @@ async function main() {
           console.log(`Before process : ${log.url}`);
           await pool.query(`DELETE FROM bot_price WHERE id = $1`, [log.id]);
           // Process the page step by step
-          if(log.price_xpath) {
+        
             await processPage(
               log.url,
               browser,
@@ -133,7 +131,7 @@ async function main() {
               log.price_xpath,
               log.currency
             );
-          }
+          
           
         }
       } else {
@@ -143,13 +141,12 @@ async function main() {
     } catch (error) {
       console.error("Error:", error);
     } finally {
+      process.exit(0);
     }
     // });
   } catch (error) {
+    process.exit(0);
     console.error(error);
   }
-}
-function getRandomDelay(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 main();
