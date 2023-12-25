@@ -23,7 +23,7 @@ async function createBrowser() {
         process.env.NODE_ENV === "production"
           ? process.env.PUPPETEER_EXECUTABLE_PATH
           : puppeteer.executablePath(),
-       args: ["--no-sandbox", "--disable-setuid-sandbox",`--proxy-server=${proxyServer}`,],
+       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
    
     
