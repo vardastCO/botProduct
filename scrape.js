@@ -132,7 +132,7 @@ async function main() {
           
         }
       } else {
-        await new Promise((resolve) => setTimeout(resolve, 300000));
+        // await new Promise((resolve) => setTimeout(resolve, 300000));
         console.error("Error: Unable to retrieve total count.");
       }
     } catch (error) {
