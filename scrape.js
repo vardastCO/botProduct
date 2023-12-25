@@ -111,8 +111,9 @@ async function main() {
         await new Promise(resolve => setTimeout(resolve, delay));
 
         const logs = await pool.query(
-          `SELECT * FROM bot_price ORDER BY RAND() LIMIT 1`
+          'SELECT * FROM bot_price ORDER BY RANDOM() LIMIT 1'
         );
+        
         
         for (const log of logs.rows) {
           console.log(`Before process : ${log.url}`);
