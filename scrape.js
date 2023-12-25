@@ -73,33 +73,43 @@ async function processPage(
       ? parseInt(englishNumber.replace(/,/g, ""), 10) / 10
       : parseInt(englishNumber.replace(/,/g, ""), 10);
      try {
-      db.one(createProductPriceQuery, [productid, sellerid, amount, true, 1])
+      console.log('farbod',productid,sellerid,amount)
+       await db.one(createProductPriceQuery, [productid, sellerid,await amount, true, 1])
       .then((result) => {
         console.log("Currect db job");
       })
       .catch((error) => {
         console.log("Error db: ", error);
       })
-      .finally(() => {
-        db.one(createProductOfferQuery, [productid, sellerid]).finally(() => {
-          console.log('finish')
-          process.exit(0);
 
-          
-        });
-      });
+  
 
      }catch(e){
       console.log('what??/',e)
      }
+     try {
+      console.log('farbod',productid,sellerid,amount)
+       await  db.one(createProductOfferQuery, [productid, sellerid])
+      .then((result) => {
+        console.log("Currect db job");
+      })
+      .catch((error) => {
+        console.log("Error db: ", error);
+      })
+     
+     }catch(e){
+      console.log('what??/',e)
+     }
+
 
     
   } catch (error) {
     console.error(error);
   } finally {
     console.log('what??/ finish')
-    process.exit(0);
+   
     await page.close();
+    process.exit(0);
   }
 }
 
