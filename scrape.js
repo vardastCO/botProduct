@@ -44,7 +44,7 @@ async function processPage(
   const page = await browser.newPage();
 
   try {
-    await page.goto(pageUrl, { timeout: 60000 });
+    await page.goto(pageUrl, { timeout: 120000 });
     const [priceElement] = await page.$x(xpath);
 
     const [priceText] = await Promise.all([
@@ -83,7 +83,7 @@ async function processPage(
       .finally(() => {
         db.one(createProductOfferQuery, [productid, sellerid]).finally(() => {
           console.log('finish')
-
+          process.exit(0);
 
           
         });
@@ -97,6 +97,8 @@ async function processPage(
   } catch (error) {
     console.error(error);
   } finally {
+    console.log('what??/ finish')
+    process.exit(0);
     await page.close();
   }
 }
@@ -144,9 +146,11 @@ async function main() {
       console.error("Error:", error);
     } finally {
       console.error("finish");
+      process.exit(0);
     }
     // });
   } catch (error) {
+    process.exit(0);
     console.error(error);
   }
 }
