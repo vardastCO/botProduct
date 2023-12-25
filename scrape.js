@@ -44,7 +44,7 @@ async function processPage(
   const page = await browser.newPage();
 
   try {
-    await page.goto(pageUrl, { timeout: 300000 });
+    await page.goto(pageUrl, { timeout: 240000 });
     const [priceElement] = await page.$x(xpath);
 
     const [priceText] = await Promise.all([
@@ -107,8 +107,8 @@ async function main() {
       if (totalCountResult.rows.length > 0) {
         const totalCount = totalCountResult.rowCount;
 
-        const delay = getRandomDelay(1000, 9000); // Random delay between 1 to 3 seconds
-        await new Promise(resolve => setTimeout(resolve, delay));
+        // const delay = getRandomDelay(1000, 9000); // Random delay between 1 to 3 seconds
+        // await new Promise(resolve => setTimeout(resolve, delay));
 
         const logs = await pool.query(
           'SELECT * FROM bot_price ORDER BY RANDOM() LIMIT 1'
