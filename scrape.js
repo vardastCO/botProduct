@@ -23,7 +23,7 @@ async function createBrowser() {
         process.env.NODE_ENV === "production"
           ? process.env.PUPPETEER_EXECUTABLE_PATH
           : puppeteer.executablePath(),
-       args: ["--no-sandbox", "--disable-setuid-sandbox"],
+       args: ["--no-sandbox", "--disable-setuid-sandbox",`--proxy-server=${proxyServer}`],
     });
    
     
@@ -44,7 +44,7 @@ async function processPage(
   const page = await browser.newPage();
 
   try {
-    await page.goto(pageUrl, { timeout: 120000 });
+    await page.goto(pageUrl, { timeout: 240000 });
     const [priceElement] = await page.$x(xpath);
 
     const [priceText] = await Promise.all([
