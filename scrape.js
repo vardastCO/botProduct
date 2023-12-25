@@ -97,6 +97,7 @@ async function processPage(
   } catch (error) {
     console.error(error);
   } finally {
+    console.log('what??/ finish')
     process.exit(0);
     await page.close();
   }
@@ -117,12 +118,10 @@ async function main() {
 
       if (totalCountResult.rows.length > 0) {
 
-
         const logs = await pool.query(
           'SELECT * FROM bot_price ORDER BY RANDOM() LIMIT 1'
         );
-        
-        
+
         for (const log of logs.rows) {
           console.log(`Before process : ${log.url}`);
           await pool.query(`DELETE FROM bot_price WHERE id = $1`, [log.id]);
@@ -146,6 +145,7 @@ async function main() {
     } catch (error) {
       console.error("Error:", error);
     } finally {
+      console.error("finish");
       process.exit(0);
     }
     // });
